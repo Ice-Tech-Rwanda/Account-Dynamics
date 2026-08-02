@@ -1,0 +1,24 @@
+const LOG_LEVELS = { debug: 0, info: 1, warn: 2, error: 3 } as const
+type LogLevel = keyof typeof LOG_LEVELS
+
+const currentLevel: LogLevel = (process.env.LOG_LEVEL as LogLevel) || "info"
+
+function log(level: LogLevel, message: string, meta?: Record<string, unknown>) {
+  if (LOG_LEVELS[level] < LOG_LEVELS[currentLevel]) return
+  const timestamp = new Date().toISOString()
+  const prefix = `[${timestamp}] [${level.toUpperCase()}]`
+  if (meta) {
+    console[level === "error" ? "error" : "log"](`${prefix} ${message}`, JSON.stringify(meta))
+  } else {
+    console[level === "error" ? "error" : "log"](`${prefix} ${message}`)
+  }
+}
+
+export const logger = {
+  debug: (message: string, meta?: Record<string, unknown>) => log("debug", message, meta),
+  info: (message: string, meta?: Record<string, unknown>) => log("info", message, meta),
+  warn: (message: string, meta?: Record<string, unknown>) => log("warn", message, meta),
+  error: (message: string, meta?: Record<string, unknown>) => log("error", message, meta),
+}
+
+export default logger

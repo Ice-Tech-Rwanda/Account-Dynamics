@@ -1,0 +1,187 @@
+/* =============================================================================
+   Ice Tech Rwanda — Design Tokens
+   -----------------------------------------------------------------------------
+   This file is the single source of truth for the template's visual language.
+   It was extracted from a production club website and standardized so that
+   every project built from this template inherits the same look and feel.
+
+   HOW TO REBRAND
+   --------------
+   Every project that starts from this template only needs to change the values
+   in the `:root` block below (brand/accent colors, font variables, radius).
+   Tailwind utilities such as `bg-brand`, `text-accent`, `shadow-card`, and the
+   component classes in components.css automatically pick up the new values.
+
+   STRUCTURE
+   ---------
+   1.  Palette  — brand, accent and neutral surfaces (light + dark)
+   2.  Typography — font families loaded in app/layout.tsx
+   3.  Radius    — border-radius scale
+   4.  Shadows   — elevation system
+   5.  Motion    — animation keyframes referenced by --animate-* tokens
+   6.  Breakpoints — documented Tailwind defaults (see note)
+   ============================================================================= */
+
+@theme inline {
+  /* ---------------------------------------------------------------------------
+     1. TYPOGRAPHY
+        Fonts are loaded via next/font/google in src/app/layout.tsx. The
+        CSS variables below are what Tailwind's font-sans/font-serif map to.
+  --------------------------------------------------------------------------- */
+  --font-sans: var(--font-lexend);
+  --font-serif: var(--font-merriweather);
+  --font-mono: var(--font-lexend);
+
+  /* ---------------------------------------------------------------------------
+     2. BRAND COLORS
+        Tailwind utilities: bg-brand, text-accent, bg-accent-soft, ...
+        `brand` is the primary action color (deep green by default) and
+        `accent` is the highlight/CTA color (gold by default). Change the
+        values in the `:root` / `.dark` blocks below to rebrand.
+  --------------------------------------------------------------------------- */
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-bg: var(--brand-bg-light);
+  --color-brand-bg-dark: var(--brand-bg-dark);
+  --color-brand-bg-dark-mid: var(--brand-bg-dark-mid);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-subtle: var(--accent-subtle);
+
+  /* ---------------------------------------------------------------------------
+     3. SEMANTIC UI COLORS (shadcn/ui contract)
+        `accent-foreground` is the text color used on accent surfaces.
+  --------------------------------------------------------------------------- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ---------------------------------------------------------------------------
+     4. RADIUS SCALE
+        Base control radius is --radius (12px). Every tier derives from it so a
+        single change re-scales the whole system.
+  --------------------------------------------------------------------------- */
+  --radius-sm: calc(var(--radius) - 4px);   /* 8px  — chips, inputs */
+  --radius-md: calc(var(--radius) - 2px);   /* 10px — small controls */
+  --radius-lg: var(--radius);               /* 12px — buttons, inputs */
+  --radius-xl: calc(var(--radius) + 4px);   /* 16px — cards */
+  --radius-2xl: calc(var(--radius) + 8px);  /* 20px — feature cards */
+  --radius-3xl: calc(var(--radius) + 12px); /* 24px — hero panels */
+  --radius-4xl: calc(var(--radius) + 16px); /* 28px — large cards, modals */
+
+  /* ---------------------------------------------------------------------------
+     5. SHADOWS (elevation system)
+        Tailwind utilities: shadow-soft, shadow-card, shadow-lift,
+        shadow-glow-brand, shadow-glow-accent.
+  --------------------------------------------------------------------------- */
+  --shadow-soft: 0 14px 28px rgba(2, 6, 23, 0.05);
+  --shadow-card: 0 20px 48px rgba(2, 6, 23, 0.07);
+  --shadow-lift: 0 24px 60px rgba(2, 6, 23, 0.14);
+  --shadow-glow-brand: 0 14px 30px color-mix(in srgb, var(--brand) 22%, transparent);
+  --shadow-glow-brand-strong: 0 18px 38px color-mix(in srgb, var(--brand) 28%, transparent);
+  --shadow-glow-accent: 0 14px 30px color-mix(in srgb, var(--accent) 22%, transparent);
+  --shadow-glow-accent-strong: 0 18px 38px color-mix(in srgb, var(--accent) 28%, transparent);
+
+  /* ---------------------------------------------------------------------------
+     6. MOTION (animation tokens)
+        Tailwind utilities: animate-float, animate-glow, animate-tile-in,
+        animate-scroll. Keyframes are defined in animations.css.
+  --------------------------------------------------------------------------- */
+  --animate-float: float 7.5s ease-in-out infinite;
+  --animate-float-slow: float 8.5s ease-in-out infinite;
+  --animate-glow: glow-pulse 7.5s ease-in-out infinite;
+  --animate-tile-in: tile-in 0.5s ease-out forwards;
+  --animate-scroll: scroll-x 30s linear infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   PALETTE — LIGHT MODE (default)
+   Change these values to rebrand the template.
+--------------------------------------------------------------------------- */
+:root {
+  /* Brand (primary action color) */
+  --brand: #0d7a3e;
+  --brand-strong: #0a5e30;
+  --brand-soft: #12a558;
+  --brand-subtle: rgba(13, 122, 62, 0.1);
+
+  /* Accent (highlight / CTA color) */
+  --accent: #d4a843;
+  --accent-strong: #b8923a;
+  --accent-soft: #e8c56d;
+  --accent-subtle: rgba(212, 168, 67, 0.1);
+
+  /* Surfaces */
+  --brand-bg-light: #f8faf6;
+  --brand-bg-dark: #0a1a0e;
+  --brand-bg-dark-mid: #0d3a1e;
+
+  /* Neutral / semantic (shadcn contract) */
+  --radius: 0.75rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.374 0.154 151.865);
+  --primary-foreground: oklch(0.985 0.001 106.423);
+  --secondary: oklch(0.685 0.127 98.481);
+  --secondary-foreground: oklch(0.141 0.005 285.823);
+  --accent-foreground: oklch(0.141 0.005 285.823);
+  --muted: oklch(0.965 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: var(--brand);
+}
+
+/* ---------------------------------------------------------------------------
+   PALETTE — DARK MODE
+--------------------------------------------------------------------------- */
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.685 0.127 98.481);
+  --primary-foreground: oklch(0.141 0.005 285.823);
+  --secondary: oklch(0.374 0.154 151.865);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.711 0.015 286.067);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--brand-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   7. BREAKPOINTS
+      Tailwind's default breakpoints are used unchanged so every project gets
+      the same responsive behavior out of the box:
+
+        sm  40rem (640px)   lg   64rem (1024px)   xl   80rem (1280px)
+        md  48rem (768px)   2xl  96rem (1536px)
+--------------------------------------------------------------------------- */

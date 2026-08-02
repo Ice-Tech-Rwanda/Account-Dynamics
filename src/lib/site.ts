@@ -1,0 +1,31 @@
+export const siteConfig = {
+  name: "Ice Tech Rwanda",
+  shortName: "Ice Tech",
+  initials: "IT",
+  productName: "Ice Tech Rwanda Template",
+  version: "1.0.0",
+  titleTemplate: "%s | Ice Tech Rwanda",
+  description:
+    "Ice Tech Rwanda is a reusable, production-ready template for community, nonprofit, and business web applications built on a shared design system.",
+  keywords: [
+    "Ice Tech Rwanda",
+    "template",
+    "design system",
+    "Next.js",
+    "TypeScript",
+    "branding",
+    "reusable components",
+    "production ready",
+  ],
+  email: "hello@icetechrwanda.rw",
+  phone: "+250 700 000 000",
+  whatsapp: "https://wa.me/250700000000",
+  location: "Kigali, Rwanda",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  socialLinks: [
+    { label: "Facebook", href: "#" },
+    { label: "Instagram", href: "#" },
+    { label: "LinkedIn", href: "#" },
+    { label: "YouTube", href: "#" },
+  ],
+} as const;
