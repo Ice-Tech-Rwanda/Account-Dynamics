@@ -10,8 +10,8 @@ interface LogoProps {
 }
 
 const sizeStyles = {
-  sm: { box: "h-9 w-9 rounded-xl text-sm", title: "text-sm", subtitle: "text-[10px]" },
-  md: { box: "h-10 w-10 rounded-xl text-base", title: "text-base", subtitle: "text-[11px]" },
+  sm: { box: "h-9 w-9 rounded-lg text-sm", title: "text-sm", subtitle: "text-[10px]" },
+  md: { box: "h-10 w-10 rounded-lg text-base", title: "text-base", subtitle: "text-[11px]" },
 } as const;
 
 export function Logo({
@@ -30,7 +30,7 @@ export function Logo({
     >
       <span
         className={cn(
-          "flex shrink-0 items-center justify-center bg-gradient-to-br from-brand to-brand-soft font-black text-white shadow-md",
+          "flex shrink-0 items-center justify-center bg-gradient-to-br from-brand to-brand-strong font-bold text-white shadow-md",
           styles.box
         )}
       >
@@ -40,7 +40,7 @@ export function Logo({
         <span className="flex flex-col leading-none">
           <span
             className={cn(
-              "font-black tracking-tight text-slate-900 dark:text-white",
+              "font-bold tracking-tight text-slate-900 dark:text-white",
               styles.title
             )}
           >
@@ -52,7 +52,7 @@ export function Logo({
               styles.subtitle
             )}
           >
-            {siteConfig.name}
+            {siteConfig.tagline}
           </span>
         </span>
       )}

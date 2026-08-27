@@ -24,11 +24,27 @@ const merriweather = Merriweather({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: `${siteConfig.name} | ${siteConfig.productName}`,
+    default: `${siteConfig.name} | Tax, Cloud Accounting, Advisory & Business Analytics`,
     template: siteConfig.titleTemplate,
   },
   description: siteConfig.description,
   keywords: [...siteConfig.keywords],
+  openGraph: {
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.siteUrl,
+    siteName: siteConfig.name,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

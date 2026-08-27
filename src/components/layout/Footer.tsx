@@ -1,64 +1,47 @@
 import Link from "next/link";
-import {
-  MessageCircle,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  ArrowUpRight,
-} from "lucide-react";
+import { Phone, MapPin, Clock, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { footerGroups } from "@/lib/navigation";
 import { Logo } from "@/components/brand/Logo";
-
-const socialIcons = {
-  Facebook,
-  Twitter,
-  Instagram,
-  LinkedIn: Linkedin,
-  YouTube: Youtube,
-} as const;
 
 export function Footer() {
   return (
     <footer className="border-t border-slate-200/80 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 dark:border-slate-800/80">
       <div className="it-container px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Brand column */}
           <div className="lg:col-span-2">
             <Logo />
             <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-400 max-w-sm">
               {siteConfig.description}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a
-                href={siteConfig.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-xl bg-brand/10 px-4 py-2 text-xs font-bold text-brand hover:bg-brand/20 transition-colors"
-              >
-                <MessageCircle className="size-3.5" />
-                WhatsApp Group
-              </a>
-              <div className="flex gap-2">
-                {siteConfig.socialLinks.map(({ label, href }) => {
-                  const Icon = socialIcons[label as keyof typeof socialIcons];
-                  if (!Icon) return null;
-                  return (
-                    <a
-                      key={label}
-                      href={href}
-                      aria-label={label}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-brand hover:text-white dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-brand transition-all"
-                    >
-                      <Icon className="size-4" />
-                    </a>
-                  );
-                })}
+
+            {/* Contact info */}
+            <div className="mt-6 space-y-3">
+              <div className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
+                <MapPin className="size-4 mt-0.5 shrink-0 text-brand" />
+                <span>{siteConfig.location}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                <Phone className="size-4 shrink-0 text-brand" />
+                <div>
+                  <a href={`tel:${siteConfig.phone.replace(/-/g, "")}`} className="hover:text-brand transition-colors">
+                    {siteConfig.phone}
+                  </a>
+                  <span className="mx-1.5 text-slate-300 dark:text-slate-600">|</span>
+                  <a href={`tel:${siteConfig.phoneSecondary?.replace(/-/g, "")}`} className="hover:text-brand transition-colors">
+                    {siteConfig.phoneSecondary}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                <Clock className="size-4 shrink-0 text-brand" />
+                <span>{siteConfig.hours}</span>
               </div>
             </div>
           </div>
 
+          {/* Link columns */}
           {footerGroups.map((group) => (
             <div key={group.title}>
               <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -81,12 +64,13 @@ export function Footer() {
           ))}
         </div>
 
+        {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 pt-8 dark:border-slate-800/80 sm:flex-row">
           <p className="text-xs text-slate-500 dark:text-slate-500">
             &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs text-slate-500 dark:text-slate-500">
-            <span>{siteConfig.location}</span>
+            <span>{siteConfig.location.split(",")[1]?.trim()}</span>
             <span>|</span>
             <a
               href={`mailto:${siteConfig.email}`}

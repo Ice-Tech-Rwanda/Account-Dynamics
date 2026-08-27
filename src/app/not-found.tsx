@@ -3,16 +3,15 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, Search, BookOpen } from "lucide-react";
+import { Home, Search, Phone } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 
 export default function NotFound() {
   return (
     <div className="relative min-h-[80vh] flex items-center justify-center px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(212,168,67,0.06),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(13,122,62,0.06),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-brand-bg-dark to-slate-950" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(14,124,123,0.06),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(27,58,92,0.06),transparent_50%)]" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
         <motion.div
@@ -21,7 +20,7 @@ export default function NotFound() {
           transition={{ duration: 0.6, ease: "backOut" }}
         >
           <div className="inline-flex items-center justify-center h-20 w-20 sm:h-24 sm:w-24 rounded-[2rem] bg-gradient-to-br from-accent/20 to-accent/5 backdrop-blur-xl mb-8 ring-1 ring-accent/20">
-            <span className="text-4xl sm:text-5xl font-black text-accent">?</span>
+            <span className="text-4xl sm:text-5xl font-bold text-accent">?</span>
           </div>
         </motion.div>
 
@@ -34,12 +33,13 @@ export default function NotFound() {
             <Search className="size-3" /> Page Not Found
           </span>
 
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-[1.06] tracking-[-0.04em] text-white">
+          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold leading-[1.06] tracking-tight text-white">
             404
           </h1>
 
           <p className="mt-4 text-lg sm:text-xl text-slate-300 max-w-lg mx-auto leading-relaxed">
-            Looks like this word isn&apos;t in the dictionary. Let&apos;s get you back on the board.
+            The page you&apos;re looking for doesn&apos;t exist. Let&apos;s get
+            you back on track.
           </p>
         </motion.div>
 
@@ -58,12 +58,12 @@ export default function NotFound() {
               <Home className="size-4" /> Back to Home
             </Button>
           </Link>
-          <Link href="/events">
+          <Link href="/contact">
             <Button
               size="xl"
               className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 gap-2.5 text-base shadow-lg"
             >
-              <BookOpen className="size-4" /> Upcoming Events
+              <Phone className="size-4" /> Contact Us
             </Button>
           </Link>
         </motion.div>

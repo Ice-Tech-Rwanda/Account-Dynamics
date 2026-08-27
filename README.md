@@ -1,12 +1,12 @@
-# Ice Tech Rwanda Template
+# Account Dynamics
 
-A reusable, production-ready Next.js starter built by **Ice Tech Rwanda** for community, nonprofit, and business web applications. It ships with a shared design system, modular domain architecture, an admin dashboard, and a full API layer — so every new project starts from a proven foundation instead of a blank page.
+A professional website for **Account Dynamics** — a Canadian accounting, tax, advisory and business analytics firm based in Toronto, Ontario.
 
 ## Tech Stack
 
 - **Next.js 16** (App Router, Turbopack) + **TypeScript**
 - **Tailwind CSS v4** design system with CSS-variable tokens
-- **Prisma** + SQL database, **NextAuth.js** (Auth.js) admin auth
+- **Prisma** + SQLite database, **NextAuth.js** (Auth.js) admin auth
 - **shadcn/ui** primitives, **Radix UI**, **Framer Motion**, **lucide-react**, **zod**, **sonner**
 - **Vitest** (unit) + **Playwright** (e2e)
 
@@ -21,47 +21,51 @@ npm run db:seed               # demo content (optional)
 npm run dev
 ```
 
-Open http://localhost:3000. The admin area is `/admin` (seed creates a demo admin login).
+Open http://localhost:3000. The admin area is `/admin`.
+
+## Services
+
+- **Small Business** — Bookkeeping, Tax Advisory, Audits & Appeals, Compilation Engagement Reports, Historical Accounting & Compliance Catch-Up, Payroll, Corporate Restructuring
+- **Personal Taxes** — Tax Filing, Tax Advisory, Estate Planning, Lifetime Capital Gains Exemption
+- **Outsourcing** — CPA & Accounting Office Outsourcing, Corporate Group Outsourcing
+- **Allied Services** — Financing & Business Plans, QuickBooks Onboarding
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage |
+| `/about` | About Us — Founder, Vision, Team |
+| `/services` | Services overview |
+| `/services/small-business` | Small Business services |
+| `/services/personal-taxes` | Personal Taxes services |
+| `/services/outsourcing` | Outsourcing services |
+| `/services/allied-services` | Allied Services |
+| `/industries` | Industries We Serve |
+| `/why-choose-us` | Why Choose Us |
+| `/contact` | Contact form and information |
+| `/admin` | Admin dashboard |
+
+## Contact
+
+- **Phone:** 416-748-2042 | 416-450-5639
+- **Address:** 55 Baywood Road, 2nd Floor, Toronto, Ontario M9V 3Y8
+- **Hours:** Monday – Friday, 9:00 AM – 4:00 PM
 
 ## Scripts
 
 | Script | Purpose |
-| ------ | ------- |
+|--------|---------|
 | `npm run dev` | Start the dev server |
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build |
-| `npm run lint` | ESLint (flat config) — keep at 0 errors |
+| `npm run lint` | ESLint (flat config) |
 | `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest unit tests (no DB required) |
-| `npm run test:watch` | Vitest watch mode |
-| `npm run test:integration` | DB-backed integration tests (needs `DATABASE_URL`) |
+| `npm test` | Vitest unit tests |
 | `npm run db:generate` | `prisma generate` |
 | `npm run db:push` | `prisma db push` |
 | `npm run db:seed` | `prisma db seed` |
 
-## Project Layout
-
-```
-src/
-  app/                    # Next.js App Router (thin routing + data orchestration)
-  components/
-    brand/                # Logo + brand primitives
-    layout/               # Header, Footer, Admin shell
-    shared/               # ThemeProvider, EmptyState, LoadingState, ErrorState, ...
-    ui/                   # shadcn/ui primitives (Button, Badge, Card, Input, ...)
-  domains/                # Feature modules (events, shop, support, join, ...)
-  lib/                    # site config, prisma, auth, validation, services
-  styles/                 # tokens.css, components.css, animations.css
-  __tests__/              # vitest unit tests (pure) + DB integration tests
-```
-
-## Documentation
-
-- [docs/template.md](docs/template.md) — template rules and source-of-truth files
-- [docs/DESIGN.md](docs/DESIGN.md) — design system reference (tokens, typography, branding)
-- [docs/GUIDE.md](docs/GUIDE.md) — how to add pages, components, and rebrand
-- [docs/GENESIS.md](docs/GENESIS.md) — the extraction & rebranding prompt for new projects
-
 ## Branding
 
-Rebranding is a single-file change: edit `src/lib/site.ts` (name, URLs, socials, email) and the `:root` / `.dark` blocks in `src/styles/tokens.css` (colors, fonts, radius). See [docs/DESIGN.md](docs/DESIGN.md) for the details.
+Edit `src/lib/site.ts` (name, URLs, socials, contact info) and the `:root` / `.dark` blocks in `src/styles/tokens.css` (colors, fonts, radius) to rebrand.

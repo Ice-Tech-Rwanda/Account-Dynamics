@@ -1,49 +1,58 @@
 export interface NavItem {
   label: string;
   href: string;
+  children?: NavItem[];
 }
 
 export const mainNav: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Events", href: "/events" },
-  { label: "Rankings", href: "/rankings" },
-  { label: "Shop", href: "/shop" },
-  { label: "Resources", href: "/resources" },
-  { label: "Join Us", href: "/join" },
+  { label: "About Us", href: "/about" },
+  {
+    label: "Services",
+    href: "/services",
+    children: [
+      { label: "Small Business", href: "/services/small-business" },
+      { label: "Personal Taxes", href: "/services/personal-taxes" },
+      { label: "Outsourcing", href: "/services/outsourcing" },
+      { label: "Allied Services", href: "/services/allied-services" },
+    ],
+  },
+  { label: "Industries", href: "/industries" },
+  { label: "Why Choose Us", href: "/why-choose-us" },
+  { label: "Contact", href: "/contact" },
 ];
+
+export const ctaNav = { label: "Book Online", href: "https://www.accountdynamics.com/book-online" };
 
 export interface FooterGroup {
   title: string;
-  links: NavItem[];
+  links: { label: string; href: string }[];
 }
 
 export const footerGroups: FooterGroup[] = [
   {
-    title: "Club",
+    title: "Services",
+    links: [
+      { label: "Small Business", href: "/services/small-business" },
+      { label: "Personal Taxes", href: "/services/personal-taxes" },
+      { label: "Outsourcing", href: "/services/outsourcing" },
+      { label: "Allied Services", href: "/services/allied-services" },
+    ],
+  },
+  {
+    title: "Company",
     links: [
       { label: "About Us", href: "/about" },
-      { label: "Events", href: "/events" },
-      { label: "Rankings", href: "/rankings" },
-      { label: "Gallery", href: "/gallery" },
+      { label: "Industries", href: "/industries" },
+      { label: "Why Choose Us", href: "/why-choose-us" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Community",
+    title: "Resources",
     links: [
-      { label: "Join Us", href: "/join" },
-      { label: "Women & Youth", href: "/womens-youth" },
-      { label: "Partnerships", href: "/partnerships" },
-      { label: "Resources", href: "/resources" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { label: "Shop", href: "/shop" },
-      { label: "Donate", href: "/support" },
-      { label: "Sponsor Us", href: "/support" },
-      { label: "Contact", href: "/about" },
+      { label: "Book Online", href: "https://www.accountdynamics.com/book-online" },
+      { label: "Get a Free Quote", href: "/contact" },
     ],
   },
 ];

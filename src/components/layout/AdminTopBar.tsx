@@ -9,11 +9,11 @@ import { useTheme } from "@/components/shared/ThemeProvider";
 import { siteConfig } from "@/lib/site";
 
 const notifications = [
-  { id: "n1", title: "New member registered", description: "Alice M. joined the club", time: "2 min ago", type: "member" },
-  { id: "n2", title: "Donation received", description: "FRW 50,000 from Anonymous", time: "15 min ago", type: "donation" },
-  { id: "n3", title: "Event updated", description: "Rwanda Open 2026 registrations open", time: "1 hour ago", type: "event" },
-  { id: "n4", title: "New order placed", description: `Order #1234 - ${siteConfig.shortName} T-Shirt`, time: "3 hours ago", type: "order" },
-  { id: "n5", title: "Gallery updated", description: "New photos from School Outreach", time: "5 hours ago", type: "gallery" },
+  { id: "n1", title: "New client inquiry", description: "John S. requested a consultation", time: "2 min ago", type: "member" },
+  { id: "n2", title: "Invoice paid", description: "$2,500 from Acme Corp", time: "15 min ago", type: "donation" },
+  { id: "n3", title: "Tax deadline reminder", description: "Corporate filings due next week", time: "1 hour ago", type: "event" },
+  { id: "n4", title: "New membership sign-up", description: `${siteConfig.shortName} Gold Plan`, time: "3 hours ago", type: "order" },
+  { id: "n5", title: "Report generated", description: "Q2 financial summary ready", time: "5 hours ago", type: "gallery" },
 ];
 
 export function AdminTopBar() {

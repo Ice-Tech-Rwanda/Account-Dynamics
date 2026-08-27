@@ -48,11 +48,11 @@ describe("memberSchema", () => {
 
 describe("eventSchema", () => {
   const validEvent = {
-    title: "Test Event",
-    description: "A test event description",
-    category: "tournament",
+    title: "Tax Workshop",
+    description: "A workshop on tax planning",
+    category: "seminar",
     startDate: "2026-06-15",
-    location: "Kigali",
+    location: "Toronto",
   }
 
   it("validates a complete event", () => {
@@ -102,12 +102,12 @@ describe("rankingSchema", () => {
 describe("productSchema", () => {
   it("validates a complete product", () => {
     const result = productSchema.parse({
-      name: "Scrabble Board",
-      description: "Official Scrabble board",
+      name: "Accounting Software",
+      description: "QuickBooks License",
       price: 25000,
       category: "equipment",
     })
-    expect(result.name).toBe("Scrabble Board")
+    expect(result.name).toBe("Accounting Software")
     expect(result.price).toBe(25000)
   })
 
@@ -221,8 +221,8 @@ describe("donationSchema", () => {
 describe("teamMemberSchema", () => {
   it("validates a complete team member", () => {
     const result = teamMemberSchema.parse({
-      name: "Coach Bob",
-      role: "Head Coach",
+      name: "Jane Smith",
+      role: "Senior Accountant",
     })
     expect(result.name).toBe("Coach Bob")
     expect(result.bio).toBe("")

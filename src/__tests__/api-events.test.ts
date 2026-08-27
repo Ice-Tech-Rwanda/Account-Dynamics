@@ -7,7 +7,7 @@ describe("Events API Integration", () => {
     description: "Integration test event description",
     category: "tournament",
     startDate: new Date("2026-07-01"),
-    location: "Kigali",
+    location: "Toronto",
     status: "upcoming",
   }
 

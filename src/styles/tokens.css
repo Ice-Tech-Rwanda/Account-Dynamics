@@ -1,43 +1,20 @@
 /* =============================================================================
-   Ice Tech Rwanda — Design Tokens
+   Account Dynamics — Design Tokens
    -----------------------------------------------------------------------------
-   This file is the single source of truth for the template's visual language.
-   It was extracted from a production club website and standardized so that
-   every project built from this template inherits the same look and feel.
-
-   HOW TO REBRAND
-   --------------
-   Every project that starts from this template only needs to change the values
-   in the `:root` block below (brand/accent colors, font variables, radius).
-   Tailwind utilities such as `bg-brand`, `text-accent`, `shadow-card`, and the
-   component classes in components.css automatically pick up the new values.
-
-   STRUCTURE
-   ---------
-   1.  Palette  — brand, accent and neutral surfaces (light + dark)
-   2.  Typography — font families loaded in app/layout.tsx
-   3.  Radius    — border-radius scale
-   4.  Shadows   — elevation system
-   5.  Motion    — animation keyframes referenced by --animate-* tokens
-   6.  Breakpoints — documented Tailwind defaults (see note)
+   Professional accounting firm design system with navy/teal palette.
+   Clean, trustworthy, and modern financial-services appearance.
    ============================================================================= */
 
 @theme inline {
   /* ---------------------------------------------------------------------------
      1. TYPOGRAPHY
-        Fonts are loaded via next/font/google in src/app/layout.tsx. The
-        CSS variables below are what Tailwind's font-sans/font-serif map to.
   --------------------------------------------------------------------------- */
   --font-sans: var(--font-lexend);
   --font-serif: var(--font-merriweather);
   --font-mono: var(--font-lexend);
 
   /* ---------------------------------------------------------------------------
-     2. BRAND COLORS
-        Tailwind utilities: bg-brand, text-accent, bg-accent-soft, ...
-        `brand` is the primary action color (deep green by default) and
-        `accent` is the highlight/CTA color (gold by default). Change the
-        values in the `:root` / `.dark` blocks below to rebrand.
+     2. BRAND COLORS — Account Dynamics navy + teal
   --------------------------------------------------------------------------- */
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
@@ -54,7 +31,6 @@
 
   /* ---------------------------------------------------------------------------
      3. SEMANTIC UI COLORS (shadcn/ui contract)
-        `accent-foreground` is the text color used on accent surfaces.
   --------------------------------------------------------------------------- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -77,21 +53,17 @@
 
   /* ---------------------------------------------------------------------------
      4. RADIUS SCALE
-        Base control radius is --radius (12px). Every tier derives from it so a
-        single change re-scales the whole system.
   --------------------------------------------------------------------------- */
-  --radius-sm: calc(var(--radius) - 4px);   /* 8px  — chips, inputs */
-  --radius-md: calc(var(--radius) - 2px);   /* 10px — small controls */
-  --radius-lg: var(--radius);               /* 12px — buttons, inputs */
-  --radius-xl: calc(var(--radius) + 4px);   /* 16px — cards */
-  --radius-2xl: calc(var(--radius) + 8px);  /* 20px — feature cards */
-  --radius-3xl: calc(var(--radius) + 12px); /* 24px — hero panels */
-  --radius-4xl: calc(var(--radius) + 16px); /* 28px — large cards, modals */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 
   /* ---------------------------------------------------------------------------
-     5. SHADOWS (elevation system)
-        Tailwind utilities: shadow-soft, shadow-card, shadow-lift,
-        shadow-glow-brand, shadow-glow-accent.
+     5. SHADOWS
   --------------------------------------------------------------------------- */
   --shadow-soft: 0 14px 28px rgba(2, 6, 23, 0.05);
   --shadow-card: 0 20px 48px rgba(2, 6, 23, 0.07);
@@ -102,9 +74,7 @@
   --shadow-glow-accent-strong: 0 18px 38px color-mix(in srgb, var(--accent) 28%, transparent);
 
   /* ---------------------------------------------------------------------------
-     6. MOTION (animation tokens)
-        Tailwind utilities: animate-float, animate-glow, animate-tile-in,
-        animate-scroll. Keyframes are defined in animations.css.
+     6. MOTION
   --------------------------------------------------------------------------- */
   --animate-float: float 7.5s ease-in-out infinite;
   --animate-float-slow: float 8.5s ease-in-out infinite;
@@ -114,45 +84,45 @@
 }
 
 /* ---------------------------------------------------------------------------
-   PALETTE — LIGHT MODE (default)
-   Change these values to rebrand the template.
+   PALETTE — LIGHT MODE — Account Dynamics
+   Navy brand (#1B3A5C) + Teal accent (#0E7C7B)
 --------------------------------------------------------------------------- */
 :root {
-  /* Brand (primary action color) */
-  --brand: #0d7a3e;
-  --brand-strong: #0a5e30;
-  --brand-soft: #12a558;
-  --brand-subtle: rgba(13, 122, 62, 0.1);
+  /* Brand — Deep navy */
+  --brand: #1B3A5C;
+  --brand-strong: #142C47;
+  --brand-soft: #2A5580;
+  --brand-subtle: rgba(27, 58, 92, 0.08);
 
-  /* Accent (highlight / CTA color) */
-  --accent: #d4a843;
-  --accent-strong: #b8923a;
-  --accent-soft: #e8c56d;
-  --accent-subtle: rgba(212, 168, 67, 0.1);
+  /* Accent — Professional teal */
+  --accent: #0E7C7B;
+  --accent-strong: #0A6060;
+  --accent-soft: #14A3A2;
+  --accent-subtle: rgba(14, 124, 123, 0.08);
 
   /* Surfaces */
-  --brand-bg-light: #f8faf6;
-  --brand-bg-dark: #0a1a0e;
-  --brand-bg-dark-mid: #0d3a1e;
+  --brand-bg-light: #F7F9FC;
+  --brand-bg-dark: #0D1B2A;
+  --brand-bg-dark-mid: #1B2838;
 
   /* Neutral / semantic (shadcn contract) */
   --radius: 0.75rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.145 0.015 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.145 0.015 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.374 0.154 151.865);
+  --popover-foreground: oklch(0.145 0.015 260);
+  --primary: oklch(0.30 0.06 250);
   --primary-foreground: oklch(0.985 0.001 106.423);
-  --secondary: oklch(0.685 0.127 98.481);
-  --secondary-foreground: oklch(0.141 0.005 285.823);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --muted: oklch(0.965 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
+  --secondary: oklch(0.55 0.08 185);
+  --secondary-foreground: oklch(0.145 0.015 260);
+  --accent-foreground: oklch(0.145 0.015 260);
+  --muted: oklch(0.965 0.005 260);
+  --muted-foreground: oklch(0.55 0.015 260);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
+  --border: oklch(0.92 0.005 260);
+  --input: oklch(0.92 0.005 260);
   --ring: var(--brand);
 }
 
@@ -160,28 +130,19 @@
    PALETTE — DARK MODE
 --------------------------------------------------------------------------- */
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0.001 106.423);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0.001 106.423);
-  --primary: oklch(0.685 0.127 98.481);
-  --primary-foreground: oklch(0.141 0.005 285.823);
-  --secondary: oklch(0.374 0.154 151.865);
-  --secondary-foreground: oklch(0.985 0.001 106.423);
-  --accent-foreground: oklch(0.985 0.001 106.423);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.711 0.015 286.067);
+  --background: oklch(0.145 0.015 260);
+  --foreground: oklch(0.965 0.005 260);
+  --card: oklch(0.20 0.015 260);
+  --card-foreground: oklch(0.965 0.005 260);
+  --primary: oklch(0.55 0.08 185);
+  --primary-foreground: oklch(0.145 0.015 260);
+  --secondary: oklch(0.30 0.06 250);
+  --secondary-foreground: oklch(0.965 0.005 260);
+  --accent-foreground: oklch(0.965 0.005 260);
+  --muted: oklch(0.26 0.015 260);
+  --muted-foreground: oklch(0.65 0.015 260);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: var(--brand-soft);
 }
-
-/* ---------------------------------------------------------------------------
-   7. BREAKPOINTS
-      Tailwind's default breakpoints are used unchanged so every project gets
-      the same responsive behavior out of the box:
-
-        sm  40rem (640px)   lg   64rem (1024px)   xl   80rem (1280px)
-        md  48rem (768px)   2xl  96rem (1536px)
---------------------------------------------------------------------------- */
