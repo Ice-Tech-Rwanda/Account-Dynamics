@@ -1,8 +1,8 @@
 /* =============================================================================
    Account Dynamics — Design Tokens
    -----------------------------------------------------------------------------
-   Professional accounting firm design system with navy/teal palette.
-   Clean, trustworthy, and modern financial-services appearance.
+   Professional accounting firm design system with green/cream palette,
+   matching the brand colors of the original www.accountdynamics.com website.
    ============================================================================= */
 
 @theme inline {
@@ -14,7 +14,10 @@
   --font-mono: var(--font-lexend);
 
   /* ---------------------------------------------------------------------------
-     2. BRAND COLORS — Account Dynamics navy + teal
+     2. BRAND COLORS — Account Dynamics green family (Wix: color 19/18/20)
+        brand  #3A5340  deep sage-green
+        accent #577D60  forest-green action color
+        cream  #FFFCF7  warm off-white surface
   --------------------------------------------------------------------------- */
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
@@ -65,13 +68,13 @@
   /* ---------------------------------------------------------------------------
      5. SHADOWS
   --------------------------------------------------------------------------- */
-  --shadow-soft: 0 14px 28px rgba(2, 6, 23, 0.05);
-  --shadow-card: 0 20px 48px rgba(2, 6, 23, 0.07);
-  --shadow-lift: 0 24px 60px rgba(2, 6, 23, 0.14);
-  --shadow-glow-brand: 0 14px 30px color-mix(in srgb, var(--brand) 22%, transparent);
-  --shadow-glow-brand-strong: 0 18px 38px color-mix(in srgb, var(--brand) 28%, transparent);
-  --shadow-glow-accent: 0 14px 30px color-mix(in srgb, var(--accent) 22%, transparent);
-  --shadow-glow-accent-strong: 0 18px 38px color-mix(in srgb, var(--accent) 28%, transparent);
+  --shadow-soft: 0 14px 28px rgba(29, 42, 32, 0.06);
+  --shadow-card: 0 20px 48px rgba(29, 42, 32, 0.08);
+  --shadow-lift: 0 24px 60px rgba(29, 42, 32, 0.16);
+  --shadow-glow-brand: 0 14px 30px color-mix(in srgb, var(--brand) 24%, transparent);
+  --shadow-glow-brand-strong: 0 18px 38px color-mix(in srgb, var(--brand) 30%, transparent);
+  --shadow-glow-accent: 0 14px 30px color-mix(in srgb, var(--accent) 24%, transparent);
+  --shadow-glow-accent-strong: 0 18px 38px color-mix(in srgb, var(--accent) 30%, transparent);
 
   /* ---------------------------------------------------------------------------
      6. MOTION
@@ -85,44 +88,44 @@
 
 /* ---------------------------------------------------------------------------
    PALETTE — LIGHT MODE — Account Dynamics
-   Navy brand (#1B3A5C) + Teal accent (#0E7C7B)
+   Sage-green brand (#3A5340) + Forest-green accent (#577D60) on cream (#FFFCF7)
 --------------------------------------------------------------------------- */
 :root {
-  /* Brand — Deep navy */
-  --brand: #1B3A5C;
-  --brand-strong: #142C47;
-  --brand-soft: #2A5580;
-  --brand-subtle: rgba(27, 58, 92, 0.08);
+  /* Brand — Deep sage green */
+  --brand: #3A5340;
+  --brand-strong: #1D2A20;
+  --brand-soft: #577D60;
+  --brand-subtle: rgba(58, 83, 64, 0.08);
 
-  /* Accent — Professional teal */
-  --accent: #0E7C7B;
-  --accent-strong: #0A6060;
-  --accent-soft: #14A3A2;
-  --accent-subtle: rgba(14, 124, 123, 0.08);
+  /* Accent — Forest green (Wix action color_18) */
+  --accent: #577D60;
+  --accent-strong: #3A5340;
+  --accent-soft: #8FA895;
+  --accent-subtle: rgba(87, 125, 96, 0.1);
 
   /* Surfaces */
-  --brand-bg-light: #F7F9FC;
-  --brand-bg-dark: #0D1B2A;
-  --brand-bg-dark-mid: #1B2838;
+  --brand-bg-light: #FFFCF7;
+  --brand-bg-dark: #1D2A20;
+  --brand-bg-dark-mid: #2A3A2F;
 
   /* Neutral / semantic (shadcn contract) */
   --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0.015 260);
+  --background: oklch(0.985 0.005 85);
+  --foreground: oklch(0.26 0.005 30);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0.015 260);
+  --card-foreground: oklch(0.26 0.005 30);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.015 260);
-  --primary: oklch(0.30 0.06 250);
-  --primary-foreground: oklch(0.985 0.001 106.423);
-  --secondary: oklch(0.55 0.08 185);
-  --secondary-foreground: oklch(0.145 0.015 260);
-  --accent-foreground: oklch(0.145 0.015 260);
-  --muted: oklch(0.965 0.005 260);
-  --muted-foreground: oklch(0.55 0.015 260);
+  --popover-foreground: oklch(0.26 0.005 30);
+  --primary: oklch(0.42 0.05 156);
+  --primary-foreground: oklch(0.985 0.005 85);
+  --secondary: oklch(0.56 0.07 156);
+  --secondary-foreground: oklch(0.26 0.005 30);
+  --accent-foreground: oklch(0.26 0.005 30);
+  --muted: oklch(0.955 0.005 85);
+  --muted-foreground: oklch(0.46 0.005 30);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.005 260);
-  --input: oklch(0.92 0.005 260);
+  --border: oklch(0.92 0.005 85);
+  --input: oklch(0.92 0.005 85);
   --ring: var(--brand);
 }
 
@@ -130,17 +133,17 @@
    PALETTE — DARK MODE
 --------------------------------------------------------------------------- */
 .dark {
-  --background: oklch(0.145 0.015 260);
-  --foreground: oklch(0.965 0.005 260);
-  --card: oklch(0.20 0.015 260);
-  --card-foreground: oklch(0.965 0.005 260);
-  --primary: oklch(0.55 0.08 185);
-  --primary-foreground: oklch(0.145 0.015 260);
-  --secondary: oklch(0.30 0.06 250);
-  --secondary-foreground: oklch(0.965 0.005 260);
-  --accent-foreground: oklch(0.965 0.005 260);
-  --muted: oklch(0.26 0.015 260);
-  --muted-foreground: oklch(0.65 0.015 260);
+  --background: oklch(0.17 0.02 156);
+  --foreground: oklch(0.96 0.01 156);
+  --card: oklch(0.22 0.02 156);
+  --card-foreground: oklch(0.96 0.01 156);
+  --primary: oklch(0.62 0.07 156);
+  --primary-foreground: oklch(0.17 0.02 156);
+  --secondary: oklch(0.42 0.05 156);
+  --secondary-foreground: oklch(0.96 0.01 156);
+  --accent-foreground: oklch(0.96 0.01 156);
+  --muted: oklch(0.24 0.02 156);
+  --muted-foreground: oklch(0.66 0.02 156);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);

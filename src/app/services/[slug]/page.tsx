@@ -5,15 +5,16 @@ import { ServiceList } from "@/domains/services/components/ServiceList";
 import { CTASection } from "@/domains/home/components/CTASection";
 
 interface ServicePageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export function generateStaticParams() {
   return serviceCategories.map((cat) => ({ slug: cat.slug }));
 }
 
-export function generateMetadata({ params }: ServicePageProps) {
-  const category = serviceCategories.find((c) => c.slug === params.slug);
+export async function generateMetadata({ params }: ServicePageProps) {
+  const { slug } = await params;
+  const category = serviceCategories.find((c) => c.slug === slug);
   if (!category) return {};
   return {
     title: category.title,
@@ -26,8 +27,9 @@ export function generateMetadata({ params }: ServicePageProps) {
   };
 }
 
-export default function ServicePage({ params }: ServicePageProps) {
-  const category = serviceCategories.find((c) => c.slug === params.slug);
+export default async function ServicePage({ params }: ServicePageProps) {
+  const { slug } = await params;
+  const category = serviceCategories.find((c) => c.slug === slug);
   if (!category) notFound();
 
   return (

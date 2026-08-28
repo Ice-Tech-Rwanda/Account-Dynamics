@@ -88,7 +88,7 @@ export default function WhyChooseUsPage() {
           >
             Why Clients Trust
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-teal-300 to-accent-soft">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-soft">
               Account Dynamics
             </span>
           </motion.h1>

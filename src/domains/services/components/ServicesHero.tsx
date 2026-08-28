@@ -24,7 +24,7 @@ export function ServicesHero() {
         >
           Comprehensive Accounting
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-teal-300 to-accent-soft">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent-soft to-accent-soft">
             Solutions for Your Business
           </span>
         </motion.h1>

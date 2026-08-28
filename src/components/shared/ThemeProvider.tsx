@@ -1,8 +1,31 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark" | "system";
+
+const THEME_KEY = "ad-theme";
+
+function subscribe(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
+function readTheme(): Theme {
+  if (typeof window === "undefined") return "system";
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    return stored === "light" || stored === "dark" || stored === "system"
+      ? stored
+      : "system";
+  } catch {
+    return "system";
+  }
+}
+
+function getServerSnapshot(): Theme {
+  return "system";
+}
 
 interface ThemeContextType {
   theme: Theme;
@@ -17,12 +40,7 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage.getItem("ad-theme") as Theme) || "system";
-    }
-    return "system";
-  });
+  const theme = useSyncExternalStore(subscribe, readTheme, getServerSnapshot);
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -41,8 +59,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   function setTheme(newTheme: Theme) {
-    setThemeState(newTheme);
-    localStorage.setItem("ad-theme", newTheme);
+    try {
+      localStorage.setItem(THEME_KEY, newTheme);
+    } catch {}
+    window.dispatchEvent(new Event("storage"));
   }
 
   return (
