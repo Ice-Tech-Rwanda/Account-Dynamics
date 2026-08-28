@@ -1,8 +1,8 @@
 {
-  "name": "ice-tech-rwanda-template",
+  "name": "account-dynamics",
   "version": "1.0.0",
   "private": true,
-  "description": "Ice Tech Rwanda production-ready template with a shared design system, reusable components, and modular app architecture",
+  "description": "Account Dynamics — Professional accounting, tax, advisory and business analytics website built with Next.js 16, Tailwind CSS v4, and Prisma.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

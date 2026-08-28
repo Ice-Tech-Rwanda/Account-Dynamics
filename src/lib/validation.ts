@@ -26,9 +26,6 @@ export const memberSchema = z.object({
   phone: z.string().max(50).nullable().optional(),
   category: z.string().max(50).default("individual"),
   status: z.string().max(50).default("active"),
-  rating: z.number().int().default(0),
-  gamesPlayed: z.number().int().default(0),
-  wins: z.number().int().default(0),
   school: z.string().max(200).nullable().optional(),
   university: z.string().max(200).nullable().optional(),
 })

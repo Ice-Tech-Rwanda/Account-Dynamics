@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextType>({
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("it-theme") as Theme) || "system";
+      return (localStorage.getItem("ad-theme") as Theme) || "system";
     }
     return "system";
   });
@@ -42,7 +42,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   function setTheme(newTheme: Theme) {
     setThemeState(newTheme);
-    localStorage.setItem("it-theme", newTheme);
+    localStorage.setItem("ad-theme", newTheme);
   }
 
   return (

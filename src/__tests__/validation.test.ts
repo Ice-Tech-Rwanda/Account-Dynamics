@@ -57,7 +57,7 @@ describe("eventSchema", () => {
 
   it("validates a complete event", () => {
     const result = eventSchema.parse(validEvent)
-    expect(result.title).toBe("Test Event")
+    expect(result.title).toBe("Tax Workshop")
     expect(result.status).toBe("upcoming")
   })
 
@@ -224,7 +224,7 @@ describe("teamMemberSchema", () => {
       name: "Jane Smith",
       role: "Senior Accountant",
     })
-    expect(result.name).toBe("Coach Bob")
+    expect(result.name).toBe("Jane Smith")
     expect(result.bio).toBe("")
   })
 })

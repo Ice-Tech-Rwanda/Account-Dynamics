@@ -5,7 +5,7 @@ describe("Events API Integration", () => {
     title: `Test Event ${Date.now()}`,
     slug: `test-event-${Date.now()}`,
     description: "Integration test event description",
-    category: "tournament",
+    category: "seminar",
     startDate: new Date("2026-07-01"),
     location: "Toronto",
     status: "upcoming",

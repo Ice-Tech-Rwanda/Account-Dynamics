@@ -20,7 +20,7 @@ interface EventItem {
 const fields = [
   { name: "title", label: "Title", required: true },
   { name: "description", label: "Description", type: "textarea" as const, required: true },
-  { name: "category", label: "Category", type: "select" as const, required: true, options: [{ label: "Tournament", value: "tournament" }, { label: "Meetup", value: "meetup" }, { label: "Workshop", value: "workshop" }, { label: "Social", value: "social" }] },
+  { name: "category", label: "Category", type: "select" as const, required: true, options: [{ label: "Seminar", value: "seminar" }, { label: "Workshop", value: "workshop" }, { label: "Webinar", value: "webinar" }, { label: "Networking", value: "networking" }] },
   { name: "startDate", label: "Start Date", type: "date" as const, required: true },
   { name: "endDate", label: "End Date", type: "date" as const },
   { name: "location", label: "Location", required: true },
@@ -93,7 +93,7 @@ export default function AdminEventsPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Events</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Create and manage tournaments, meetups, and workshops.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Create and manage seminars, webinars and workshops.</p>
         </div>
         <Button variant="brand" size="sm" className="rounded-xl gap-1" onClick={() => { setEditItem(null); setDialogOpen(true); }}>
           <Plus className="size-4" /> New Event

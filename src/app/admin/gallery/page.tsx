@@ -21,7 +21,7 @@ const fields = [
   { name: "description", label: "Description", type: "textarea" as const },
   { name: "type", label: "Type", type: "select" as const, options: [{ label: "Photos", value: "photos" }, { label: "Videos", value: "videos" }] },
   { name: "date", label: "Date", type: "date" as const },
-  { name: "category", label: "Category", type: "select" as const, options: [{ label: "Tournaments", value: "tournaments" }, { label: "Meetups", value: "meetups" }, { label: "School Programs", value: "school-programs" }, { label: "University Events", value: "university-events" }] },
+  { name: "category", label: "Category", type: "select" as const, options: [{ label: "Office Events", value: "office-events" }, { label: "Workshops", value: "workshops" }, { label: "Community Outreach", value: "community" }, { label: "General", value: "general" }] },
 ];
 
 export default function AdminGalleryPage() {

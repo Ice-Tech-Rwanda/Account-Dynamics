@@ -48,9 +48,39 @@ export function ContactForm() {
     setErrors({});
     setFormState("loading");
 
-    // Simulate form submission (no backend integration)
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setFormState("success");
+    try {
+      const subject = [
+        formData.service ? `Service: ${formData.service}` : "General Inquiry",
+        formData.business ? `Company: ${formData.business}` : "",
+      ]
+        .filter(Boolean)
+        .join(" — ")
+        .slice(0, 300);
+
+      const message = [
+        formData.phone ? `Phone: ${formData.phone}` : "",
+        formData.message,
+      ]
+        .filter(Boolean)
+        .join("\n")
+        .slice(0, 5000);
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: formData.name, email: formData.email, subject, message }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Request failed with status ${res.status}`);
+      }
+
+      setFormState("success");
+    } catch (err) {
+      console.error("Contact form submission failed", err);
+      setFormState("error");
+    }
   }
 
   function handleChange(
@@ -208,6 +238,17 @@ export function ContactForm() {
           />
           {errors.message && <p className="mt-1 text-xs text-red-500">{errors.message}</p>}
         </div>
+
+        {/* Error state */}
+        {formState === "error" && (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-600 dark:text-red-400"
+          >
+            We couldn&apos;t send your message. Please try again in a moment, or contact us
+            directly by phone or email.
+          </div>
+        )}
 
         <Button
           type="submit"

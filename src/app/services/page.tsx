@@ -1,4 +1,3 @@
-import { siteConfig } from "@/lib/site";
 import { serviceCategories } from "@/lib/data/services";
 import { ServicesHero } from "@/domains/services/components/ServicesHero";
 import { ServiceCard } from "@/domains/services/components/ServiceCard";

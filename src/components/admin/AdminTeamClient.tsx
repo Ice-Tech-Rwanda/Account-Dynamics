@@ -90,7 +90,7 @@ export default function AdminTeamClient({ initialPage = 1 }: { initialPage?: num
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">Team</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage club leadership and committee members.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage team members and roles.</p>
         </div>
         <Button variant="brand" size="sm" className="rounded-xl gap-1" onClick={() => { setEditItem(null); setDialogOpen(true); }}>
           <Plus className="size-4" /> Add Member

@@ -27,7 +27,15 @@ export async function validateProductInput(input: any) {
 
 export async function createProduct(data: ProductInput, userId?: string) {
   try {
-    const created = await prisma.product.create({ data: { name: data.name, slug: data.slug ?? undefined, description: data.description ?? '', price: data.price, stock: data.stock, images: JSON.stringify(data.images ?? []), category: 'general' } as any });
+    const slug =
+      data.slug ??
+      (data.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80) || `product-${Date.now()}`);
+    const created = await prisma.product.create({ data: { name: data.name, slug, description: data.description ?? '', price: data.price, stock: data.stock, images: JSON.stringify(data.images ?? []), category: 'general' } as any });
     await prisma.auditLog.create({ data: { userId: userId ?? undefined, action: 'product:create', entity: 'Product', entityId: created.id, details: JSON.stringify(data) } });
     return { ok: true, product: created };
   } catch (err) {

@@ -81,7 +81,7 @@ export default function AdminDashboardClient({ data }: { data: DashboardData | n
     <motion.div variants={container} initial="hidden" animate="show">
       <motion.div variants={item} className="mb-6">
         <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Welcome back! Here&apos;s your club overview.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Welcome back! Here&apos;s your business overview.</p>
       </motion.div>
 
       <motion.div variants={item} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -101,7 +101,7 @@ export default function AdminDashboardClient({ data }: { data: DashboardData | n
                 </span>
               </div>
               <p className="text-2xl font-black text-slate-900 dark:text-white">
-                {stat.label === "Donations" ? `FRW ${formatCurrency(stat.value)}` : typeof stat.value === "number" ? stat.value.toLocaleString() : stat.value}
+                {stat.label === "Donations" ? `$${formatCurrency(stat.value)}` : typeof stat.value === "number" ? stat.value.toLocaleString() : stat.value}
               </p>
               <p className="text-xs font-medium text-slate-500 mt-0.5">{stat.label}</p>
             </div>
@@ -220,7 +220,7 @@ export default function AdminDashboardClient({ data }: { data: DashboardData | n
           {[
             { label: "New Event", href: "/admin/events" },
             { label: "Add Member", href: "/admin/members" },
-            { label: "Update Rankings", href: "/admin/rankings" },
+            { label: "Manage Team", href: "/admin/team" },
             { label: "New Product", href: "/admin/shop" },
             { label: "Add Gallery", href: "/admin/gallery" },
           ].map((action) => (

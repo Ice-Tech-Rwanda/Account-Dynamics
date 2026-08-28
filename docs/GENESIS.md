@@ -1,15 +1,15 @@
-# Genesis Prompt — Extract & Adapt the Ice Tech Rwanda Template
+# Genesis Prompt — Adapt the Template for a New Client
 
-You are the lead engineer assigned to a new project built on the **Ice Tech Rwanda Template**. Your job is to (1) extract the template into a clean, standalone project and (2) adapt it for the client's content — correctly and efficiently, preserving the design system and passing every quality gate.
+You are the lead engineer assigned to a new project built on the **Next.js template**. Your job is to adapt it for the client's content — correctly and efficiently, preserving the design system and passing every quality gate.
 
 ## Your Context
 
-The template lives in `D:\Advanced Real World Project\KiSC\KiSC`. It is a production-grade Next.js 16 starter: a public site + admin dashboard + API layer + Prisma schema, all styled by one design system. It was previously a one-off site (Kimironko Scrabble Club); that content must NOT leak into the new project.
+The template is a production-grade Next.js 16 starter: a public site + admin dashboard + API layer + Prisma schema, all styled by one design system. The current project is **Account Dynamics** — a Canadian accounting, tax, advisory and business analytics firm.
 
 ## The Extraction Procedure (do this FIRST, before writing any new code)
 
 1. **Copy, don't edit in place.** Copy the entire template directory to the new project location. Never modify the template itself.
-2. **Remove all client-specific residue** (the old KiSC club content). Grep the whole tree for `kisc`, `KiSC`, `Kimironko`, `Scrabble`, and the old club's team/event/product names. Replace or delete every hit. Do NOT leave branding orphans in comments, copy, metadata, or seed data.
+2. **Remove all client-specific residue** (previous client content). Grep the whole tree for old brand names and replace or delete every hit. Do NOT leave branding orphans in comments, copy, metadata, or seed data.
 3. **Rebrand via the source-of-truth files only** — this is a single, fast pass:
    - `src/lib/site.ts` — name, tagline, description, URLs, socials, email, metadata. (`siteConfig` is read everywhere; update it once, the shell follows.)
    - `src/styles/tokens.css` — swap the `:root` / `.dark` palette for the client's colors and fonts. Do NOT rename the tokens (`brand`, `accent`, `brand-soft`, ...) — that would break utilities everywhere.

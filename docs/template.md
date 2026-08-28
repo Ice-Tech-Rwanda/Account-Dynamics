@@ -1,6 +1,6 @@
-# Ice Tech Rwanda Template
+# Account Dynamics — Project Template
 
-This repository is a reusable, production-ready Ice Tech Rwanda starter rather than a one-off site. Every project built from it inherits the same design system, component vocabulary, and architecture.
+This repository is the **Account Dynamics** website, built on a reusable, production-ready Next.js starter. The shared design system, component vocabulary, and architecture were originally built for a client-specific starter and adapted for a Canadian accounting, tax, advisory and business analytics firm.
 
 ## Source Of Truth
 

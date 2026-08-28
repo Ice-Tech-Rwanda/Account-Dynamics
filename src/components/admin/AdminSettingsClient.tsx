@@ -44,7 +44,7 @@ export default function AdminSettingsClient({ initial = {} }: Props) {
   const update = (k: string, v: any) => { setForm((s) => { const n = { ...s, [k]: v }; setUnsaved(true); return n; }); };
 
   const fields = [
-    { key: "clubName", label: "Club Name" },
+    { key: "companyName", label: "Company Name" },
     { key: "tagline", label: "Tagline" },
     { key: "email", label: "Email", type: "email" },
     { key: "phone", label: "Phone" },

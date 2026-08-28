@@ -129,7 +129,7 @@ export async function GET(_request: NextRequest) {
     recentMembersList.forEach((m) => {
       activityEntries.push({
         action: "New member registered",
-        detail: `${m.name} joined the club`,
+        detail: `${m.name} registered`,
         time: timeAgo(m.createdAt),
         type: "member",
       })
@@ -138,7 +138,7 @@ export async function GET(_request: NextRequest) {
     recentDonationsList.forEach((d) => {
       activityEntries.push({
         action: "Donation received",
-        detail: `FRW ${d.amount.toLocaleString()} from ${d.donorName}`,
+        detail: `$${d.amount.toLocaleString()} from ${d.donorName}`,
         time: timeAgo(d.createdAt),
         type: "donation",
       })
@@ -174,7 +174,7 @@ export async function GET(_request: NextRequest) {
     recentRankings.forEach((r) => {
       activityEntries.push({
         action: "Ranking updated",
-        detail: "Leaderboard recalculated",
+        detail: "Rankings updated",
         time: timeAgo(r.updatedAt),
         type: "ranking",
       })

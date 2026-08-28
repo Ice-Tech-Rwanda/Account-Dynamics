@@ -7,7 +7,7 @@ describe("Members API Integration", () => {
   const testMember = {
     name: "Test Member",
     email: `test-${Date.now()}@example.com`,
-    phone: "+250788000000",
+    phone: "+14165551234",
     category: "individual",
   }
 
@@ -40,10 +40,10 @@ describe("Members API Integration", () => {
   it("updates the member", async () => {
     const updated = await prisma.member.update({
       where: { id: createdId },
-      data: { rating: 1500, gamesPlayed: 10 },
+      data: { category: "business", status: "active" },
     })
-    expect(updated.rating).toBe(1500)
-    expect(updated.gamesPlayed).toBe(10)
+    expect(updated.category).toBe("business")
+    expect(updated.status).toBe("active")
   })
 
   it("lists members with pagination", async () => {

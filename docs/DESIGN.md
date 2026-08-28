@@ -15,9 +15,9 @@ Two opinionated brand colors plus a neutral/semantic set.
 
 | Role | Utility | Light default | Dark default |
 | ---- | ------- | ------------- | ------------ |
-| Primary action | `brand` / `brand-strong` / `brand-soft` / `brand-subtle` | `#0d7a3e` | unchanged (surface-dependent) |
-| Highlight / CTA | `accent` / `accent-strong` / `accent-soft` / `accent-subtle` | `#d4a843` | unchanged |
-| Brand surfaces | `brand-bg` / `brand-bg-dark` / `brand-bg-dark-mid` | `#f8faf6` | `#0a1a0e` |
+| Primary action | `brand` / `brand-strong` / `brand-soft` / `brand-subtle` | `#1B3A5C` (navy) | unchanged (surface-dependent) |
+| Highlight / CTA | `accent` / `accent-strong` / `accent-soft` / `accent-subtle` | `#0E7C7B` (teal) | unchanged |
+| Brand surfaces | `brand-bg` / `brand-bg-dark` / `brand-bg-dark-mid` | `#F7F9FC` | `#0D1B2A` |
 
 Semantic colors follow the shadcn/ui contract: `background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent-foreground`, `destructive`, `border`, `input`, `ring`.
 
@@ -93,7 +93,7 @@ Base `--radius: 0.75rem` (12px). Tiers derive from it so one change re-scales th
 
 ## Dark Mode
 
-A `.dark` class on `<html>` toggles the palette. All semantic and surface tokens have dark values; components reference tokens (not hard-coded colors) so dark mode is automatic. The theme is persisted in `localStorage` under `it-theme` (`src/components/shared/ThemeProvider.tsx`).
+A `.dark` class on `<html>` toggles the palette. All semantic and surface tokens have dark values; components reference tokens (not hard-coded colors) so dark mode is automatic. The theme is persisted in `localStorage` under `ad-theme` (`src/components/shared/ThemeProvider.tsx`).
 
 ## Verification
 

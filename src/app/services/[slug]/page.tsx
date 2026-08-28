@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { siteConfig } from "@/lib/site";
 import { serviceCategories } from "@/lib/data/services";
 import { ServiceDetailHero } from "@/domains/services/components/ServiceDetailHero";
 import { ServiceList } from "@/domains/services/components/ServiceList";

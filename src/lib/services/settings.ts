@@ -3,7 +3,7 @@ import logger from "@/lib/logger";
 import { z } from "zod";
 
 export const settingsSchema = z.object({
-  clubName: z.string().min(1).optional(),
+  companyName: z.string().min(1).optional(),
   tagline: z.string().optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),

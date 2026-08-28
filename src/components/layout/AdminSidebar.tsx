@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   Users,
   Calendar,
-  Trophy,
   ShoppingBag,
   Handshake,
   Heart,
@@ -29,7 +28,6 @@ const navGroups = [
       { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
       { label: "Members", href: "/admin/members", icon: Users },
       { label: "Events", href: "/admin/events", icon: Calendar },
-      { label: "Rankings", href: "/admin/rankings", icon: Trophy },
     ],
   },
   {

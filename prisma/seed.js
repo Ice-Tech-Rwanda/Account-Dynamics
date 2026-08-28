@@ -17,7 +17,7 @@ async function main() {
 
   // 2. Settings
   const settings = [
-    { key: "clubName", value: "Account Dynamics" },
+    { key: "companyName", value: "Account Dynamics" },
     { key: "tagline", value: "Tax | Cloud Accounting | Advisory | Business Data Analysts" },
     { key: "email", value: "info@accountdynamics.com" },
     { key: "phone", value: "416-748-2042" },
