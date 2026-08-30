@@ -23,4 +23,15 @@ declare module "lucide-react" {
   export const DollarSign: LucideIcon;
   export const Calculator: LucideIcon;
   export const Store: LucideIcon;
+  export const CalendarCheck: LucideIcon;
+  export const Copy: LucideIcon;
+  export const CheckCheck: LucideIcon;
+  export const RefreshCw: LucideIcon;
+  export const Monitor: LucideIcon;
+  export const Clock: LucideIcon;
+  export const FileText: LucideIcon;
+  export const HelpCircle: LucideIcon;
+  export const Search: LucideIcon;
+  export const Bell: LucideIcon;
+  export const ShieldCheck: LucideIcon;
 }

@@ -1,10 +1,12 @@
 import { siteConfig } from "@/lib/site";
-import { founder, teamMembers } from "@/lib/data/team";
+import { getTeam } from "@/lib/content/service.server";
 import { AboutHero } from "@/domains/about/components/AboutHero";
 import { FounderProfile } from "@/domains/about/components/FounderProfile";
 import { VisionSection } from "@/domains/about/components/VisionSection";
 import { TeamGrid } from "@/domains/about/components/TeamGrid";
 import { CTASection } from "@/domains/home/components/CTASection";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "About Us",
@@ -16,9 +18,13 @@ export const metadata = {
       "Learn about Account Dynamics — a Canadian accounting, tax, advisory and business analytics firm.",
     url: "/about",
   },
+  alternates: {
+    canonical: "/about",
+  },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const team = await getTeam();
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || siteConfig.siteUrl;
 
   const structuredData = {
@@ -46,9 +52,9 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <AboutHero />
-      <FounderProfile founder={founder} />
+      <FounderProfile founder={team.founder} />
       <VisionSection />
-      <TeamGrid members={teamMembers} />
+      <TeamGrid members={team.members} />
       <CTASection />
     </div>
   );

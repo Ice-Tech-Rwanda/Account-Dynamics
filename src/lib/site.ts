@@ -28,12 +28,21 @@ export const siteConfig = {
   email: "info@accountdynamics.com",
   phone: "416-748-2042",
   phoneSecondary: "416-450-5639",
+  // WhatsApp click-to-chat. The number is the international format equivalent of
+  // the phone SMS/WhatsApp line (no "+", spaces, parentheses or hyphens).
+  whatsappNumber: "14167482042",
   whatsapp: "https://wa.me/14167482042",
+  // Default pre-filled message for WhatsApp click-to-chat.
+  // Context-aware messages per page are defined in the FloatingWhatsApp component.
+  whatsappMessage:
+    "Hello Account Dynamics, I would like to learn more about your accounting and advisory services.",
   location: "55 Baywood Road, 2nd Floor, Toronto, Ontario M9V 3Y8",
   hours: "Monday – Friday, 9:00 AM – 4:00 PM",
   siteUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  bookOnlineUrl: "https://www.accountdynamics.com/book-online",
+  bookOnlineUrl: "/book",
   socialLinks: [
     { label: "LinkedIn", href: "#" },
   ],
 } as const;
+
+export const BOOKING_URL = siteConfig.bookOnlineUrl;

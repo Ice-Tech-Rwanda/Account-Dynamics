@@ -3,6 +3,7 @@
 import { Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/lib/site";
 
 export function MembershipSection() {
   return (
@@ -24,7 +25,7 @@ export function MembershipSection() {
               and have put together plans that give you peace of mind.
             </p>
             <div className="mt-8">
-              <Link href="https://www.accountdynamics.com/book-online" target="_blank" rel="noopener noreferrer">
+              <Link href={siteConfig.bookOnlineUrl}>
                 <Button variant="accent" className="gap-2 rounded-xl">
                   Explore Membership Options <ArrowRight className="size-4" />
                 </Button>

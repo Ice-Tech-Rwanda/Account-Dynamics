@@ -1,3 +1,5 @@
+import { siteConfig } from "@/lib/site";
+
 export interface NavItem {
   label: string;
   href: string;
@@ -22,7 +24,7 @@ export const mainNav: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-export const ctaNav = { label: "Book Online", href: "https://www.accountdynamics.com/book-online" };
+export const ctaNav = { label: "Book Online", href: siteConfig.bookOnlineUrl };
 
 export interface FooterGroup {
   title: string;
@@ -51,8 +53,8 @@ export const footerGroups: FooterGroup[] = [
   {
     title: "Resources",
     links: [
-      { label: "Book Online", href: "https://www.accountdynamics.com/book-online" },
-      { label: "Get a Free Quote", href: "/contact" },
+      { label: "Book Online", href: siteConfig.bookOnlineUrl },
+      { label: "FAQ", href: "/#faq" },
     ],
   },
 ];

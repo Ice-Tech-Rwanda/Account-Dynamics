@@ -11,9 +11,9 @@ const visionItems = [
   },
   {
     icon: Brain,
-    title: "AI & Business Analytics",
+    title: "Analytics-Driven Advisory",
     description:
-      "Integrating AI technology and applying business analytics to accounting, creating future predictive models with business valuation.",
+      "Applying business analytics to accounting to help clients understand performance, identify opportunities and plan ahead with confidence.",
   },
   {
     icon: BarChart3,

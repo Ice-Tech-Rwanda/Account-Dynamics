@@ -2,6 +2,9 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
+import type { Role } from "@prisma/client"
+
+// Module augmentation lives in src/types/next-auth.d.ts
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -23,7 +26,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: credentials.email as string },
         })
 
-        if (!user || !user.password) return null
+        if (!user || !user.password || !user.active) return null
 
         const bcrypt = await import("bcryptjs")
         const isValid = await bcrypt.compare(
@@ -33,12 +36,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isValid) return null
 
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        }).catch(() => undefined)
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
           image: user.image,
+          role: user.role,
         }
       },
     }),
@@ -53,8 +61,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role as string
-        session.user.id = token.id as string
+        session.user.role = (token.role as Role) ?? "EDITOR"
+        session.user.id = (token.id as string) ?? ""
       }
       return session
     },

@@ -1,7 +1,16 @@
 "use client";
 
 import type { TeamMember } from "@/lib/data/team";
-import { User } from "lucide-react";
+import { TeamAvatar, type TeamSlug } from "@/domains/team/components/TeamAvatar";
+
+const slugByName: Record<string, TeamSlug> = {
+  "Joseph P. Mathews": "founder",
+  Rishi: "rishi",
+  Amrit: "amrit",
+  Yogesh: "yogesh",
+  Hari: "hari",
+  Nikhil: "nikhil",
+};
 
 interface TeamGridProps {
   members: TeamMember[];
@@ -25,36 +34,38 @@ export function TeamGrid({ members }: TeamGridProps) {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {members.map((member) => (
-            <div
-              key={member.name}
-              className="group p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:border-brand/20 hover:shadow-lg transition-all duration-300"
-            >
-              {/* Avatar placeholder */}
-              <div className="w-16 h-16 rounded-xl bg-brand/5 dark:bg-brand/10 flex items-center justify-center text-brand mb-4">
-                <User className="size-7" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                {member.name}
-              </h3>
-              <p className="text-sm text-brand font-medium">{member.role}</p>
-              <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-4">
-                {member.bio}
-              </p>
-              {member.expertise.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {member.expertise.slice(0, 3).map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-block px-2 py-0.5 text-[10px] font-medium bg-brand/5 dark:bg-brand/10 text-brand rounded-md"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+          {members.map((member) => {
+            const slug = slugByName[member.name] ?? "founder";
+            return (
+              <div
+                key={member.name}
+                className="group p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:border-brand/20 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="mb-4">
+                  <TeamAvatar slug={slug} size={64} />
                 </div>
-              )}
-            </div>
-          ))}
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                  {member.name}
+                </h3>
+                <p className="text-sm text-brand font-medium">{member.role}</p>
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-4">
+                  {member.bio}
+                </p>
+                {member.expertise.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {member.expertise.slice(0, 3).map((skill) => (
+                      <span
+                        key={skill}
+                        className="inline-block px-2 py-0.5 text-[10px] font-medium bg-brand/5 dark:bg-brand/10 text-brand rounded-md"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

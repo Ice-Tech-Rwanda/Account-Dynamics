@@ -66,12 +66,32 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 pt-8 dark:border-slate-800/80 sm:flex-row">
-          <p className="text-xs text-slate-500 dark:text-slate-500">
-            &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
-          </p>
-          <div className="flex gap-4 text-xs text-slate-500 dark:text-slate-500">
-            <span>{siteConfig.location.split(",")[1]?.trim()}</span>
-            <span>|</span>
+          <div className="flex flex-col items-center gap-1.5 sm:items-start">
+            <p className="text-xs text-slate-500 dark:text-slate-500">
+              &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+            </p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-600">
+              Designed &amp; Developed by{" "}
+              <a
+                href="https://icetechrwanda.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-500 dark:text-slate-500 hover:text-brand transition-colors"
+              >
+                Ice Tech Rwanda
+              </a>
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-500">
+            <Link href="/privacy-policy" className="hover:text-brand transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-brand transition-colors">
+              Terms of Use
+            </Link>
+            <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+            <span className="hidden sm:inline">{siteConfig.location.split(",")[1]?.trim()}</span>
+            <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
             <a
               href={`mailto:${siteConfig.email}`}
               className="hover:text-brand transition-colors"

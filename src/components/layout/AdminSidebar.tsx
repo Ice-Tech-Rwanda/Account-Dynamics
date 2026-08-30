@@ -6,51 +6,68 @@ import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 import {
   LayoutDashboard,
+  MessageSquare,
+  FileText,
+  CalendarCheck,
+  Briefcase,
   Users,
-  Calendar,
-  ShoppingBag,
-  Handshake,
-  Heart,
+  Building2,
+  HelpCircle,
+  Star,
+  Monitor,
   Image,
-  BookOpen,
+  Globe,
+  Search,
   Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Receipt,
   UserCog,
+  ShieldCheck,
+  Bell,
 } from "lucide-react";
 
 const navGroups = [
   {
-    label: "Main",
+    label: "Overview",
     items: [
       { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-      { label: "Members", href: "/admin/members", icon: Users },
-      { label: "Events", href: "/admin/events", icon: Calendar },
     ],
   },
   {
-    label: "Commerce",
+    label: "Leads",
     items: [
-      { label: "Shop", href: "/admin/shop", icon: ShoppingBag },
-      { label: "Orders", href: "/admin/orders", icon: Receipt },
-      { label: "Donations", href: "/admin/donations", icon: Heart },
+      { label: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
+      { label: "Quotes", href: "/admin/quotes", icon: FileText },
+      { label: "Consultations", href: "/admin/consultations", icon: CalendarCheck },
     ],
   },
   {
     label: "Content",
     items: [
-      { label: "Partners", href: "/admin/partners", icon: Handshake },
-      { label: "Gallery", href: "/admin/gallery", icon: Image },
-      { label: "Resources", href: "/admin/resources", icon: BookOpen },
-      { label: "Team", href: "/admin/team", icon: UserCog },
+      { label: "Services", href: "/admin/services", icon: Briefcase },
+      { label: "Team", href: "/admin/team", icon: Users },
+      { label: "Industries", href: "/admin/industries", icon: Building2 },
+      { label: "FAQs", href: "/admin/faqs", icon: HelpCircle },
+      { label: "Testimonials", href: "/admin/testimonials", icon: Star },
+      { label: "Software", href: "/admin/software", icon: Monitor },
+    ],
+  },
+  {
+    label: "Site",
+    items: [
+      { label: "Homepage", href: "/admin/homepage", icon: Globe },
+      { label: "Media", href: "/admin/media", icon: Image },
+      { label: "SEO", href: "/admin/seo", icon: Search },
+      { label: "Settings", href: "/admin/settings", icon: Settings },
     ],
   },
   {
     label: "System",
     items: [
-      { label: "Settings", href: "/admin/settings", icon: Settings },
+      { label: "Users", href: "/admin/users", icon: UserCog },
+      { label: "Audit Logs", href: "/admin/audit-logs", icon: ShieldCheck },
+      { label: "Notifications", href: "/admin/notifications", icon: Bell },
     ],
   },
 ];
@@ -58,7 +75,6 @@ const navGroups = [
 interface AdminSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
-  onOpenNotifications?: () => void;
 }
 
 export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
@@ -104,7 +120,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const active = pathname === item.href;
+                const active = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
                   <Link
                     key={item.href}
@@ -114,7 +130,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
                       collapsed ? "justify-center px-0 py-2.5" : "px-2.5 py-2",
                       active
                         ? "bg-gradient-to-r from-brand/10 to-transparent text-brand dark:from-brand/15"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200",
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200"
                     )}
                     title={collapsed ? item.label : undefined}
                   >

@@ -54,7 +54,7 @@ const pillars = [
     icon: Cpu,
     title: "Digital Transformation",
     description:
-      "Forward-thinking approach to integrating AI technology and business analytics into accounting practices for future predictive models.",
+      "A forward-thinking approach to applying business analytics and modern accounting technology to help clients understand their finances and plan for the future.",
   },
   {
     icon: TrendingUp,

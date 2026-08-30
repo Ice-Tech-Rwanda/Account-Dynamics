@@ -1,5 +1,3 @@
-import { Prisma } from "@prisma/client";
-
 export type DonationRecord = {
   id: string;
   donorName: string | null;
@@ -22,10 +20,9 @@ export function calculateTotals(items: DonationRecord[]) {
   return { total, count };
 }
 
-export function generateCsv(items: (Prisma.DonationGetPayload<{ select: any }> | DonationRecord)[]) {
+export function generateCsv(items: DonationRecord[]) {
   const headers = ["id", "donorName", "donorEmail", "amount", "anonymous", "status", "message", "createdAt"];
-  const rows = items.map((it) => {
-    const d: any = "createdAt" in it ? it : (it as any);
+  const rows = items.map((d) => {
     const donorName = d.anonymous ? "" : d.donorName ?? "";
     const donorEmail = d.anonymous ? "" : d.donorEmail ?? "";
     const amount = d.amount ?? "";

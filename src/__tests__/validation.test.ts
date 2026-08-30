@@ -1,242 +1,301 @@
-import { memberSchema, eventSchema, rankingSchema, productSchema, orderSchema, partnerSchema, donationSchema, teamMemberSchema, contactSchema, newsletterSchema, paginationSchema } from "@/lib/validation"
+import { describe, it, expect } from "vitest";
+import {
+  contactSchema,
+  quoteSchema,
+  bookingSchema,
+  newsletterSchema,
+  serviceCategorySchema,
+  serviceSchema,
+  teamMemberSchema,
+  industrySchema,
+  faqSchema,
+  testimonialSchema,
+  softwareToolSchema,
+  homepageSectionSchema,
+  seoSettingSchema,
+  userCreateSchema,
+  userUpdateSchema,
+} from "@/lib/validation";
 
-describe("paginationSchema", () => {
-  it("defaults to page 1, limit 20", () => {
-    const result = paginationSchema.parse({})
-    expect(result.page).toBe(1)
-    expect(result.limit).toBe(20)
-  })
-
-  it("accepts valid pagination params", () => {
-    const result = paginationSchema.parse({ page: "3", limit: "50" })
-    expect(result.page).toBe(3)
-    expect(result.limit).toBe(50)
-  })
-
-  it("rejects limit over 100", () => {
-    const result = paginationSchema.safeParse({ page: "1", limit: "200" })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("memberSchema", () => {
-  it("validates a complete member", () => {
-    const result = memberSchema.parse({
-      name: "John Doe",
+describe("Contact Schema", () => {
+  it("accepts valid contact data", () => {
+    const result = contactSchema.safeParse({
+      name: "John Smith",
       email: "john@example.com",
-    })
-    expect(result.name).toBe("John Doe")
-    expect(result.email).toBe("john@example.com")
-    expect(result.status).toBe("active")
-  })
+      subject: "General Inquiry",
+      message: "I need help with tax preparation.",
+    });
+    expect(result.success).toBe(true);
+  });
 
-  it("rejects missing name", () => {
-    const result = memberSchema.safeParse({ email: "john@example.com" })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects invalid email", () => {
-    const result = memberSchema.safeParse({ name: "John", email: "not-an-email" })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects empty name", () => {
-    const result = memberSchema.safeParse({ name: "", email: "john@example.com" })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("eventSchema", () => {
-  const validEvent = {
-    title: "Tax Workshop",
-    description: "A workshop on tax planning",
-    category: "seminar",
-    startDate: "2026-06-15",
-    location: "Toronto",
-  }
-
-  it("validates a complete event", () => {
-    const result = eventSchema.parse(validEvent)
-    expect(result.title).toBe("Tax Workshop")
-    expect(result.status).toBe("upcoming")
-  })
-
-  it("rejects missing title", () => {
-    const result = eventSchema.safeParse({ ...validEvent, title: "" })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects missing category", () => {
-    const result = eventSchema.safeParse({ ...validEvent, category: "" })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects missing location", () => {
-    const result = eventSchema.safeParse({ ...validEvent, location: "" })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("rankingSchema", () => {
-  it("validates a complete ranking", () => {
-    const result = rankingSchema.parse({
-      memberId: "cm123",
-      rank: 1,
-    })
-    expect(result.memberId).toBe("cm123")
-    expect(result.rank).toBe(1)
-    expect(result.rating).toBe(0)
-  })
-
-  it("rejects negative rank", () => {
-    const result = rankingSchema.safeParse({ memberId: "cm123", rank: -1 })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects missing memberId", () => {
-    const result = rankingSchema.safeParse({ rank: 1 })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("productSchema", () => {
-  it("validates a complete product", () => {
-    const result = productSchema.parse({
-      name: "Accounting Software",
-      description: "QuickBooks License",
-      price: 25000,
-      category: "equipment",
-    })
-    expect(result.name).toBe("Accounting Software")
-    expect(result.price).toBe(25000)
-  })
-
-  it("rejects negative price", () => {
-    const result = productSchema.safeParse({
-      name: "Test",
-      description: "Test",
-      price: -100,
-      category: "equipment",
-    })
-    expect(result.success).toBe(false)
-  })
-
-  it("rejects zero price", () => {
-    const result = productSchema.safeParse({
-      name: "Test",
-      description: "Test",
-      price: 0,
-      category: "equipment",
-    })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("orderSchema", () => {
-  it("validates a complete order", () => {
-    const result = orderSchema.parse({
-      total: 50000,
-      customerName: "Jane Doe",
-      customerEmail: "jane@example.com",
-    })
-    expect(result.total).toBe(50000)
-    expect(result.status).toBe("pending")
-  })
+  it("rejects missing required fields", () => {
+    const result = contactSchema.safeParse({ name: "", email: "", subject: "", message: "" });
+    expect(result.success).toBe(false);
+  });
 
   it("rejects invalid email", () => {
-    const result = orderSchema.safeParse({
-      total: 50000,
-      customerName: "Jane",
-      customerEmail: "bad",
-    })
-    expect(result.success).toBe(false)
-  })
-})
-
-describe("contactSchema", () => {
-  it("validates a complete contact message", () => {
-    const result = contactSchema.parse({
-      name: "Jane",
-      email: "jane@example.com",
-      subject: "Hello",
-      message: "This is a test message",
-    })
-    expect(result.name).toBe("Jane")
-  })
-
-  it("rejects missing subject", () => {
     const result = contactSchema.safeParse({
+      name: "John",
+      email: "not-an-email",
+      subject: "Test",
+      message: "Hello",
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("Quote Schema", () => {
+  it("accepts valid quote data", () => {
+    const result = quoteSchema.safeParse({
+      name: "Jane Doe",
+      email: "jane@example.com",
+      service: "Tax Preparation",
+      preferredContact: "email",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("defaults preferredContact to email", () => {
+    const result = quoteSchema.safeParse({
+      name: "Jane Doe",
+      email: "jane@example.com",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.preferredContact).toBe("email");
+    }
+  });
+
+  it("rejects invalid preferredContact", () => {
+    const result = quoteSchema.safeParse({
       name: "Jane",
       email: "jane@example.com",
-      subject: "",
-      message: "Test",
-    })
-    expect(result.success).toBe(false)
-  })
+      preferredContact: "sms",
+    });
+    expect(result.success).toBe(false);
+  });
+});
 
-  it("rejects empty message", () => {
-    const result = contactSchema.safeParse({
-      name: "Jane",
-      email: "jane@example.com",
-      subject: "Hello",
-      message: "",
-    })
-    expect(result.success).toBe(false)
-  })
-})
+describe("Booking Schema", () => {
+  it("accepts valid booking data", () => {
+    const result = bookingSchema.safeParse({
+      name: "Bob Wilson",
+      email: "bob@example.com",
+      service: "Tax Advisory",
+    });
+    expect(result.success).toBe(true);
+  });
 
-describe("newsletterSchema", () => {
-  it("validates a valid email", () => {
-    const result = newsletterSchema.parse({ email: "test@example.com" })
-    expect(result.email).toBe("test@example.com")
-  })
+  it("requires name and email", () => {
+    const result = bookingSchema.safeParse({ email: "bob@example.com" });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("Newsletter Schema", () => {
+  it("accepts valid email", () => {
+    const result = newsletterSchema.safeParse({ email: "subscriber@example.com" });
+    expect(result.success).toBe(true);
+  });
 
   it("rejects invalid email", () => {
-    const result = newsletterSchema.safeParse({ email: "not-email" })
-    expect(result.success).toBe(false)
-  })
-})
+    const result = newsletterSchema.safeParse({ email: "invalid" });
+    expect(result.success).toBe(false);
+  });
+});
 
-describe("donationSchema", () => {
-  it("validates a complete donation", () => {
-    const result = donationSchema.parse({
-      donorName: "Alice",
-      donorEmail: "alice@example.com",
-      amount: 10000,
-    })
-    expect(result.amount).toBe(10000)
-    expect(result.anonymous).toBe(false)
-  })
+describe("Service Category Schema", () => {
+  it("accepts valid category", () => {
+    const result = serviceCategorySchema.safeParse({
+      slug: "small-business",
+      title: "Small Business",
+      description: "Services for small businesses",
+    });
+    expect(result.success).toBe(true);
+  });
 
-  it("rejects negative amount", () => {
-    const result = donationSchema.safeParse({
-      donorName: "Alice",
-      donorEmail: "alice@example.com",
-      amount: -100,
-    })
-    expect(result.success).toBe(false)
-  })
-})
+  it("rejects invalid slug format", () => {
+    const result = serviceCategorySchema.safeParse({
+      slug: "Invalid Slug!",
+      title: "Test",
+      description: "Test",
+    });
+    expect(result.success).toBe(false);
+  });
 
-describe("teamMemberSchema", () => {
-  it("validates a complete team member", () => {
-    const result = teamMemberSchema.parse({
-      name: "Jane Smith",
-      role: "Senior Accountant",
-    })
-    expect(result.name).toBe("Jane Smith")
-    expect(result.bio).toBe("")
-  })
-})
+  it("defaults status to PUBLISHED", () => {
+    const result = serviceCategorySchema.safeParse({
+      slug: "test",
+      title: "Test",
+      description: "Test",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toBe("PUBLISHED");
+    }
+  });
+});
 
-describe("partnerSchema", () => {
-  it("validates a complete partner", () => {
-    const result = partnerSchema.parse({
-      name: "ACME Corp",
-      description: "A partner company",
-      type: "sponsor",
-    })
-    expect(result.name).toBe("ACME Corp")
-    expect(result.active).toBe(true)
-  })
-})
+describe("Service Schema", () => {
+  it("accepts valid service", () => {
+    const result = serviceSchema.safeParse({
+      categoryId: "cat-123",
+      name: "Bookkeeping",
+      slug: "bookkeeping",
+      description: "Daily bookkeeping services",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("requires categoryId", () => {
+    const result = serviceSchema.safeParse({
+      name: "Bookkeeping",
+      slug: "bookkeeping",
+      description: "Daily bookkeeping",
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("Team Member Schema", () => {
+  it("accepts valid member", () => {
+    const result = teamMemberSchema.safeParse({
+      name: "Joseph Mathews",
+      role: "Founder",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("requires name and role", () => {
+    const result = teamMemberSchema.safeParse({ name: "Joseph" });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("Industry Schema", () => {
+  it("accepts valid industry", () => {
+    const result = industrySchema.safeParse({
+      name: "Small Business",
+      slug: "small-business",
+      description: "Accounting for small businesses",
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("FAQ Schema", () => {
+  it("accepts valid FAQ", () => {
+    const result = faqSchema.safeParse({
+      question: "What services do you offer?",
+      answer: "We offer accounting, tax and advisory services.",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("defaults category to General", () => {
+    const result = faqSchema.safeParse({
+      question: "Test?",
+      answer: "Test answer",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.category).toBe("General");
+    }
+  });
+});
+
+describe("Testimonial Schema", () => {
+  it("accepts valid testimonial", () => {
+    const result = testimonialSchema.safeParse({
+      clientName: "Happy Client",
+      content: "Great service!",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("defaults status to DRAFT", () => {
+    const result = testimonialSchema.safeParse({
+      clientName: "Client",
+      content: "Good",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toBe("DRAFT");
+    }
+  });
+});
+
+describe("Homepage Section Schema", () => {
+  it("accepts valid section data", () => {
+    const result = homepageSectionSchema.safeParse({
+      eyebrow: "Our Services",
+      title: "What We Offer",
+      subtitle: "Professional services",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts items array", () => {
+    const result = homepageSectionSchema.safeParse({
+      items: [
+        { icon: "Check", title: "Item 1", description: "Desc 1" },
+      ],
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("SEO Setting Schema", () => {
+  it("accepts valid SEO data", () => {
+    const result = seoSettingSchema.safeParse({
+      title: "Home | Account Dynamics",
+      description: "Accounting services in Toronto",
+      indexable: true,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("User Create Schema", () => {
+  it("accepts valid user data", () => {
+    const result = userCreateSchema.safeParse({
+      name: "Admin User",
+      email: "admin@example.com",
+      password: "securepassword123",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("requires minimum password length", () => {
+    const result = userCreateSchema.safeParse({
+      name: "Admin",
+      email: "admin@example.com",
+      password: "short",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("defaults role to EDITOR", () => {
+    const result = userCreateSchema.safeParse({
+      name: "User",
+      email: "user@example.com",
+      password: "password123",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.role).toBe("EDITOR");
+    }
+  });
+});
+
+describe("User Update Schema", () => {
+  it("accepts partial updates", () => {
+    const result = userUpdateSchema.safeParse({ name: "New Name" });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts empty update", () => {
+    const result = userUpdateSchema.safeParse({});
+    expect(result.success).toBe(true);
+  });
+});

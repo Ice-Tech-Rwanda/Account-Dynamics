@@ -1,4 +1,5 @@
 import type { TeamMember } from "@/lib/data/team";
+import { TeamAvatar } from "@/domains/team/components/TeamAvatar";
 
 interface FounderProfileProps {
   founder: TeamMember;
@@ -14,12 +15,17 @@ export function FounderProfile({ founder }: FounderProfileProps) {
             <span className="inline-flex items-center gap-2 rounded-full bg-brand/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand mb-4">
               Leadership
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-              {founder.name}
-            </h2>
-            <p className="mt-1 text-lg text-brand font-medium">
-              {founder.role}
-            </p>
+            <div className="flex items-center gap-5">
+              <TeamAvatar slug="founder" size={88} />
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+                  {founder.name}
+                </h2>
+                <p className="mt-1 text-lg text-brand font-medium">
+                  {founder.role}
+                </p>
+              </div>
+            </div>
             <div className="mt-6 space-y-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               <p>{founder.bio}</p>
             </div>

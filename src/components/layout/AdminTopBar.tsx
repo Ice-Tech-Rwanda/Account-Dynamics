@@ -6,6 +6,7 @@ import { Search, Bell, Moon, Sun, LogOut, User, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useTheme } from "@/components/shared/ThemeProvider";
+import { useRouter } from "next/navigation";
 import { siteConfig } from "@/lib/site";
 
 const notifications = [
@@ -18,10 +19,23 @@ const notifications = [
 
 export function AdminTopBar() {
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+      router.push("/admin/login");
+      router.refresh();
+    } catch {
+      router.push("/admin/login");
+    }
+  };
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -127,16 +141,24 @@ export function AdminTopBar() {
                     { label: "Sign Out", icon: LogOut, href: "/admin/login", danger: true },
                   ].map((item) => {
                     const Icon = item.icon;
+                    if (item.danger) {
+                      return (
+                        <button
+                          key={item.label}
+                          onClick={handleSignOut}
+                          disabled={signingOut}
+                          className="flex w-full items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 disabled:opacity-50"
+                        >
+                          <Icon className="size-4" />
+                          {signingOut ? "Signing out..." : item.label}
+                        </button>
+                      );
+                    }
                     return (
                       <Link
                         key={item.label}
                         href={item.href}
-                        className={cn(
-                          "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                          item.danger
-                            ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
-                            : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                        )}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
                       >
                         <Icon className="size-4" />
                         {item.label}

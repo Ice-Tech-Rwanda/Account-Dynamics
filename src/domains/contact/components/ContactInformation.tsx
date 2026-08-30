@@ -1,4 +1,4 @@
-import { Phone, MapPin, Clock, Mail, ExternalLink } from "lucide-react";
+import { Phone, MapPin, Clock, Mail } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -91,13 +91,11 @@ export function ContactInformation() {
           Schedule a consultation directly through our online booking system.
         </p>
         <Link
-          href="https://www.accountdynamics.com/book-online"
-          target="_blank"
-          rel="noopener noreferrer"
+          href={siteConfig.bookOnlineUrl}
           className="mt-4 inline-block"
         >
           <Button variant="brand" className="gap-2 rounded-xl">
-            Book Online <ExternalLink className="size-3.5" />
+            Book Online
           </Button>
         </Link>
       </div>

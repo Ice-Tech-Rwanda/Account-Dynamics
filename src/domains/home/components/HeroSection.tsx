@@ -6,13 +6,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Phone, ChevronLeft, ChevronRight } from "lucide-react";
+import { siteConfig } from "@/lib/site";
+import { siteImages } from "@/lib/siteImages";
 
-const SLIDES = [
-  { src: "/hero/slide-1.jpg", alt: "Account Dynamics team collaborating on financial documents in a bright office." },
-  { src: "/hero/slide-2.jpg", alt: "Close-up of a calculator, financial statements and a desk at Account Dynamics." },
-  { src: "/hero/slide-3.jpg", alt: "Business meeting at Account Dynamics reviewing charts and financial performance." },
-  { src: "/hero/slide-4.jpg", alt: "Professional in business attire at Account Dynamics offices in Canada." },
-];
+const SLIDES = siteImages.heroSlides;
 
 const SLIDE_DURATION_MS = 6000;
 
@@ -38,7 +35,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-brand-bg-dark"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-bg-dark"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-label="Introduction"
@@ -72,10 +69,10 @@ export function HeroSection() {
       </div>
 
       {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-bg-dark/95 via-brand-bg-dark/80 to-brand-bg-dark/60" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,rgba(29,42,32,0.55),transparent_60%)]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-bg-dark/70 via-brand-bg-dark/50 to-brand-bg-dark/25" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,rgba(29,42,32,0.4),transparent_60%)]" />
 
-      <div className="relative z-10 w-full max-w-4xl px-4 sm:px-6 py-20">
+      <div className="relative z-10 w-full max-w-5xl px-4 sm:px-6 py-24">
         <div className="text-center sm:text-left">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -120,17 +117,13 @@ export function HeroSection() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="mt-9 flex flex-wrap gap-4 justify-center sm:justify-start"
           >
-            <Link href="/contact">
+            <Link href="/book">
               <Button variant="accent" size="xl" className="gap-2.5 rounded-xl shadow-xl shadow-accent/30 text-base">
-                Get a Free Quote
+                Book a Free Consultation
                 <ArrowRight className="size-4" />
               </Button>
             </Link>
-            <Link
-              href="https://www.accountdynamics.com/book-online"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href={siteConfig.bookOnlineUrl}>
               <Button
                 size="xl"
                 className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 gap-2.5 text-base shadow-lg"

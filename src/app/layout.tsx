@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AdminGuard } from "@/components/layout/AdminGuard";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { FloatingWhatsApp } from "@/components/shared/FloatingWhatsApp";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/lib/site";
 
@@ -66,6 +67,7 @@ export default function RootLayout({
           </AdminGuard>
           <Toaster position="top-right" richColors />
         </ThemeProvider>
+        <FloatingWhatsApp />
       </body>
     </html>
   );

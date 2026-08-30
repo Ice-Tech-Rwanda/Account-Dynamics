@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
-    include: ["src/__tests__/{validation,members,donations,uploads}.test.ts"],
+    include: ["src/__tests__/**/*.test.ts"],
     exclude: ["src/__tests__/e2e/**", "node_modules/**"],
   },
 });

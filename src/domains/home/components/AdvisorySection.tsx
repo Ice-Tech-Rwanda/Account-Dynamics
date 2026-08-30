@@ -7,9 +7,22 @@ import {
   Target,
   Lightbulb,
   ArrowRight,
+  Receipt,
+  Search,
+  Sparkles,
+  Clipboard,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+const analyticsFlow = [
+  { icon: Receipt, step: "1", label: "Financial Data", hint: "Your raw numbers" },
+  { icon: Search, step: "2", label: "Analysis", hint: "Trends & performance" },
+  { icon: Sparkles, step: "3", label: "Insights", hint: "What the numbers mean" },
+  { icon: Clipboard, step: "4", label: "Planning", hint: "Actions & strategy" },
+  { icon: CheckCircle, step: "5", label: "Better Decisions", hint: "Confident next steps" },
+];
 
 const advisoryItems = [
   {
@@ -80,10 +93,37 @@ export function AdvisorySection() {
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                     {item.title}
                   </h3>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                    {item.description}
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          </div>
+        ))}
+          </div>
+        </div>
+
+        {/* Analytics flow */}
+        <div className="mt-16">
+          <p className="text-center text-sm font-semibold uppercase tracking-[0.16em] text-brand mb-8">
+            From Financial Data to Better Business Decisions
+          </p>
+          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-2">
+            {analyticsFlow.map((step, i) => (
+              <div key={step.label} className="flex flex-col md:flex-row items-center gap-3 md:gap-2 w-full md:w-auto flex-1">
+                <div className="flex-1 md:flex-none w-full md:w-auto flex flex-col items-center text-center p-5 rounded-2xl border border-slate-100 dark:border-slate-800/50 bg-white dark:bg-slate-800/40">
+                  <div className="w-11 h-11 rounded-xl bg-brand/5 dark:bg-brand/10 text-brand flex items-center justify-center">
+                    <step.icon className="size-5" />
+                  </div>
+                  <p className="mt-3 text-sm font-bold text-slate-900 dark:text-white">
+                    {step.label}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {step.hint}
                   </p>
                 </div>
+                {i < analyticsFlow.length - 1 && (
+                  <ArrowRight className="size-5 text-slate-300 dark:text-slate-600 shrink-0 rotate-90 md:rotate-0" />
+                )}
               </div>
             ))}
           </div>

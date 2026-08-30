@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Phone } from "lucide-react";
+import { siteConfig } from "@/lib/site";
 
 export function CTASection() {
   return (
@@ -23,16 +24,16 @@ export function CTASection() {
           advisory, our team is here to help you succeed.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Link href="/contact">
+          <Link href="/book">
             <Button
               variant="accent"
               size="xl"
               className="gap-2.5 rounded-xl shadow-xl shadow-accent/25 hover:shadow-accent/35 transition-all duration-300 text-base"
             >
-              <ArrowRight className="size-4" /> Get a Free Quote
+              <ArrowRight className="size-4" /> Book a Free Consultation
             </Button>
           </Link>
-          <Link href="https://www.accountdynamics.com/book-online" target="_blank" rel="noopener noreferrer">
+          <Link href={siteConfig.bookOnlineUrl}>
             <Button
               size="xl"
               className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 gap-2.5 text-base shadow-lg"
