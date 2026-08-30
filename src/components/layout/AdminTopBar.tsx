@@ -23,8 +23,13 @@ export function AdminTopBar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -65,9 +70,9 @@ export function AdminTopBar() {
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
           className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300 transition-colors"
-          title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          title={mounted ? (isDark ? "Switch to light mode" : "Switch to dark mode") : "Toggle theme"}
         >
-          {isDark ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
+          {mounted ? (isDark ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />) : <span className="size-[18px]" />}
         </button>
 
         <div ref={notifRef} className="relative">
