@@ -7,6 +7,7 @@ declare module "lucide-react" {
   export const Activity: Icon
   export const AlertCircle: Icon
   export const AlertTriangle: Icon
+  export const Archive: Icon
   export const ArrowDown: Icon
   export const ArrowLeft: Icon
   export const ArrowRight: Icon
@@ -24,6 +25,7 @@ declare module "lucide-react" {
   export const Camera: Icon
   export const Check: Icon
   export const CheckCircle: Icon
+  export const CheckCircle2: Icon
   export const ChevronDown: Icon
   export const ChevronLeft: Icon
   export const ChevronRight: Icon

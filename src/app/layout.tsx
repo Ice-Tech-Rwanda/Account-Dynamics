@@ -13,6 +13,8 @@ const lexend = Lexend({
   variable: "--font-lexend",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
 });
 
 const merriweather = Merriweather({
@@ -20,6 +22,8 @@ const merriweather = Merriweather({
   subsets: ["latin"],
   weight: ["300", "400", "700"],
   style: ["normal", "italic"],
+  display: "swap",
+  fallback: ["Georgia", "Cambria", "Times New Roman", "serif"],
 });
 
 export const metadata: Metadata = {

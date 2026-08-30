@@ -25,6 +25,7 @@ import {
   UserCog,
   ShieldCheck,
   Bell,
+  Sparkles,
 } from "lucide-react";
 
 const navGroups = [
@@ -50,6 +51,7 @@ const navGroups = [
       { label: "Industries", href: "/admin/industries", icon: Building2 },
       { label: "FAQs", href: "/admin/faqs", icon: HelpCircle },
       { label: "Testimonials", href: "/admin/testimonials", icon: Star },
+      { label: "Membership", href: "/admin/membership", icon: Sparkles },
       { label: "Software", href: "/admin/software", icon: Monitor },
     ],
   },

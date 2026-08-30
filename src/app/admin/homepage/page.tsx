@@ -74,7 +74,7 @@ export default function AdminHomepagePage() {
             <div><Label>CTA Label</Label><Input value={section.ctaLabel ?? ""} onChange={e => updateField(activeSection, "ctaLabel", e.target.value)} className="mt-1" /></div>
             <div><Label>CTA URL</Label><Input value={section.ctaUrl ?? ""} onChange={e => updateField(activeSection, "ctaUrl", e.target.value)} className="mt-1" /></div>
           </div>
-          <div><Label>Image Key</Label><Input value={section.image ?? ""} onChange={e => updateField(activeSection, "image", e.target.value)} className="mt-1" placeholder="e.g. about, advisory" /></div>
+          <div><Label>Image Key Reference</Label><Input value={section.imageKey ?? section.image ?? ""} onChange={e => updateField(activeSection, "imageKey", e.target.value)} className="mt-1" placeholder="e.g. hero, about, advisory, technology" /></div>
 
           <div className="flex justify-end pt-4">
             <Button variant="brand" className="rounded-xl" onClick={() => saveSection(activeSection)} disabled={saving}>

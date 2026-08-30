@@ -137,6 +137,7 @@ export default function AdminDashboardPage() {
           {[
             { label: "View Inquiries", href: "/admin/inquiries" },
             { label: "Manage Services", href: "/admin/services" },
+            { label: "Membership", href: "/admin/membership" },
             { label: "Edit Homepage", href: "/admin/homepage" },
             { label: "Upload Media", href: "/admin/media" },
             { label: "Site Settings", href: "/admin/settings" },

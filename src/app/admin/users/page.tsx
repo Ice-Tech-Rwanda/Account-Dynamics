@@ -16,59 +16,190 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
-  const { data, loading, search, setSearch, refresh } = useAdminList<any>({ endpoint: "/api/admin/users", pageSize: 20 });
+  const { data, loading, refresh } = useAdminList<any>({
+    endpoint: "/api/admin/users",
+    pageSize: 20,
+  });
   const [showCreate, setShowCreate] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleCreate = async (formData: Record<string, any>) => {
-    const res = await fetch("/api/admin/users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-    if (res.ok) { toast.success("User created"); refresh(); setShowCreate(false); }
-    else { const e = await res.json().catch(() => ({})); toast.error(e.error || "Failed"); }
+    const res = await fetch("/api/admin/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      toast.success("User created successfully");
+      refresh();
+      setShowCreate(false);
+    } else {
+      const e = await res.json().catch(() => ({}));
+      toast.error(e.error || "Failed to create user");
+    }
   };
 
   const handleUpdate = async (formData: Record<string, any>) => {
     if (!editItem) return;
-    const res = await fetch(`/api/admin/users/${editItem.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-    if (res.ok) { toast.success("User updated"); refresh(); setEditItem(null); }
-    else { const e = await res.json().catch(() => ({})); toast.error(e.error || "Failed"); }
+    const res = await fetch(`/api/admin/users/${editItem.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      toast.success("User updated successfully");
+      refresh();
+      setEditItem(null);
+    } else {
+      const e = await res.json().catch(() => ({}));
+      toast.error(e.error || "Failed to update user");
+    }
   };
 
   const handleDelete = async () => {
     if (!deleteItem) return;
     const res = await fetch(`/api/admin/users/${deleteItem.id}`, { method: "DELETE" });
-    if (res.ok) { toast.success("User deleted"); refresh(); setDeleteItem(null); }
-    else { const e = await res.json().catch(() => ({})); toast.error(e.error || "Failed"); }
+    if (res.ok) {
+      toast.success("User deleted");
+      refresh();
+      setDeleteItem(null);
+    } else {
+      const e = await res.json().catch(() => ({}));
+      toast.error(e.error || "Failed to delete user");
+    }
   };
 
   const columns: Column<any>[] = [
-    { key: "name", label: "Name", sortable: true, render: (item) => <span className="font-medium">{item.name || "—"}</span> },
-    { key: "email", label: "Email", sortable: true },
-    { key: "role", label: "Role", render: (item) => <Badge className={`${ROLE_COLORS[item.role] ?? ""} border-0 text-[10px] font-bold`}>{item.role}</Badge> },
-    { key: "active", label: "Active", render: (item) => item.active ? <span className="text-emerald-600 text-xs font-bold">Yes</span> : <span className="text-red-500 text-xs font-bold">No</span> },
-    { key: "lastLoginAt", label: "Last Login", render: (item) => item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleDateString() : "Never" },
-    { key: "actions", label: "", render: (item) => (
-      <div className="flex gap-1">
-        <button onClick={(e) => { e.stopPropagation(); setEditItem(item); }} className="text-xs text-brand hover:underline">Edit</button>
-        <button onClick={(e) => { e.stopPropagation(); setDeleteItem(item); }} className="text-xs text-red-500 hover:underline">Delete</button>
-      </div>
-    )},
+    {
+      key: "name",
+      label: "Name",
+      sortable: true,
+      render: (item) => <span className="font-medium text-slate-900 dark:text-white">{item.name || "—"}</span>,
+    },
+    { key: "email", label: "Email Address", sortable: true },
+    {
+      key: "role",
+      label: "Role",
+      render: (item) => (
+        <Badge className={`${ROLE_COLORS[item.role] ?? ""} border-0 text-[10px] font-bold`}>
+          {item.role}
+        </Badge>
+      ),
+    },
+    {
+      key: "active",
+      label: "Active Status",
+      render: (item) =>
+        item.active ? (
+          <span className="text-emerald-600 text-xs font-bold">Active</span>
+        ) : (
+          <span className="text-red-500 text-xs font-bold">Inactive</span>
+        ),
+    },
+    {
+      key: "lastLoginAt",
+      label: "Last Login",
+      render: (item) =>
+        item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleDateString() : "Never",
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (item) => (
+        <div className="flex gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditItem(item);
+            }}
+            className="text-xs font-semibold text-brand hover:underline"
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteItem(item);
+            }}
+            className="text-xs font-semibold text-red-500 hover:underline"
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <AdminPageShell title="Users" subtitle="Manage admin users (SUPER_ADMIN only)" onRefresh={refresh} loading={loading} onAdd={() => setShowCreate(true)} addLabel="Add User">
-      <CrudDialog open={showCreate} onClose={() => setShowCreate(false)} onSave={handleCreate} title="Create User" fields={[
-        { name: "name", label: "Name", required: true },
-        { name: "email", label: "Email", type: "email", required: true },
-        { name: "password", label: "Password", required: true, placeholder: "Min 8 characters" },
-        { name: "role", label: "Role", type: "select", options: [{ label: "Editor", value: "EDITOR" }, { label: "Admin", value: "ADMIN" }, { label: "Super Admin", value: "SUPER_ADMIN" }] },
-      ]} />
-      <CrudDialog open={!!editItem} onClose={() => setEditItem(null)} onSave={handleUpdate} title="Edit User" initial={editItem ?? {}} fields={[
-        { name: "name", label: "Name" },
-        { name: "email", label: "Email", type: "email" },
-        { name: "role", label: "Role", type: "select", options: [{ label: "Editor", value: "EDITOR" }, { label: "Admin", value: "ADMIN" }, { label: "Super Admin", value: "SUPER_ADMIN" }] },
-      ]} />
-      <ConfirmDialog open={!!deleteItem} onClose={() => setDeleteItem(null)} onConfirm={handleDelete} title="Delete user?" message="This action cannot be undone." />
+    <AdminPageShell
+      title="User Management"
+      subtitle="Manage admin users, roles, and permissions (SUPER_ADMIN only)"
+      onRefresh={refresh}
+      loading={loading}
+      onAdd={() => setShowCreate(true)}
+      addLabel="Add Admin User"
+    >
+      <AdminDataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        searchKeys={["name", "email", "role"]}
+        searchPlaceholder="Search users by name or email..."
+        pageSize={15}
+      />
+
+      <CrudDialog
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        onSave={handleCreate}
+        title="Create Admin User"
+        fields={[
+          { name: "name", label: "Full Name", required: true },
+          { name: "email", label: "Email Address", type: "email", required: true },
+          { name: "password", label: "Password", required: true, placeholder: "Min 8 characters" },
+          {
+            name: "role",
+            label: "Role",
+            type: "select",
+            options: [
+              { label: "Editor", value: "EDITOR" },
+              { label: "Admin", value: "ADMIN" },
+              { label: "Super Admin", value: "SUPER_ADMIN" },
+            ],
+          },
+        ]}
+      />
+
+      <CrudDialog
+        open={!!editItem}
+        onClose={() => setEditItem(null)}
+        onSave={handleUpdate}
+        title="Edit Admin User"
+        initial={editItem ?? {}}
+        fields={[
+          { name: "name", label: "Full Name" },
+          { name: "email", label: "Email Address", type: "email" },
+          {
+            name: "role",
+            label: "Role",
+            type: "select",
+            options: [
+              { label: "Editor", value: "EDITOR" },
+              { label: "Admin", value: "ADMIN" },
+              { label: "Super Admin", value: "SUPER_ADMIN" },
+            ],
+          },
+        ]}
+      />
+
+      <ConfirmDialog
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
+        onConfirm={handleDelete}
+        title="Delete user account?"
+        message={`Are you sure you want to delete ${deleteItem?.email}? This action cannot be undone.`}
+      />
     </AdminPageShell>
   );
 }
