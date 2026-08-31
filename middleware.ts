@@ -1,22 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtDecrypt } from "jose";
-import { hkdf } from "@panva/hkdf";
 
 const enc = "A256CBC-HS512";
 
 /**
- * Derive the encryption key the same way Auth.js does.
- * Auth.js uses HKDF-SHA512 with the secret and salt (cookie name) to derive
- * the encryption key for JWE tokens.
+ * Derive the encryption key the same way Auth.js does, using Web Crypto API
+ * (works in both Edge and Node.js runtimes).
+ *
+ * Auth.js source: hkdf("sha256", secret, salt, `Auth.js Generated Encryption Key (${salt})`, length)
  */
-async function deriveKey(secret: string, salt: string): Promise<Uint8Array> {
+async function deriveKey(
+  secret: string,
+  salt: string
+): Promise<Uint8Array> {
   const length = enc === "A256CBC-HS512" ? 64 : 32;
-  return await hkdf(
-    "sha256",
-    secret,
-    salt,
-    `Auth.js Generated Encryption Key (${salt})`,
-    length
+  const info = new TextEncoder().encode(
+    `Auth.js Generated Encryption Key (${salt})`
+  );
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    typeof secret === "string" ? new TextEncoder().encode(secret) : secret,
+    { name: "HKDF" },
+    false,
+    ["deriveBits"]
+  );
+  return new Uint8Array(
+    await crypto.subtle.deriveBits(
+      { name: "HKDF", hash: "SHA-256", salt: new TextEncoder().encode(salt), info },
+      keyMaterial,
+      length * 8
+    )
   );
 }
 
