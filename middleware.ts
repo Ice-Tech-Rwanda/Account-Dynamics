@@ -5,11 +5,14 @@ export async function middleware(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl;
 
-    // Use NextAuth's getToken to properly decode the (possibly encrypted) JWT session token
+    // Use NextAuth's getToken to properly decode the (possibly encrypted) JWT session token.
+    // On HTTPS (Vercel), the cookie is prefixed with __Secure- which also serves as the
+    // salt for JWT key derivation — it must match the cookie name used during encoding.
+    const secureCookie = req.url.startsWith("https://");
     const token = await getToken({
       req,
       secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-      salt: "authjs.session-token",
+      secureCookie,
     });
     const isLoggedIn = !!token;
 
