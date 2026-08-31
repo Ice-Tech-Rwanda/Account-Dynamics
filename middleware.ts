@@ -1,63 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Simple JWT payload decoder for session verification
-// Middleware runs in Edge Runtime, so we decode the JWT without cryptographic verification
-// The cookie is HttpOnly and set by NextAuth, so tampering is not a concern
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-    const payload = parts[1];
-    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(decoded);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Extract the authenticated user from the session cookie.
- * Returns the user object if valid and not expired, or null.
- */
-function getLoggedInUser(req: NextRequest): Record<string, unknown> | null {
-  try {
-    // Auth.js v5 uses "authjs.session-token"; NextAuth v4 used "next-auth.session-token"
-    const sessionToken =
-      req.cookies.get("__Secure-authjs.session-token")?.value ||
-      req.cookies.get("authjs.session-token")?.value ||
-      req.cookies.get("__Secure-next-auth.session-token")?.value ||
-      req.cookies.get("next-auth.session-token")?.value;
-    if (!sessionToken) return null;
-
-    const payload = decodeJwtPayload(sessionToken);
-    if (!payload) return null;
-
-    // Check JWT expiration — NextAuth sets `exp` as unix seconds
-    if (typeof payload.exp === "number") {
-      const nowSeconds = Math.floor(Date.now() / 1000);
-      if (payload.exp < nowSeconds) return null; // Token expired
-    }
-
-    // Extract user info from the JWT. NextAuth v5 stores user fields
-    // at the top level of the token (name, email, role, id, sub).
-    const name = payload.name;
-    const email = payload.email;
-    const sub = payload.sub;
-
-    // A valid session must have at least an email or subject ID
-    if (!email && !sub) return null;
-
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   try {
     const { pathname } = req.nextUrl;
-    const user = getLoggedInUser(req);
-    const isLoggedIn = !!user;
+
+    // Use NextAuth's getToken to properly decode the (possibly encrypted) JWT session token
+    const token = await getToken({
+      req,
+      secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+      salt: "authjs.session-token",
+    });
+    const isLoggedIn = !!token;
 
     // Protect admin pages - redirect to login if not authenticated
     if (
@@ -86,7 +40,6 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     console.error("[middleware] Error:", error);
-    // On error, deny access rather than fail open
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
