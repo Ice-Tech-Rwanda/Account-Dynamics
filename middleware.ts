@@ -1,52 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server"
+import NextAuth from "next-auth"
+import { authConfig } from "@/lib/auth.config"
 
-export async function middleware(req: NextRequest) {
-  try {
-    const { pathname } = req.nextUrl;
+const { auth } = NextAuth(authConfig)
 
-    // Use NextAuth's getToken to properly decode the (possibly encrypted) JWT session token.
-    // On HTTPS (Vercel), the cookie is prefixed with __Secure- which also serves as the
-    // salt for JWT key derivation — it must match the cookie name used during encoding.
-    const secureCookie = req.url.startsWith("https://");
-    const token = await getToken({
-      req,
-      secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-      secureCookie,
-    });
-    const isLoggedIn = !!token;
+export default auth((req) => {
+  const { pathname } = req.nextUrl
+  const isLoggedIn = !!req.auth
 
-    // Protect admin pages - redirect to login if not authenticated
-    if (
-      pathname.startsWith("/admin") &&
-      !pathname.startsWith("/admin/login") &&
-      !isLoggedIn
-    ) {
-      const loginUrl = new URL("/admin/login", req.url);
-      const redirectPath = req.nextUrl.pathname;
-      if (redirectPath.startsWith("/admin") && !redirectPath.startsWith("//")) {
-        loginUrl.searchParams.set("redirect", redirectPath);
-      }
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Protect admin API routes - return 401 if not authenticated
-    if (pathname.startsWith("/api/admin") && !isLoggedIn) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Redirect already logged-in users from login page to dashboard
-    if (pathname === "/admin/login" && isLoggedIn) {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error("[middleware] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  // Protect admin pages - redirect to login if not authenticated
+  if (
+    pathname.startsWith("/admin") &&
+    !pathname.startsWith("/admin/login") &&
+    !isLoggedIn
+  ) {
+    const loginUrl = new URL("/admin/login", req.url)
+    loginUrl.searchParams.set("redirect", pathname)
+    return NextResponse.redirect(loginUrl)
   }
-}
+
+  // Protect admin API routes - return 401 if not authenticated
+  if (pathname.startsWith("/api/admin") && !isLoggedIn) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  // Redirect already logged-in users from login page to dashboard
+  if (pathname === "/admin/login" && isLoggedIn) {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url))
+  }
+
+  return NextResponse.next()
+})
 
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*"],
-};
+}
