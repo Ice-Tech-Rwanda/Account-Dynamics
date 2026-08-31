@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { AdminLayoutClient } from "@/components/layout/AdminLayoutClient";
 
 export default async function AdminLayout({
@@ -6,8 +7,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get session if available (login page won't have one)
-  // The middleware handles redirect for unauthenticated users
+  // Server-side auth gate — defense-in-depth in case middleware is bypassed
   let user = null;
   try {
     const session = await auth();
@@ -19,8 +19,12 @@ export default async function AdminLayout({
       };
     }
   } catch {
-    // Auth failed — middleware will handle the redirect
+    // Auth library error — treat as unauthenticated
   }
 
-  return <AdminLayoutClient user={user!}>{children}</AdminLayoutClient>;
+  if (!user) {
+    redirect("/admin/login");
+  }
+
+  return <AdminLayoutClient user={user}>{children}</AdminLayoutClient>;
 }

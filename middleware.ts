@@ -15,6 +15,10 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
+/**
+ * Extract the authenticated user from the session cookie.
+ * Returns the user object if valid and not expired, or null.
+ */
 function getLoggedInUser(req: NextRequest): Record<string, unknown> | null {
   try {
     const sessionToken =
@@ -25,13 +29,22 @@ function getLoggedInUser(req: NextRequest): Record<string, unknown> | null {
     const payload = decodeJwtPayload(sessionToken);
     if (!payload) return null;
 
-    const raw = payload as Record<string, unknown>;
-    const sessionObj = raw.session as Record<string, unknown> | undefined;
-    const user = raw.user || sessionObj?.user || payload;
-    if (typeof user === "object" && user !== null) {
-      return user as Record<string, unknown>;
+    // Check JWT expiration — NextAuth sets `exp` as unix seconds
+    if (typeof payload.exp === "number") {
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      if (payload.exp < nowSeconds) return null; // Token expired
     }
-    return null;
+
+    // Extract user info from the JWT. NextAuth v5 stores user fields
+    // at the top level of the token (name, email, role, id, sub).
+    const name = payload.name;
+    const email = payload.email;
+    const sub = payload.sub;
+
+    // A valid session must have at least an email or subject ID
+    if (!email && !sub) return null;
+
+    return payload;
   } catch {
     return null;
   }
