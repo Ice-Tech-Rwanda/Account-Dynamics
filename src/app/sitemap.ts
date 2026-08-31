@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
-import { serviceCategories } from "@/lib/data/services";
+import { getServiceCategories } from "@/lib/content/service.server";
 import { siteConfig } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.siteUrl.replace(/\/$/, "");
   const now = new Date();
 
@@ -23,7 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1 : 0.7,
   }));
 
-  const serviceRoutes = serviceCategories.map((category) => ({
+  const categories = await getServiceCategories();
+  const serviceRoutes = categories.map((category) => ({
     url: `${base}/services/${category.slug}`,
     lastModified: now,
     changeFrequency: "monthly" as const,

@@ -4,8 +4,19 @@ import { newsletterSchema } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { notifyAdmins } from "@/lib/services/notifications";
 import { logger } from "@/lib/logger";
+import { isFormAllowed } from "@/lib/localRateLimiter";
+import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(request: Request) {
+  const csrf = validateOrigin(request);
+  if (!csrf.ok) {
+    return NextResponse.json({ error: "Request rejected" }, { status: 403 });
+  }
+
+  if (!(await isFormAllowed(request, "newsletter"))) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const parsed = parseParams(newsletterSchema, body);

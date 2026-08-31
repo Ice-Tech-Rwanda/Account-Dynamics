@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowRight, Award, ShieldCheck, Users, Building2 } from "lucide-react";
 import { TeamAvatar } from "@/domains/team/components/TeamAvatar";
 import { Button } from "@/components/ui/button";
-import { founder } from "@/lib/data/team";
+import type { TeamMember } from "@/lib/content/types";
 import { siteImages } from "@/lib/siteImages";
 
 const trustPoints = [
@@ -16,8 +16,14 @@ const trustPoints = [
   { icon: Users, text: "Personalized, client-centered service" },
 ];
 
-export function AboutPreview() {
+interface AboutPreviewProps {
+  founder: TeamMember;
+}
+
+export function AboutPreviewSection({ founder }: AboutPreviewProps) {
   const [imgSrc, setImgSrc] = useState<string>(siteImages.about.src);
+
+  if (!founder.name) return null;
 
   return (
     <section className="py-20 sm:py-28 bg-white dark:bg-slate-950">

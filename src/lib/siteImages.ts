@@ -46,6 +46,13 @@ export interface SiteImages {
     hari: TeamAvatarEntry;
     nikhil: TeamAvatarEntry;
   };
+  aboutPage: {
+    heroBackground: SiteImage;
+    office: SiteImage;
+    teamCollaboration: SiteImage;
+    finances: SiteImage;
+    workspace: SiteImage;
+  };
 }
 
 export const siteImages: SiteImages = {
@@ -108,15 +115,65 @@ export const siteImages: SiteImages = {
   },
 
   // Team member avatars.
-  // src is currently null → a tasteful initials placeholder is shown.
-  // To use official Account Dynamics photos later, set src to a local path
-  // (e.g. "/team/joseph-mathews.jpg") or a remote URL — no component changes needed.
+  // src is a temporary internet portrait placeholder that the client will
+  // replace later with official Account Dynamics photos. To swap in real
+  // photos, just set src to a local path (e.g. "/team/joseph-mathews.jpg")
+  // or another URL — no component changes needed.
   team: {
-    founder: { name: "Joseph P. Mathews", initials: "JM", src: null },
-    rishi: { name: "Rishi", initials: "R", src: null },
-    amrit: { name: "Amrit", initials: "A", src: null },
-    yogesh: { name: "Yogesh", initials: "Y", src: null },
-    hari: { name: "Hari", initials: "H", src: null },
-    nikhil: { name: "Nikhil", initials: "N", src: null },
+    founder: {
+      name: "Joseph P. Mathews",
+      initials: "JM",
+      src: `${base}/photo-1560250097-0b93528c311a`,
+    },
+    rishi: {
+      name: "Rishi",
+      initials: "R",
+      src: `${base}/photo-1507003211169-0a1dd7228f2d`,
+    },
+    amrit: {
+      name: "Amrit",
+      initials: "A",
+      src: `${base}/photo-1472099645785-5658abf4ff4e`,
+    },
+    yogesh: {
+      name: "Yogesh",
+      initials: "Y",
+      src: `${base}/photo-1519085360753-af0119f7cbe7`,
+    },
+    hari: {
+      name: "Hari",
+      initials: "H",
+      src: `${base}/photo-1500648767791-00dcc994a43e`,
+    },
+    nikhil: {
+      name: "Nikhil",
+      initials: "N",
+      src: `${base}/photo-1573496359142-b8d87734a5a2`,
+    },
+  },
+
+  // About page illustration images (generic scenes — not portraits of named staff).
+  // Used to enrich the About section with real, professional imagery.
+  aboutPage: {
+    heroBackground: {
+      src: `${base}/photo-1551434678-e076c223a692`,
+      alt: "Professional accounting team collaborating in a modern bright office",
+    },
+    office: {
+      src: `${base}/photo-1524758631624-e2822e304c36`,
+      alt: "Modern professional office meeting space at Account Dynamics",
+    },
+    teamCollaboration: {
+      src: `${base}/photo-1542744173-8e7e53415bb0`,
+      alt: "Account Dynamics team collaborating around a desk in the office",
+    },
+    finances: {
+      src: `${base}/photo-1554224155-6726b3ff858f`,
+      alt: "Financial documents and calculator on a desk at Account Dynamics",
+    },
+    workspace: {
+      src: `${base}/photo-1497366754035-f200968a6e72`,
+      alt: "Organized accounting workspace at Account Dynamics",
+    },
   },
 };

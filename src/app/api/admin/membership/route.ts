@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { error } = await requireRole("EDITOR");
+  if (error) return error;
 
   const membership = await prisma.membership.findFirst({ where: { status: "PUBLISHED" } });
   if (!membership) return NextResponse.json({ membership: null, plans: [] });
@@ -20,15 +19,13 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("ADMIN");
+  if (error) return error;
 
   try {
     const body = await request.json();
     const { membership, plans } = body;
 
-    // Upsert membership
     let membershipRecord = await prisma.membership.findFirst({ where: { status: "PUBLISHED" } });
     if (membershipRecord && membership) {
       membershipRecord = await prisma.membership.update({
@@ -39,7 +36,6 @@ export async function PUT(request: Request) {
       membershipRecord = await prisma.membership.create({ data: { title: membership.title ?? "Membership", ...membership } });
     }
 
-    // Replace plans if provided
     if (plans && membershipRecord) {
       await prisma.membershipPlan.deleteMany({ where: { membershipId: membershipRecord.id } });
       for (const plan of plans) {
@@ -57,8 +53,8 @@ export async function PUT(request: Request) {
     } catch { /* best-effort */ }
 
     return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("[admin:membership] update error", error);
+  } catch (err) {
+    console.error("[admin:membership] update error", err);
     return NextResponse.json({ error: "Failed to update membership" }, { status: 500 });
   }
 }

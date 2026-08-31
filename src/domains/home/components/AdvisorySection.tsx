@@ -59,7 +59,7 @@ export function AdvisorySection() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Content */}
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-accent/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-accent mb-4">
+            <span className="inline-flex items-center gap-2 rounded-full bg-brand/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand mb-4">
               Business Advisory
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">

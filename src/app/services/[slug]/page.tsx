@@ -1,21 +1,24 @@
 import { notFound } from "next/navigation";
-import { serviceCategories } from "@/lib/data/services";
+import { getServiceCategories, getServiceCategory } from "@/lib/content/service.server";
 import { ServiceDetailHero } from "@/domains/services/components/ServiceDetailHero";
 import { ServiceList } from "@/domains/services/components/ServiceList";
 import { CTASection } from "@/domains/home/components/CTASection";
 import { siteConfig } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
+
 interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return serviceCategories.map((cat) => ({ slug: cat.slug }));
+export async function generateStaticParams() {
+  const categories = await getServiceCategories();
+  return categories.map((cat) => ({ slug: cat.slug }));
 }
 
 export async function generateMetadata({ params }: ServicePageProps) {
   const { slug } = await params;
-  const category = serviceCategories.find((c) => c.slug === slug);
+  const category = await getServiceCategory(slug);
   if (!category) return {};
   return {
     title: `${category.title} | Account Dynamics`,
@@ -33,7 +36,7 @@ export async function generateMetadata({ params }: ServicePageProps) {
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const category = serviceCategories.find((c) => c.slug === slug);
+  const category = await getServiceCategory(slug);
   if (!category) notFound();
 
   const structuredData = {

@@ -1,5 +1,10 @@
 /**
- * Upload handler: validates, optimizes (sharp), and stores files locally.
+ * Upload handler: validates files and stores them.
+ *
+ * Backends:
+ *  - Vercel Blob (@vercel/blob) when BLOB_READ_WRITE_TOKEN is set (Vercel/production).
+ *  - Local filesystem under public/uploads when Blob is not configured (local dev /
+ *    self-hosted), preserving the previous behavior.
  * Returns metadata for Prisma Media record creation.
  */
 import { writeFile, mkdir } from "fs/promises";
@@ -64,72 +69,75 @@ function generateUniqueFilename(originalName: string): string {
   return `${base}-${timestamp}-${random}${ext}`;
 }
 
+function isImage(file: File): boolean {
+  return ALLOWED_IMAGE_TYPES.has(file.type) && file.type !== "image/svg+xml";
+}
+
+/** Read image dimensions with sharp (best-effort, optional). */
+async function imageDimensions(buffer: Buffer): Promise<{ width?: number; height?: number }> {
+  try {
+    const sharp = (await import("sharp")).default;
+    const meta = await sharp(buffer).metadata();
+    return { width: meta.width, height: meta.height };
+  } catch {
+    return {};
+  }
+}
+
+function isBlobEnabled(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
 /**
- * Process and store an uploaded file. For images, applies sharp optimization.
- * Files are stored in public/uploads/{year}/{month}/
+ * Store an uploaded file and return metadata for the Media record.
+ * Uses Vercel Blob when configured, otherwise the local filesystem.
  */
 export async function processUpload(file: File): Promise<UploadResult> {
+  const filename = generateUniqueFilename(file.name);
+  const dims = isImage(file) ? await imageDimensions(Buffer.from(await file.arrayBuffer())) : {};
+
+  if (isBlobEnabled()) {
+    const { put } = await import("@vercel/blob");
+    const { url } = await put(`uploads/${filename}`, file, {
+      access: "public",
+      addRandomSuffix: true,
+    });
+    return { url, name: file.name, mimeType: file.type, size: file.size, ...dims };
+  }
+
+  // Local filesystem fallback (local dev / self-hosted).
   const buffer = Buffer.from(await file.arrayBuffer());
   const now = new Date();
   const subDir = path.join("uploads", String(now.getFullYear()), String(now.getMonth() + 1).padStart(2, "0"));
   const absDir = path.join(process.cwd(), "public", subDir);
   await mkdir(absDir, { recursive: true });
 
-  const filename = generateUniqueFilename(file.name);
-  const isImage = ALLOWED_IMAGE_TYPES.has(file.type) && file.type !== "image/svg+xml";
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let finalBuffer: any = buffer;
-  let width: number | undefined;
-  let height: number | undefined;
+  let finalBuffer: Buffer = buffer;
   let finalMime = file.type;
 
-  if (isImage && file.type !== "image/gif") {
-    // Optimize non-GIF images with sharp
+  if (isImage(file) && file.type !== "image/gif") {
     try {
       const sharp = (await import("sharp")).default;
       const image = sharp(buffer);
       const metadata = await image.metadata();
-      width = metadata.width;
-      height = metadata.height;
-
-      // Resize if larger than 2048px on longest side
       const maxDim = 2048;
-      if (width && height && (width > maxDim || height > maxDim)) {
+      if (metadata.width && metadata.height && (metadata.width > maxDim || metadata.height > maxDim)) {
         image.resize({ width: maxDim, height: maxDim, fit: "inside", withoutEnlargement: true });
-        const newMeta = await image.clone().metadata();
-        width = newMeta.width;
-        height = newMeta.height;
       }
-
-      // Convert to WebP for smaller size (keep original extension for URL clarity)
       finalBuffer = await image.webp({ quality: 85 }).toBuffer();
       finalMime = "image/webp";
-      // Update extension to .webp
-      const webpFilename = filename.replace(/\.[^.]+$/, ".webp");
-      const filePath = path.join(absDir, webpFilename);
-      await writeFile(filePath, finalBuffer);
-      const url = `/${subDir}/${webpFilename}`;
-      return { url, name: file.name, mimeType: finalMime, size: finalBuffer.length, width, height };
     } catch {
       // Fall through to raw write
     }
   }
 
-  // Write raw file (documents, SVGs, GIFs, or if sharp failed)
-  const filePath = path.join(absDir, filename);
+  const writeName =
+    finalMime === "image/webp" && filename.toLowerCase().endsWith(".webp") === false
+      ? filename.replace(/\.[^.]+$/, ".webp")
+      : filename;
+  const filePath = path.join(absDir, writeName);
   await writeFile(filePath, finalBuffer);
 
-  if (isImage) {
-    // Get dimensions for GIFs
-    try {
-      const sharp = (await import("sharp")).default;
-      const meta = await sharp(buffer).metadata();
-      width = meta.width;
-      height = meta.height;
-    } catch { /* ok */ }
-  }
-
-  const url = `/${subDir}/${filename}`;
-  return { url, name: file.name, mimeType: finalMime, size: finalBuffer.length, width, height };
+  const url = `/${subDir}/${writeName}`;
+  return { url, name: file.name, mimeType: finalMime, size: finalBuffer.length, width: dims.width, height: dims.height };
 }

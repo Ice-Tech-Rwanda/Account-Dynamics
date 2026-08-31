@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Check, ArrowRight, BookOpen, ShieldCheck, FileText, Clock, Wallet, Building2, CheckCircle, Lightbulb, Shield, TrendingUp, Briefcase, LayoutGrid, Clipboard, Rocket, Calculator, User, Globe, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { ServiceCategory } from "@/lib/data/services";
+import type { ServiceCategory } from "@/lib/content/types";
 
 const iconMap: Record<string, React.ElementType> = {
   BookOpen,

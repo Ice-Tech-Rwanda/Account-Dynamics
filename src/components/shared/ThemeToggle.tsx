@@ -9,6 +9,8 @@ export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
+    // Hydration guard: only render theme-dependent UI after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

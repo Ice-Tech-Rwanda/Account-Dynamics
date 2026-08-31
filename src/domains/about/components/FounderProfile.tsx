@@ -1,5 +1,7 @@
-import type { TeamMember } from "@/lib/data/team";
+import Image from "next/image";
+import type { TeamMember } from "@/lib/content/types";
 import { TeamAvatar } from "@/domains/team/components/TeamAvatar";
+import { siteImages } from "@/lib/siteImages";
 
 interface FounderProfileProps {
   founder: TeamMember;
@@ -28,6 +30,17 @@ export function FounderProfile({ founder }: FounderProfileProps) {
             </div>
             <div className="mt-6 space-y-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               <p>{founder.bio}</p>
+            </div>
+
+            {/* Office illustration */}
+            <div className="relative mt-6 overflow-hidden rounded-2xl">
+              <Image
+                src={siteImages.aboutPage.office.src}
+                alt={siteImages.aboutPage.office.alt}
+                width={800}
+                height={500}
+                className="h-56 w-full object-cover"
+              />
             </div>
           </div>
 

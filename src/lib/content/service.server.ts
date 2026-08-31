@@ -3,13 +3,6 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { siteConfig } from "@/lib/site";
-import { siteImages, type SiteImage } from "@/lib/siteImages";
-import { serviceCategories as staticCategories, serviceHighlights as staticHighlights } from "@/lib/data/services";
-import { founder as staticFounder, teamMembers as staticTeam } from "@/lib/data/team";
-import { faqs as staticFaqs } from "@/lib/data/faq";
-import { industries as staticIndustries } from "@/lib/data/industries";
-import { whoWeServe as staticWhoWeServe } from "@/lib/data/who-we-serve";
-import { technologyItems as staticTechnology } from "@/lib/data/technology";
 import type {
   ServiceCategory,
   TeamMember,
@@ -52,6 +45,23 @@ function parseItems(raw: string | null | undefined): HomepageSectionData["items"
   );
 }
 
+/**
+ * Dedupes an array by a key, keeping the first occurrence (which is the
+ * founder-first ordering). Guards against React duplicate-key collisions
+ * when the database contains rows with identical names.
+ */
+function dedupeByName<T extends { name: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const item of items) {
+    if (!seen.has(item.name)) {
+      seen.add(item.name);
+      out.push(item);
+    }
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------------------
 // Services
 // ---------------------------------------------------------------------------
@@ -68,14 +78,6 @@ async function loadServiceCategories(): Promise<ServiceCategory[]> {
       },
     },
   });
-  if (!rows.length) return staticCategories;
-
-  const categoryImages: Record<string, SiteImage> = {
-    "small-business": siteImages.smallBusiness,
-    "personal-taxes": siteImages.personalTaxes,
-    outsourcing: siteImages.outsourcing,
-    "allied-services": siteImages.alliedServices,
-  };
 
   return rows.map((cat) => ({
     id: cat.id as unknown as string,
@@ -103,8 +105,6 @@ export function getServiceCategories() {
 }
 
 export async function getServiceCategory(slug: string): Promise<ServiceCategory | null> {
-  const categories = await getServiceCategories();
-  // Prefer DB-backed categories; if DB is empty the static fallback is used.
   const dbCat = await prisma.serviceCategory.findUnique({
     where: { slug },
     include: {
@@ -115,37 +115,36 @@ export async function getServiceCategory(slug: string): Promise<ServiceCategory 
       },
     },
   });
-  if (dbCat) {
-    return {
-      slug: dbCat.slug,
-      title: dbCat.title,
-      description: dbCat.description,
-      icon: dbCat.icon,
-      cta: dbCat.cta,
-      image: dbCat.image,
-      seoTitle: dbCat.seoTitle,
-      seoDescription: dbCat.seoDescription,
-      services: dbCat.services.map((service) => ({
-        name: service.name,
-        description: service.description,
-        benefits: service.benefits.map((b) => b.text),
-        icon: service.icon,
-      })),
-    };
-  }
-  return categories.find((c) => c.slug === slug) ?? null;
+  if (!dbCat) return null;
+
+  return {
+    slug: dbCat.slug,
+    title: dbCat.title,
+    description: dbCat.description,
+    icon: dbCat.icon,
+    cta: dbCat.cta,
+    image: dbCat.image,
+    seoTitle: dbCat.seoTitle,
+    seoDescription: dbCat.seoDescription,
+    services: dbCat.services.map((service) => ({
+      name: service.name,
+      description: service.description,
+      benefits: service.benefits.map((b) => b.text),
+      icon: service.icon,
+    })),
+  };
 }
 
 // ---------------------------------------------------------------------------
-// Service highlights (static, editable through homepage "services" section)
+// Service highlights — from homepage "services" section items or empty
 // ---------------------------------------------------------------------------
 
-export function getServiceHighlights() {
-  return cached(
-    "serviceHighlights",
-    async () => staticHighlights,
-    CONTENT_TAGS.homepage
-  )();
+export async function getServiceHighlights(): Promise<Array<{ title: string; description: string; icon: string }>> {
+  const section = await prisma.homepageSection.findUnique({ where: { sectionKey: "services" } });
+  if (section?.items) {
+    return parseJsonArray<{ icon: string; title: string; description: string }>(section.items);
+  }
+  return [];
 }
 
 // ---------------------------------------------------------------------------
@@ -157,23 +156,32 @@ async function loadTeam(): Promise<{ founder: TeamMember; members: TeamMember[] 
     where: { status: "PUBLISHED" },
     orderBy: [{ isFounder: "desc" }, { displayOrder: "asc" }],
   });
+
   if (!rows.length) {
-    return { founder: staticFounder, members: staticTeam };
+    return {
+      founder: { name: "", role: "", bio: "", expertise: [] },
+      members: [],
+    };
   }
-  const members = rows.map((m) => ({
-    name: m.name,
-    role: m.role,
-    bio: m.bio ?? "",
-    expertise: parseJsonArray<string>(m.expertise),
-    image: m.photo ?? undefined,
-    isFounder: m.isFounder,
-    email: m.email ?? undefined,
-    linkedin: m.linkedin ?? undefined,
-  }));
+
+  const members = dedupeByName(
+    rows.map((m) => ({
+      name: m.name,
+      role: m.role,
+      bio: m.bio ?? "",
+      expertise: parseJsonArray<string>(m.expertise),
+      image: m.photo ?? undefined,
+      isFounder: m.isFounder,
+      email: m.email ?? undefined,
+      linkedin: m.linkedin ?? undefined,
+    }))
+  );
+
   const founder =
     members.find((m) => m.isFounder) ??
     members.find((m) => m.name === "Joseph P. Mathews") ??
     members[0];
+
   return { founder, members };
 }
 
@@ -190,7 +198,6 @@ async function loadFaqs(): Promise<FaqItem[]> {
     where: { status: "PUBLISHED" },
     orderBy: [{ category: "asc" }, { displayOrder: "asc" }],
   });
-  if (!rows.length) return staticFaqs;
   return rows.map((f) => ({
     question: f.question,
     answer: f.answer,
@@ -212,9 +219,7 @@ async function loadIndustries(): Promise<{ industries: Industry[]; whoWeServe: W
     where: { status: "PUBLISHED" },
     orderBy: { displayOrder: "asc" },
   });
-  if (!rows.length) {
-    return { industries: staticIndustries, whoWeServe: staticWhoWeServe };
-  }
+
   const industries = rows.map((row) => ({
     name: row.name,
     description: row.description,
@@ -222,12 +227,14 @@ async function loadIndustries(): Promise<{ industries: Industry[]; whoWeServe: W
     image: row.image,
     slug: row.slug,
   }));
+
   const whoWeServe = rows.map((row) => ({
     name: row.name,
     description: row.description,
     icon: row.icon,
     services: parseJsonArray<string>(row.services),
   }));
+
   return { industries, whoWeServe };
 }
 
@@ -236,19 +243,29 @@ export function getIndustries() {
 }
 
 // ---------------------------------------------------------------------------
-// Technology (homepage section items)
+// Technology / Software Tools
 // ---------------------------------------------------------------------------
 
+async function loadTechnologyItems(): Promise<TechnologyItem[]> {
+  const rows = await prisma.softwareTool.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: { displayOrder: "asc" },
+  });
+  return rows.map((r) => ({
+    title: r.name,
+    description: r.description ?? undefined,
+    icon: "Cloud",
+    logo: r.logo ?? undefined,
+    websiteUrl: r.websiteUrl ?? undefined,
+  }));
+}
+
 export function getTechnologyItems(): Promise<TechnologyItem[]> {
-  return cached(
-    "technology",
-    async () => staticTechnology,
-    CONTENT_TAGS.homepage
-  )();
+  return cached("technology", loadTechnologyItems, CONTENT_TAGS.software)();
 }
 
 // ---------------------------------------------------------------------------
-// Testimonials (only verified — admin adds manually)
+// Testimonials
 // ---------------------------------------------------------------------------
 
 async function loadTestimonials(): Promise<Testimonial[]> {
@@ -285,24 +302,20 @@ async function loadMembershipSection(): Promise<HomepageSectionData> {
       })
     : [];
 
-  const fallbackTitle = "Predictable Pricing, Exceptional Value";
-  const fallbackDescription =
-    "Account Dynamics offers membership plans designed to provide affordable, predictable services instead of relying entirely on hourly billing.";
-
   let items: HomepageSectionData["items"] = [];
   if (section) {
     items = parseItems(section.items);
   } else if (membership) {
-    items = parseJsonArray<{ icon: string; title: string; description: string }>(membership.benefits).map((b, i) => ({
+    items = parseJsonArray<{ icon: string; title: string; description: string }>(membership.benefits).map((b) => ({
       icon: "Check",
       title: typeof b === "string" ? b : b.title,
       description: "",
     }));
   }
 
-  const title = section?.title ?? membership?.title ?? fallbackTitle;
+  const title = section?.title ?? membership?.title ?? "";
   const subtitle = section?.subtitle ?? null;
-  const description = section?.description ?? membership?.description ?? fallbackDescription;
+  const description = section?.description ?? membership?.description ?? "";
   const imageKey = section?.imageKey;
   const ctaLabel = section?.ctaLabel ?? membership?.ctaLabel ?? "Explore Membership Options";
   const ctaUrl = section?.ctaUrl ?? membership?.ctaUrl ?? siteConfig.bookOnlineUrl;
@@ -337,94 +350,22 @@ export function getMembershipSection() {
 // Homepage sections
 // ---------------------------------------------------------------------------
 
-const HOMEPAGE_DEFAULTS: Record<string, Omit<HomepageSectionData, "sectionKey" | "items"> & { items?: HomepageSectionData["items"] }> = {
-  hero: {
-    eyebrow: "Helping You Reach Your Financial Goals",
-    title: "Turn your numbers into smarter decisions.",
-    subtitle:
-      "Professional tax, cloud accounting, bookkeeping and advisory for individuals and small businesses across Canada.",
-    ctaLabel: "Book a Free Consultation",
-    ctaUrl: "/book",
-  },
-  services: {
-    eyebrow: "Our Services",
-    title: "Comprehensive Accounting Solutions",
-    subtitle:
-      "From day-to-day bookkeeping to strategic tax planning, we provide the full spectrum of accounting services your business needs.",
-  },
-  advisory: {
-    eyebrow: "Business Advisory",
-    title: "Turn Financial Data Into Better Business Decisions",
-    subtitle:
-      "We help business owners move beyond basic bookkeeping by using financial information to identify patterns, understand costs, plan ahead and make informed decisions.",
-    ctaLabel: "Learn More",
-    ctaUrl: "/why-choose-us",
-  },
-  about: {
-    eyebrow: "About Account Dynamics",
-    title: "Accounting Expertise You Can Rely On",
-    subtitle:
-      "Account Dynamics is a Canadian accounting, tax, advisory and business analytics firm in Toronto. We combine professional accounting expertise with modern cloud technology and a client-centered approach to help individuals and small businesses understand their numbers and make confident decisions.",
-    ctaLabel: "Meet Our Team",
-    ctaUrl: "/about",
-  },
-  whyChoose: {
-    eyebrow: "Why Choose Us",
-    title: "Why Clients Trust Account Dynamics",
-    subtitle:
-      "We combine professional expertise with personalized service and modern technology to deliver results that matter.",
-    ctaLabel: "Learn Why",
-    ctaUrl: "/why-choose-us",
-  },
-  whoWeServe: {
-    eyebrow: "Who We Serve",
-    title: "Accounting Support Built Around Your Needs",
-    subtitle:
-      "We tailor our accounting, tax and advisory services to the clients we serve — from individuals to groups of companies.",
-    ctaLabel: "Explore Who We Serve",
-    ctaUrl: "/industries",
-  },
-  technology: {
-    eyebrow: "Technology",
-    title: "Technology That Makes Accounting Simpler",
-    subtitle:
-      "We use modern accounting technology and cloud-based, paperless workflows so your financial information is organized, accessible and easy to understand.",
-    ctaLabel: "Explore Our Approach",
-    ctaUrl: "/why-choose-us",
-  },
-  faq: {
-    eyebrow: "FAQ",
-    title: "Frequently Asked Questions",
-    subtitle:
-      "Answers to the questions we hear most from individuals and small business owners.",
-  },
-  finalCta: {
-    eyebrow: "Get Started Today",
-    title: "Ready to Take Control of Your Finances?",
-    subtitle:
-      "Whether you need tax preparation, bookkeeping, or strategic business advisory, our team is here to help you succeed.",
-    ctaLabel: "Book a Free Consultation",
-    ctaUrl: "/book",
-  },
-};
-
 async function loadHomepageContent(): Promise<HomepageContent> {
   const rows = await prisma.homepageSection.findMany();
   const sections = new Map(rows.map((r) => [r.sectionKey, r]));
 
   const build = (key: keyof HomepageContent): HomepageSectionData => {
-    const defaults = HOMEPAGE_DEFAULTS[key] ?? {};
     const row = sections.get(key);
     return {
       sectionKey: key,
-      eyebrow: row?.eyebrow ?? defaults.eyebrow ?? null,
-      title: row?.title ?? defaults.title ?? null,
-      subtitle: row?.subtitle ?? defaults.subtitle ?? null,
-      description: row?.description ?? defaults.description ?? null,
-      items: row ? parseItems(row.items) : (defaults.items ?? []),
-      image: row?.imageKey ?? defaults.image ?? null,
-      ctaLabel: row?.ctaLabel ?? defaults.ctaLabel ?? null,
-      ctaUrl: row?.ctaUrl ?? defaults.ctaUrl ?? null,
+      eyebrow: row?.eyebrow ?? null,
+      title: row?.title ?? null,
+      subtitle: row?.subtitle ?? null,
+      description: row?.description ?? null,
+      items: row ? parseItems(row.items) : [],
+      image: row?.imageKey ?? null,
+      ctaLabel: row?.ctaLabel ?? null,
+      ctaUrl: row?.ctaUrl ?? null,
     };
   };
 
@@ -450,10 +391,6 @@ export function getHomepageContent() {
 // Site images (editable via admin)
 // ---------------------------------------------------------------------------
 
-function cachedImage(key: string, fallback: SiteImage): SiteImageSetting {
-  return { key, url: fallback.src, alt: fallback.alt };
-}
-
 async function loadSiteImages(): Promise<{
   heroSlides: SiteImageSetting[];
   about: SiteImageSetting;
@@ -469,24 +406,21 @@ async function loadSiteImages(): Promise<{
   const heroSlides = heroKeys
     .map((key) => byKey.get(key))
     .filter((s): s is SiteImageSetting => Boolean(s));
-  if (!heroSlides.length) {
-    heroSlides.push(...siteImages.heroSlides.map((s, i) => cachedImage(`hero.${i + 1}`, s)));
-  }
 
-  const resolve = (key: string, fallback: SiteImage): SiteImageSetting =>
-    byKey.get(key) ?? cachedImage(key, fallback);
+  const resolve = (key: string): SiteImageSetting =>
+    byKey.get(key) ?? { key, url: "", alt: "" };
 
   return {
     heroSlides,
-    about: resolve("about", siteImages.about),
-    advisory: resolve("advisory", siteImages.advisory),
-    servicesHero: resolve("servicesHero", siteImages.servicesHero),
-    contact: resolve("contact", siteImages.contact),
+    about: resolve("about"),
+    advisory: resolve("advisory"),
+    servicesHero: resolve("servicesHero"),
+    contact: resolve("contact"),
     categories: {
-      "small-business": resolve("category.small-business", siteImages.smallBusiness),
-      "personal-taxes": resolve("category.personal-taxes", siteImages.personalTaxes),
-      outsourcing: resolve("category.outsourcing", siteImages.outsourcing),
-      "allied-services": resolve("category.allied-services", siteImages.alliedServices),
+      "small-business": resolve("category.small-business"),
+      "personal-taxes": resolve("category.personal-taxes"),
+      outsourcing: resolve("category.outsourcing"),
+      "allied-services": resolve("category.allied-services"),
     },
   };
 }
@@ -499,72 +433,40 @@ export function getSiteImages() {
 // Site settings
 // ---------------------------------------------------------------------------
 
-function normalizeSocial(raw: string): string {
-  return raw.trim() || "#";
-}
-
 async function loadSiteSettings(): Promise<SiteSettings> {
   const rows = await prisma.setting.findMany();
   const s = new Map(rows.map((r) => [r.key, r.value]));
 
-  const defaults: SiteSettings = {
-    companyName: siteConfig.name,
-    shortName: siteConfig.shortName,
-    tagline: siteConfig.tagline,
-    description: siteConfig.description,
-    addressLine1: "55 Baywood Road, 2nd Floor",
-    addressLine2: "Toronto, Ontario M9V 3Y8",
-    city: "Toronto",
-    province: "Ontario",
-    postalCode: "M9V 3Y8",
-    country: "Canada",
-    phone: siteConfig.phone,
-    phoneSecondary: siteConfig.phoneSecondary ?? "",
-    email: siteConfig.email,
-    businessHoursLine1: "Monday – Friday",
-    businessHoursLine2: "9:00 AM – 4:00 PM",
-    linkedin: "#",
-    facebook: "#",
-    instagram: "#",
-    youtube: "#",
-    bookingUrl: siteConfig.bookOnlineUrl,
-    whatsappNumber: siteConfig.whatsappNumber,
-    whatsappMessage: siteConfig.whatsappMessage,
-    copyright: "",
-    designerCredit: "Ice Tech Rwanda",
-    adminEmail: siteConfig.email,
-  };
-
-  const get = (key: string, fallback: string) => (s.has(key) ? (s.get(key) || "") : fallback);
+  const get = (key: string, fallback: string = "") => (s.has(key) ? (s.get(key) || "") : fallback);
 
   return {
-    companyName: get("companyName", defaults.companyName),
-    shortName: get("shortName", defaults.shortName),
-    tagline: get("tagline", defaults.tagline),
-    description: get("description", defaults.description),
+    companyName: get("companyName", siteConfig.name),
+    shortName: get("shortName", siteConfig.shortName),
+    tagline: get("tagline", siteConfig.tagline),
+    description: get("description", siteConfig.description),
     logo: get("logo", ""),
     favicon: get("favicon", ""),
-    addressLine1: get("addressLine1", defaults.addressLine1),
-    addressLine2: get("addressLine2", defaults.addressLine2),
-    city: get("city", defaults.city),
-    province: get("province", defaults.province),
-    postalCode: get("postalCode", defaults.postalCode),
-    country: get("country", defaults.country),
-    phone: get("phone", defaults.phone),
-    phoneSecondary: get("phoneSecondary", defaults.phoneSecondary),
-    email: get("email", defaults.email),
-    businessHoursLine1: get("businessHoursLine1", defaults.businessHoursLine1),
-    businessHoursLine2: get("businessHoursLine2", defaults.businessHoursLine2),
-    linkedin: normalizeSocial(get("linkedin", defaults.linkedin)),
-    facebook: normalizeSocial(get("facebook", defaults.facebook)),
-    instagram: normalizeSocial(get("instagram", defaults.instagram)),
-    youtube: normalizeSocial(get("youtube", defaults.youtube)),
-    bookingUrl: get("bookingUrl", defaults.bookingUrl),
-    whatsappNumber: get("whatsappNumber", defaults.whatsappNumber),
-    whatsappMessage: get("whatsappMessage", defaults.whatsappMessage),
-    copyright: get("copyright", `© ${new Date().getFullYear()} ${defaults.companyName}. All rights reserved.`),
-    designerCredit: get("designerCredit", defaults.designerCredit),
-    adminEmail: get("adminEmail", defaults.adminEmail),
+    addressLine1: get("addressLine1", ""),
+    addressLine2: get("addressLine2", ""),
+    city: get("city", ""),
+    province: get("province", ""),
+    postalCode: get("postalCode", ""),
+    country: get("country", "Canada"),
+    phone: get("phone", siteConfig.phone),
+    phoneSecondary: get("phoneSecondary", ""),
+    email: get("email", siteConfig.email),
+    businessHoursLine1: get("businessHoursLine1", ""),
+    businessHoursLine2: get("businessHoursLine2", ""),
+    linkedin: get("linkedin", "#"),
+    facebook: get("facebook", "#"),
+    instagram: get("instagram", "#"),
+    youtube: get("youtube", "#"),
+    bookingUrl: get("bookingUrl", siteConfig.bookOnlineUrl),
+    whatsappNumber: get("whatsappNumber", siteConfig.whatsappNumber),
+    whatsappMessage: get("whatsappMessage", siteConfig.whatsappMessage),
+    copyright: get("copyright", `© ${new Date().getFullYear()} ${siteConfig.name}. All rights reserved.`),
+    designerCredit: get("designerCredit", ""),
+    adminEmail: get("adminEmail", siteConfig.email),
   };
 }
 
@@ -573,7 +475,7 @@ export function getSiteSettings() {
 }
 
 // ---------------------------------------------------------------------------
-// Small helper so every content getter is cached with shared tags
+// Cached helper
 // ---------------------------------------------------------------------------
 
 type CachedFn<T> = () => Promise<T>;

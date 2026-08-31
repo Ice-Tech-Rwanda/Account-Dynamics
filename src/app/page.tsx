@@ -1,8 +1,8 @@
 import { HeroSection } from "@/domains/home/components/HeroSection";
-import { ServiceHighlights } from "@/domains/home/components/ServiceHighlights";
-import { ServicesPreview } from "@/domains/home/components/ServicesPreview";
+import { ServiceHighlightsSection } from "@/domains/home/components/ServiceHighlights";
+import { ServicesPreviewSection } from "@/domains/home/components/ServicesPreview";
 import { AdvisorySection } from "@/domains/home/components/AdvisorySection";
-import { AboutPreview } from "@/domains/home/components/AboutPreview";
+import { AboutPreviewSection } from "@/domains/home/components/AboutPreview";
 import { WhyChoosePreview } from "@/domains/home/components/WhyChoosePreview";
 import { WhoWeServeSection } from "@/domains/home/components/WhoWeServeSection";
 import { TechnologySection } from "@/domains/home/components/TechnologySection";
@@ -10,7 +10,16 @@ import { MembershipSection } from "@/domains/home/components/MembershipSection";
 import { FaqSection } from "@/domains/home/components/FaqSection";
 import { CTASection } from "@/domains/home/components/CTASection";
 import { siteConfig } from "@/lib/site";
-import { faqs } from "@/lib/data/faq";
+import {
+  getFaqs,
+  getServiceCategories,
+  getIndustries,
+  getTechnologyItems,
+  getTeam,
+  getHomepageContent,
+} from "@/lib/content/service.server";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: `${siteConfig.name} | Tax, Accounting & Business Advisory`,
@@ -25,7 +34,23 @@ export const metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [faqs, categories, { whoWeServe }, technologyItems, { founder }, homepage] =
+    await Promise.all([
+      getFaqs(),
+      getServiceCategories(),
+      getIndustries(),
+      getTechnologyItems(),
+      getTeam(),
+      getHomepageContent(),
+    ]);
+
+  const serviceHighlights = homepage.services.items.map((item) => ({
+    title: item.title,
+    description: item.description,
+    icon: item.icon,
+  }));
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -46,15 +71,15 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <HeroSection />
-      <ServiceHighlights />
-      <ServicesPreview />
+      <ServiceHighlightsSection highlights={serviceHighlights} />
+      <ServicesPreviewSection categories={categories} />
       <AdvisorySection />
-      <AboutPreview />
-      <WhyChoosePreview />
-      <WhoWeServeSection />
-      <TechnologySection />
+      <AboutPreviewSection founder={founder} />
+      <WhyChoosePreview pillars={homepage.whyChoose.items} />
+      <WhoWeServeSection audiences={whoWeServe} />
+      <TechnologySection items={technologyItems} />
       <MembershipSection />
-      <FaqSection />
+      <FaqSection faqs={faqs} />
       <CTASection />
     </div>
   );

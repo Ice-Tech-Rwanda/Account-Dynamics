@@ -1,12 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 
+/** Only these settings keys can be modified via the admin UI. */
+const ALLOWED_KEYS = new Set([
+  "companyName", "shortName", "tagline", "description",
+  "email", "phone", "phoneSecondary", "adminEmail",
+  "addressLine1", "addressLine2", "city", "province", "postalCode", "country",
+  "businessHoursLine1", "businessHoursLine2",
+  "linkedin", "facebook", "instagram", "youtube",
+  "bookingUrl", "whatsappNumber", "whatsappMessage",
+  "copyright", "designerCredit",
+  "logo", "favicon",
+]);
+
 export async function GET() {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { error } = await requireRole("EDITOR");
+  if (error) return error;
 
   const rows = await prisma.setting.findMany();
   const settings: Record<string, string> = {};
@@ -15,18 +26,27 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("ADMIN");
+  if (error) return error;
 
   const body = await request.json();
   if (typeof body !== "object" || body === null) {
     return NextResponse.json({ error: "Settings must be an object" }, { status: 400 });
   }
 
-  const entries = Object.entries(body).filter(([k, v]) => typeof k === "string" && typeof v === "string");
+  // Filter to only allowed keys
+  const entries = Object.entries(body).filter(
+    ([k, v]) => typeof k === "string" && typeof v === "string" && ALLOWED_KEYS.has(k)
+  );
+
   if (!entries.length) {
     return NextResponse.json({ error: "No valid settings provided" }, { status: 400 });
+  }
+
+  // Blocklist: reject if someone tries to set these via the API
+  const blocked = Object.keys(body).filter((k) => !ALLOWED_KEYS.has(k));
+  if (blocked.length) {
+    logger.warn("Settings update blocked keys", { keys: blocked, userId: session.user.id });
   }
 
   await Promise.all(
@@ -49,3 +69,5 @@ export async function PUT(request: Request) {
 
   return NextResponse.json({ ok: true, updated: entries.length });
 }
+
+import { logger } from "@/lib/logger";

@@ -10,9 +10,12 @@ import { getMembershipSection } from "@/lib/content/service.server";
 
 export const dynamic = "force-dynamic";
 
+/** Settings keys that should NOT be exposed to the public API. */
+const SENSITIVE_KEYS = new Set(["adminEmail"]);
+
 export async function GET() {
   try {
-    const [services, team, faqs, industries, homepage, settings, testimonials, membership] =
+    const [services, team, faqs, industries, homepage, allSettings, testimonials, membership] =
       await Promise.all([
         getServiceCategories(),
         getTeam(),
@@ -23,6 +26,14 @@ export async function GET() {
         getTestimonials(),
         getMembershipSection(),
       ]);
+
+    // Filter sensitive settings from public response
+    const settings: Record<string, string> = {};
+    for (const [key, value] of Object.entries(allSettings)) {
+      if (!SENSITIVE_KEYS.has(key)) {
+        settings[key] = value;
+      }
+    }
 
     const response = NextResponse.json({
       services,

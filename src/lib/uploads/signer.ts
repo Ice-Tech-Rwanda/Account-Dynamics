@@ -1,7 +1,6 @@
 import crypto from "crypto";
 
 const SECRET = process.env.UPLOADS_SIGNING_SECRET ?? process.env.NEXTAUTH_SECRET ?? "local-dev-secret";
-
 export function generateSignedToken(filename: string, expiresInSeconds = 300) {
   const expires = Math.floor(Date.now() / 1000) + expiresInSeconds;
   const payload = `${filename}:${expires}`;

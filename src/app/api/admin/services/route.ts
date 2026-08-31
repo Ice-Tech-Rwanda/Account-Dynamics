@@ -1,11 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { serviceSchema, serviceUpdateSchema } from "@/lib/validation";
-import {
-  createListHandler,
-  createCreateHandler,
-} from "@/lib/admin/api-registry";
+import { createListHandler, requireRole } from "@/lib/admin/api-registry";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 
 const config = {
@@ -25,9 +21,8 @@ const config = {
 export const GET = createListHandler(prisma.service, config);
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("ADMIN");
+  if (error) return error;
 
   try {
     const body = await request.json();

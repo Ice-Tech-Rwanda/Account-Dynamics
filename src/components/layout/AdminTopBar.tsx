@@ -28,6 +28,8 @@ export function AdminTopBar() {
   const userRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Hydration guard: only render theme-dependent UI after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

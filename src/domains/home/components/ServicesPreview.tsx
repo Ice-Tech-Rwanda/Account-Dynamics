@@ -1,8 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import { Building2, User, Globe, Handshake, ArrowRight } from "lucide-react";
-import { serviceCategories } from "@/lib/data/services";
+import type { ServiceCategory } from "@/lib/content/types";
 
 const iconMap: Record<string, React.ElementType> = {
   Building2,
@@ -11,7 +9,11 @@ const iconMap: Record<string, React.ElementType> = {
   Handshake,
 };
 
-export function ServicesPreview() {
+interface ServicesPreviewProps {
+  categories: ServiceCategory[];
+}
+
+export function ServicesPreviewSection({ categories }: ServicesPreviewProps) {
   return (
     <section className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-900">
       <div className="it-container px-4 sm:px-6 lg:px-8">
@@ -29,7 +31,7 @@ export function ServicesPreview() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {serviceCategories.map((category) => {
+          {categories.map((category) => {
             const Icon = iconMap[category.icon] || Building2;
             return (
               <Link

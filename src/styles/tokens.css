@@ -1,8 +1,9 @@
 /* =============================================================================
    Account Dynamics — Design Tokens
    -----------------------------------------------------------------------------
-   Professional accounting firm design system with green/cream palette,
-   matching the brand colors of the original www.accountdynamics.com website.
+   Professional accounting firm design system.
+   Primary (brand)  = vivid blue  #0245EC
+   Secondary (accent) = lime       #D9FF3A
    ============================================================================= */
 
 @theme inline {
@@ -14,10 +15,9 @@
   --font-mono: var(--font-lexend);
 
   /* ---------------------------------------------------------------------------
-     2. BRAND COLORS — Account Dynamics green family (Wix: color 19/18/20)
-        brand  #3A5340  deep sage-green
-        accent #577D60  forest-green action color
-        cream  #FFFCF7  warm off-white surface
+     2. BRAND COLORS — Account Dynamics blue/lime family
+        brand  #0245EC  vivid blue (primary)
+        accent #D9FF3A  lime (secondary)
   --------------------------------------------------------------------------- */
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
@@ -68,9 +68,9 @@
   /* ---------------------------------------------------------------------------
      5. SHADOWS
   --------------------------------------------------------------------------- */
-  --shadow-soft: 0 14px 28px rgba(29, 42, 32, 0.06);
-  --shadow-card: 0 20px 48px rgba(29, 42, 32, 0.08);
-  --shadow-lift: 0 24px 60px rgba(29, 42, 32, 0.16);
+  --shadow-soft: 0 14px 28px rgba(2, 45, 140, 0.06);
+  --shadow-card: 0 20px 48px rgba(2, 45, 140, 0.08);
+  --shadow-lift: 0 24px 60px rgba(2, 45, 140, 0.16);
   --shadow-glow-brand: 0 14px 30px color-mix(in srgb, var(--brand) 24%, transparent);
   --shadow-glow-brand-strong: 0 18px 38px color-mix(in srgb, var(--brand) 30%, transparent);
   --shadow-glow-accent: 0 14px 30px color-mix(in srgb, var(--accent) 24%, transparent);
@@ -88,44 +88,44 @@
 
 /* ---------------------------------------------------------------------------
    PALETTE — LIGHT MODE — Account Dynamics
-   Sage-green brand (#3A5340) + Forest-green accent (#577D60) on cream (#FFFCF7)
+   Vivid blue brand (#0245EC) + lime accent (#D9FF3A)
 --------------------------------------------------------------------------- */
 :root {
-  /* Brand — Deep sage green */
-  --brand: #3A5340;
-  --brand-strong: #1D2A20;
-  --brand-soft: #577D60;
-  --brand-subtle: rgba(58, 83, 64, 0.08);
+  /* Brand — Vivid blue (primary) */
+  --brand: #0245EC;
+  --brand-strong: #0230A6;
+  --brand-soft: #5B81F0;
+  --brand-subtle: rgba(2, 69, 236, 0.08);
 
-  /* Accent — Forest green (Wix action color_18) */
-  --accent: #577D60;
-  --accent-strong: #3A5340;
-  --accent-soft: #8FA895;
-  --accent-subtle: rgba(87, 125, 96, 0.1);
+  /* Accent — Lime (secondary) */
+  --accent: #D9FF3A;
+  --accent-strong: #B3D920;
+  --accent-soft: #E7FF6E;
+  --accent-subtle: rgba(217, 255, 58, 0.16);
 
   /* Surfaces */
-  --brand-bg-light: #FFFCF7;
-  --brand-bg-dark: #1D2A20;
-  --brand-bg-dark-mid: #2A3A2F;
+  --brand-bg-light: #F5F8FF;
+  --brand-bg-dark: #0A1F45;
+  --brand-bg-dark-mid: #162E5C;
 
   /* Neutral / semantic (shadcn contract) */
   --radius: 0.75rem;
-  --background: oklch(0.985 0.005 85);
-  --foreground: oklch(0.26 0.005 30);
+  --background: oklch(0.985 0.005 268);
+  --foreground: oklch(0.22 0.04 265);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.26 0.005 30);
+  --card-foreground: oklch(0.22 0.04 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.26 0.005 30);
-  --primary: oklch(0.42 0.05 156);
-  --primary-foreground: oklch(0.985 0.005 85);
-  --secondary: oklch(0.56 0.07 156);
-  --secondary-foreground: oklch(0.26 0.005 30);
-  --accent-foreground: oklch(0.26 0.005 30);
-  --muted: oklch(0.955 0.005 85);
-  --muted-foreground: oklch(0.46 0.005 30);
+  --popover-foreground: oklch(0.22 0.04 265);
+  --primary: oklch(0.488 0.254 263.4);
+  --primary-foreground: oklch(0.985 0.005 268);
+  --secondary: oklch(0.941 0.209 120.5);
+  --secondary-foreground: oklch(0.30 0.10 261.9);
+  --accent-foreground: oklch(0.30 0.10 261.9);
+  --muted: oklch(0.958 0.008 268);
+  --muted-foreground: oklch(0.50 0.02 265);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.005 85);
-  --input: oklch(0.92 0.005 85);
+  --border: oklch(0.92 0.008 268);
+  --input: oklch(0.92 0.008 268);
   --ring: var(--brand);
 }
 
@@ -133,19 +133,21 @@
    PALETTE — DARK MODE
 --------------------------------------------------------------------------- */
 .dark {
-  --background: oklch(0.17 0.02 156);
-  --foreground: oklch(0.96 0.01 156);
-  --card: oklch(0.22 0.02 156);
-  --card-foreground: oklch(0.96 0.01 156);
-  --primary: oklch(0.62 0.07 156);
-  --primary-foreground: oklch(0.17 0.02 156);
-  --secondary: oklch(0.42 0.05 156);
-  --secondary-foreground: oklch(0.96 0.01 156);
-  --accent-foreground: oklch(0.96 0.01 156);
-  --muted: oklch(0.24 0.02 156);
-  --muted-foreground: oklch(0.66 0.02 156);
+  --background: oklch(0.17 0.05 262);
+  --foreground: oklch(0.96 0.01 262);
+  --card: oklch(0.21 0.05 262);
+  --card-foreground: oklch(0.96 0.01 262);
+  --popover: oklch(0.21 0.05 262);
+  --popover-foreground: oklch(0.96 0.01 262);
+  --primary: oklch(0.60 0.19 263.4);
+  --primary-foreground: oklch(0.16 0.05 262);
+  --secondary: oklch(0.90 0.19 120.5);
+  --secondary-foreground: oklch(0.22 0.08 262);
+  --accent-foreground: oklch(0.22 0.08 262);
+  --muted: oklch(0.25 0.04 262);
+  --muted-foreground: oklch(0.68 0.02 262);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: var(--brand-soft);
+  --ring: oklch(0.60 0.19 263.4);
 }

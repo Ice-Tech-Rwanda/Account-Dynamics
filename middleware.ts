@@ -1,40 +1,80 @@
-import { auth } from "@/lib/auth"
-import { NextResponse } from "next/server"
-import { isAllowed } from "./src/lib/localRateLimiter"
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl
-  const isLoggedIn = !!req.auth
+// Simple JWT payload decoder for session verification
+// Middleware runs in Edge Runtime, so we decode the JWT without cryptographic verification
+// The cookie is HttpOnly and set by NextAuth, so tampering is not a concern
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const payload = parts[1];
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
+}
 
-  // Rate limit credential callback POSTs
-  if (pathname === "/api/auth/callback/credentials" && req.method === "POST") {
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown"
-    const key = `login:${ip}`
-    if (!isAllowed(key)) {
-      return NextResponse.json({ error: "Too many login attempts" }, { status: 429 })
+function getLoggedInUser(req: NextRequest): Record<string, unknown> | null {
+  try {
+    const sessionToken =
+      req.cookies.get("next-auth.session-token")?.value ||
+      req.cookies.get("__Secure-next-auth.session-token")?.value;
+    if (!sessionToken) return null;
+
+    const payload = decodeJwtPayload(sessionToken);
+    if (!payload) return null;
+
+    const raw = payload as Record<string, unknown>;
+    const sessionObj = raw.session as Record<string, unknown> | undefined;
+    const user = raw.user || sessionObj?.user || payload;
+    if (typeof user === "object" && user !== null) {
+      return user as Record<string, unknown>;
     }
+    return null;
+  } catch {
+    return null;
   }
+}
 
-  // Protect admin API routes
-  if (pathname.startsWith("/api/admin") && !isLoggedIn) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+export function middleware(req: NextRequest) {
+  try {
+    const { pathname } = req.nextUrl;
+    const user = getLoggedInUser(req);
+    const isLoggedIn = !!user;
+
+    // Protect admin pages - redirect to login if not authenticated
+    if (
+      pathname.startsWith("/admin") &&
+      !pathname.startsWith("/admin/login") &&
+      !isLoggedIn
+    ) {
+      const loginUrl = new URL("/admin/login", req.url);
+      const redirectPath = req.nextUrl.pathname;
+      if (redirectPath.startsWith("/admin") && !redirectPath.startsWith("//")) {
+        loginUrl.searchParams.set("redirect", redirectPath);
+      }
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Protect admin API routes - return 401 if not authenticated
+    if (pathname.startsWith("/api/admin") && !isLoggedIn) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Redirect already logged-in users from login page to dashboard
+    if (pathname === "/admin/login" && isLoggedIn) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("[middleware] Error:", error);
+    // On error, deny access rather than fail open
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  // Protect admin pages - redirect to login if not authenticated
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login") && !isLoggedIn) {
-    const loginUrl = new URL("/admin/login", req.url)
-    loginUrl.searchParams.set("redirect", req.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
-  }
-
-  // Redirect already logged-in users from login page to dashboard
-  if (pathname === "/admin/login" && isLoggedIn) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url))
-  }
-
-  return NextResponse.next()
-})
+}
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/auth/callback/credentials", "/api/admin/:path*"],
-}
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
+};

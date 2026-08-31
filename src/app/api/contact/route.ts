@@ -6,8 +6,19 @@ import { notifyAdmins } from "@/lib/services/notifications";
 import { notifyAdminOfLead, sendLeadConfirmation } from "@/lib/services/email";
 import { getSiteSettings } from "@/lib/content/service.server";
 import { logger } from "@/lib/logger";
+import { isFormAllowed } from "@/lib/localRateLimiter";
+import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(request: Request) {
+  const csrf = validateOrigin(request);
+  if (!csrf.ok) {
+    return NextResponse.json({ error: "Request rejected" }, { status: 403 });
+  }
+
+  if (!(await isFormAllowed(request, "contact"))) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const parsed = parseParams(contactSchema, body);

@@ -1,7 +1,5 @@
-"use client";
-
 import { User, Store, Rocket, Building2, Briefcase, LayoutGrid } from "lucide-react";
-import { whoWeServe } from "@/lib/data/who-we-serve";
+import type { WhoWeServe } from "@/lib/content/types";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -14,12 +12,18 @@ const iconMap: Record<string, React.ElementType> = {
   LayoutGrid,
 };
 
-export function WhoWeServeSection() {
+interface WhoWeServeSectionProps {
+  audiences: WhoWeServe[];
+}
+
+export function WhoWeServeSection({ audiences }: WhoWeServeSectionProps) {
+  if (!audiences.length) return null;
+
   return (
     <section className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-900">
       <div className="it-container px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-accent mb-4">
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand mb-4">
             Who We Serve
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -32,7 +36,7 @@ export function WhoWeServeSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {whoWeServe.map((audience) => {
+          {audiences.map((audience) => {
             const Icon = iconMap[audience.icon] || Building2;
             return (
               <div

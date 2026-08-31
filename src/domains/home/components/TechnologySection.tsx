@@ -1,7 +1,5 @@
-"use client";
-
 import { Cloud, Calculator, BarChart3, ShieldCheck } from "lucide-react";
-import { technologyItems } from "@/lib/data/technology";
+import type { TechnologyItem } from "@/lib/content/types";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -12,7 +10,13 @@ const iconMap: Record<string, React.ElementType> = {
   ShieldCheck,
 };
 
-export function TechnologySection() {
+interface TechnologySectionProps {
+  items: TechnologyItem[];
+}
+
+export function TechnologySection({ items }: TechnologySectionProps) {
+  if (!items.length) return null;
+
   return (
     <section className="py-20 sm:py-28 bg-white dark:bg-slate-950">
       <div className="it-container px-4 sm:px-6 lg:px-8">
@@ -46,7 +50,7 @@ export function TechnologySection() {
 
           {/* Right: items */}
           <div className="space-y-4">
-            {technologyItems.map((item) => {
+            {items.map((item) => {
               const Icon = iconMap[item.icon] || Cloud;
               return (
                 <div

@@ -26,8 +26,10 @@ export interface RegistryConfig<TCreate, TUpdate> {
   createSchema: z.ZodType<TCreate>;
   /** Zod schema for update input (partial) */
   updateSchema: z.ZodType<TUpdate>;
-  /** Minimum role required. Default: "ADMIN" */
+  /** Minimum role required for mutations (create/update/delete). Default: "ADMIN" */
   requiredRole?: "ADMIN" | "SUPER_ADMIN";
+  /** Minimum role required for reads (list/get). Default: "EDITOR" (any authenticated admin) */
+  readRole?: "EDITOR" | "ADMIN" | "SUPER_ADMIN";
   /** Prisma model include option */
   include?: Record<string, any>;
   /** Fields searchable via ?q= query param */
@@ -44,17 +46,38 @@ export interface RegistryConfig<TCreate, TUpdate> {
 // Helpers
 // ---------------------------------------------------------------------------
 
+const ROLE_RANK: Record<string, number> = { EDITOR: 1, ADMIN: 2, SUPER_ADMIN: 3 };
+
 async function getSession(requiredRole: string = "ADMIN") {
   const session = await auth();
   if (!session?.user) {
     return { ok: false as const, response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
   }
   const role = session.user.role as string;
-  const rank: Record<string, number> = { EDITOR: 1, ADMIN: 2, SUPER_ADMIN: 3 };
-  if ((rank[role] ?? 0) < (rank[requiredRole] ?? 0)) {
+  if ((ROLE_RANK[role] ?? 0) < (ROLE_RANK[requiredRole] ?? 0)) {
     return { ok: false as const, response: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   }
   return { ok: true as const, session };
+}
+
+/**
+ * Quick auth check for route handlers. Returns null on success,
+ * or a NextResponse (401/403) on failure.
+ */
+export async function requireRole(requiredRole: string = "ADMIN"): Promise<{ session: any; error: null } | { session: null; error: NextResponse }> {
+  const session = await auth();
+  if (!session?.user) {
+    console.error("[auth] No session user found");
+    return { session: null, error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
+  }
+  const role = session.user.role as string;
+  const userRank = ROLE_RANK[role] ?? 0;
+  const requiredRank = ROLE_RANK[requiredRole] ?? 0;
+  if (userRank < requiredRank) {
+    console.error(`[auth] Forbidden: user role=${role} (rank=${userRank}), required=${requiredRole} (rank=${requiredRank})`);
+    return { session: null, error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  }
+  return { session, error: null };
 }
 
 function parseZod<T>(schema: z.ZodType<T>, data: unknown): { success: true; data: T } | { success: false; error: string } {
@@ -78,7 +101,7 @@ export function createListHandler<TCreate, TUpdate>(
   config: RegistryConfig<TCreate, TUpdate>
 ) {
   return async function GET(request: Request) {
-    const authCheck = await getSession(config.requiredRole);
+    const authCheck = await getSession(config.readRole ?? "EDITOR");
     if (!authCheck.ok) return authCheck.response;
 
     try {
@@ -194,7 +217,7 @@ export function createGetHandler<TCreate, TUpdate>(
   config: RegistryConfig<TCreate, TUpdate>
 ) {
   return async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-    const authCheck = await getSession(config.requiredRole);
+    const authCheck = await getSession(config.readRole ?? "EDITOR");
     if (!authCheck.ok) return authCheck.response;
 
     try {

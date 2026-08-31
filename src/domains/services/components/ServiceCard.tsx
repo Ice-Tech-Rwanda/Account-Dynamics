@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Building2, User, Globe, Handshake, ArrowRight } from "lucide-react";
-import type { ServiceCategory } from "@/lib/data/services";
+import type { ServiceCategory } from "@/lib/content/types";
 
 const iconMap: Record<string, React.ElementType> = {
   Building2,

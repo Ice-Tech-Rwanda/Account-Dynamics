@@ -1,10 +1,21 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { siteImages } from "@/lib/siteImages";
 
 export function AboutHero() {
   return (
     <section className="relative py-24 sm:py-32 bg-gradient-to-br from-slate-950 via-brand-bg-dark to-slate-950 overflow-hidden">
+      <Image
+        src={siteImages.aboutPage.heroBackground.src}
+        alt={siteImages.aboutPage.heroBackground.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 object-cover opacity-25"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-brand-bg-dark/80 to-brand-bg-dark" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(14,124,123,0.08),transparent_50%)]" />
       <div className="relative z-10 it-container px-4 sm:px-6 lg:px-8 text-center">
         <motion.div

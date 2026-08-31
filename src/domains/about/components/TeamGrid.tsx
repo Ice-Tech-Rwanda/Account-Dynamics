@@ -1,6 +1,6 @@
 "use client";
 
-import type { TeamMember } from "@/lib/data/team";
+import type { TeamMember } from "@/lib/content/types";
 import { TeamAvatar, type TeamSlug } from "@/domains/team/components/TeamAvatar";
 
 const slugByName: Record<string, TeamSlug> = {

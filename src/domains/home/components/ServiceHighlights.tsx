@@ -1,7 +1,4 @@
-"use client";
-
 import { Calculator, Cloud, TrendingUp, BarChart3 } from "lucide-react";
-import { serviceHighlights } from "@/lib/data/services";
 
 const iconMap: Record<string, React.ElementType> = {
   Calculator,
@@ -10,12 +7,18 @@ const iconMap: Record<string, React.ElementType> = {
   BarChart3,
 };
 
-export function ServiceHighlights() {
+interface ServiceHighlightsProps {
+  highlights: Array<{ title: string; description: string; icon: string }>;
+}
+
+export function ServiceHighlightsSection({ highlights }: ServiceHighlightsProps) {
+  if (!highlights.length) return null;
+
   return (
     <section className="relative py-16 sm:py-20 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50">
       <div className="it-container px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {serviceHighlights.map((item) => {
+          {highlights.map((item) => {
             const Icon = iconMap[item.icon] || Calculator;
             return (
               <div

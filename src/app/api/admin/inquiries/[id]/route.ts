@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { error } = await requireRole("EDITOR");
+  if (error) return error;
 
   const { id } = await params;
   const inquiry = await prisma.inquiry.findUnique({
@@ -15,7 +14,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   });
   if (!inquiry) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Mark as read
   if (!inquiry.read) {
     await prisma.inquiry.update({ where: { id }, data: { read: true } });
   }
@@ -24,9 +22,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("EDITOR");
+  if (error) return error;
 
   const { id } = await params;
   const body = await request.json();
@@ -34,6 +31,29 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const data: Record<string, any> = {};
   for (const key of allowed) {
     if (key in body) data[key] = body[key];
+  }
+
+  // Validate assignedToId references a real active user
+  if (data.assignedToId !== undefined) {
+    if (data.assignedToId === null) {
+      // Allow unassigning
+    } else if (typeof data.assignedToId === "string") {
+      const assignee = await prisma.user.findUnique({
+        where: { id: data.assignedToId },
+        select: { id: true, active: true },
+      });
+      if (!assignee || !assignee.active) {
+        return NextResponse.json({ error: "Assigned user not found or inactive" }, { status: 400 });
+      }
+    } else {
+      return NextResponse.json({ error: "Invalid assignedToId" }, { status: 400 });
+    }
+  }
+
+  // Validate status enum
+  const validStatuses = ["NEW", "CONTACTED", "IN_PROGRESS", "QUALIFIED", "CONVERTED", "CLOSED", "SPAM"];
+  if (data.status && !validStatuses.includes(data.status)) {
+    return NextResponse.json({ error: "Invalid status value" }, { status: 400 });
   }
 
   try {
@@ -46,9 +66,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) !== "SUPER_ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("SUPER_ADMIN");
+  if (error) return error;
 
   const { id } = await params;
   try {

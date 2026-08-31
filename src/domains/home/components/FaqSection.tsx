@@ -1,6 +1,4 @@
-"use client";
-
-import { faqs } from "@/lib/data/faq";
+import type { FaqItem } from "@/lib/content/types";
 import {
   Accordion,
   AccordionItem,
@@ -8,7 +6,13 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-export function FaqSection() {
+interface FaqSectionProps {
+  faqs: FaqItem[];
+}
+
+export function FaqSection({ faqs }: FaqSectionProps) {
+  if (!faqs.length) return null;
+
   return (
     <section id="faq" className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-900">
       <div className="it-container px-4 sm:px-6 lg:px-8">

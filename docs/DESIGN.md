@@ -79,7 +79,7 @@ Base `--radius: 0.75rem` (12px). Tiers derive from it so one change re-scales th
 
 - **Button** variants: `default`, `secondary`, `destructive`, `outline`, `ghost`, `link`, `brand`, `accent`.
 - **Badge** variants: `default`, `secondary`, `destructive`, `outline`, `brand`, `accent`.
-- `brand` = primary action (green). `accent` = highlight (gold).
+- `brand` = primary action (blue). `accent` = highlight (blue).
 - The `it-btn-*` classes in `components.css` are the pre-template equivalents; prefer `Button`/`Badge` for new work.
 
 ## Shared State Components

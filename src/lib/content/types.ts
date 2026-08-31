@@ -1,23 +1,66 @@
 // Domain types shared between the CMS repositories and the public website.
-// Shapes intentionally mirror the original static content modules so the
-// public components keep working with either static defaults or DB data.
 
-import type { ServiceCategory as StaticCategory, Service } from "@/lib/data/services";
-import type { TeamMember as StaticTeamMember } from "@/lib/data/team";
-import type { FaqItem as StaticFaq } from "@/lib/data/faq";
-import type { Industry as StaticIndustry } from "@/lib/data/industries";
-import type { WhoWeServe as StaticWhoWeServe } from "@/lib/data/who-we-serve";
-import type { TechnologyItem as StaticTechnology } from "@/lib/data/technology";
+export interface Service {
+  name: string;
+  description: string;
+  benefits: string[];
+  icon: string;
+  image?: string | null;
+}
 
-export type {
-  Service,
-};
-export type ServiceCategory = StaticCategory & { image?: string | null; seoTitle?: string | null; seoDescription?: string | null };
-export type TeamMember = StaticTeamMember & { image?: string | null };
-export type FaqItem = StaticFaq & { category?: string; displayOrder?: number };
-export type Industry = StaticIndustry & { image?: string | null; slug?: string };
-export type WhoWeServe = StaticWhoWeServe;
-export type TechnologyItem = StaticTechnology;
+export interface ServiceCategory {
+  id?: string;
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  cta: string;
+  image?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  services: Service[];
+}
+
+export interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  expertise: string[];
+  image?: string | null;
+  isFounder?: boolean;
+  email?: string;
+  linkedin?: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+  category?: string;
+  displayOrder?: number;
+}
+
+export interface Industry {
+  name: string;
+  description: string;
+  icon: string;
+  image?: string | null;
+  slug?: string;
+}
+
+export interface WhoWeServe {
+  name: string;
+  description: string;
+  icon: string;
+  services: string[];
+}
+
+export interface TechnologyItem {
+  title: string;
+  description?: string;
+  icon: string;
+  logo?: string;
+  websiteUrl?: string;
+}
 
 export interface Testimonial {
   id: string;

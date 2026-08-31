@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/admin/api-registry";
 import { userCreateSchema } from "@/lib/validation";
 import { logAudit } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { error } = await requireRole("ADMIN");
+  if (error) return error;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -48,9 +47,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) !== "SUPER_ADMIN") return NextResponse.json({ error: "Only SUPER_ADMIN can create users" }, { status: 403 });
+  const { session, error } = await requireRole("SUPER_ADMIN");
+  if (error) return error;
 
   try {
     const body = await request.json();

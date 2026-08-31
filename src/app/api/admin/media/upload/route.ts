@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 import { validateFile, processUpload } from "@/lib/uploads/handler";
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if ((session.user.role as string) === "EDITOR") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { session, error } = await requireRole("ADMIN");
+  if (error) return error;
 
   try {
     const formData = await request.formData();
@@ -67,8 +66,8 @@ export async function POST(request: Request) {
       uploaded: results,
       errors: errors.length ? errors : undefined,
     }, { status: results.length ? 201 : 400 });
-  } catch (error) {
-    console.error("[admin:media:upload] error", error);
+  } catch (err) {
+    console.error("[admin:media:upload] error", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

@@ -40,3 +40,6 @@ Thumbs.db
 *.db
 *.db-journal
 prisma/dev.db
+
+# Runtime-uploaded media (managed via Vercel Blob in prod, local disk in dev)
+public/uploads/
