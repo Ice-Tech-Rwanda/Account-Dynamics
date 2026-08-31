@@ -1,37 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
+/**
+ * Simple middleware that checks for session cookie presence.
+ * No JWT decryption here — the auth() call in admin/layout.tsx
+ * handles proper session verification server-side.
+ */
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Debug: bypass all auth for /admin/debug-auth to test if middleware runs
-  if (pathname === "/admin/debug-auth") {
-    return NextResponse.json({ hello: "middleware is running", pathname, url: req.url });
-  }
+  // Auth.js v5 session cookie names
+  const hasSessionCookie =
+    req.cookies.has("__Secure-authjs.session-token") ||
+    req.cookies.has("authjs.session-token");
 
-  // Simple cookie check without JWT decryption
-  const token =
-    req.cookies.get("__Secure-authjs.session-token")?.value ||
-    req.cookies.get("authjs.session-token")?.value;
-  const isLoggedIn = !!token;
-
-  // Protect admin pages
+  // Protect admin pages — redirect to login if no session cookie
   if (
     pathname.startsWith("/admin") &&
     !pathname.startsWith("/admin/login") &&
-    !isLoggedIn
+    !hasSessionCookie
   ) {
     const loginUrl = new URL("/admin/login", req.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Protect admin API routes
-  if (pathname.startsWith("/api/admin") && !isLoggedIn) {
+  // Protect admin API routes — return 401 if no session cookie
+  if (pathname.startsWith("/api/admin") && !hasSessionCookie) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Redirect logged-in users from login page
-  if (pathname === "/admin/login" && isLoggedIn) {
+  // Redirect logged-in users away from login page
+  if (pathname === "/admin/login" && hasSessionCookie) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
