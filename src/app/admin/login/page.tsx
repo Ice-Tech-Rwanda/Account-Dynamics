@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -16,8 +17,10 @@ import { Logo } from "@/components/brand/Logo";
 import { siteConfig } from "@/lib/site";
 import { loginAction, type LoginState } from "./actions";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/admin/dashboard";
 
   const [state, formAction, pending] = useActionState<
     LoginState | undefined,
@@ -103,6 +106,7 @@ export default function AdminLoginPage() {
 
             {/* Form */}
             <form action={formAction} className="space-y-5">
+              <input type="hidden" name="redirectTo" value={redirectTo} />
               {/* Email */}
               <div>
                 <label
@@ -211,5 +215,13 @@ export default function AdminLoginPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

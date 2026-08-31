@@ -1,15 +1,16 @@
 import { auth } from "@/lib/auth";
 import { AdminLayoutClient } from "@/components/layout/AdminLayoutClient";
 
+/**
+ * Common admin layout. Wraps ALL admin routes including login.
+ * Auth gating is handled by the (protected) route group layout.
+ * This layout only enriches the client layout with session data.
+ */
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Auth gate is handled by middleware. This layout only enriches the
-  // client layout with the session user — it never redirects itself
-  // to avoid self-redirect loops (e.g. the login page is also
-  // wrapped by this layout).
   let user = null;
   try {
     const session = await auth();
