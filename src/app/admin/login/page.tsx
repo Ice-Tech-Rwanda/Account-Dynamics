@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Logo } from "@/components/brand/Logo";
 import { siteConfig } from "@/lib/site";
 
@@ -24,34 +25,19 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const csrf = await fetch("/api/auth/csrf?_=" + Date.now()).then((r) => r.json());
-
-      const res = await fetch("/api/auth/callback/credentials", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-Auth-Return-Redirect": "1",
-        },
-        body: new URLSearchParams({
-          email,
-          password,
-          csrfToken: csrf.csrfToken,
-          callbackUrl: window.location.origin + "/admin/dashboard",
-        }),
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: window.location.origin + "/admin/dashboard",
       });
 
-      const data = await res.json();
-
-      if (res.ok && data.url) {
-        const url = new URL(data.url);
-        const error = url.searchParams.get("error");
-        if (error) {
-          toast.error("Invalid email or password");
-        } else {
-          toast.success("Welcome back!");
-          router.push("/admin/dashboard");
-          router.refresh();
-        }
+      if (result?.error) {
+        toast.error("Invalid email or password");
+      } else if (result?.ok) {
+        toast.success("Welcome back!");
+        router.push(result.url ?? "/admin/dashboard");
+        router.refresh();
       } else {
         toast.error("Invalid email or password");
       }
