@@ -21,9 +21,12 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
  */
 function getLoggedInUser(req: NextRequest): Record<string, unknown> | null {
   try {
+    // Auth.js v5 uses "authjs.session-token"; NextAuth v4 used "next-auth.session-token"
     const sessionToken =
-      req.cookies.get("next-auth.session-token")?.value ||
-      req.cookies.get("__Secure-next-auth.session-token")?.value;
+      req.cookies.get("__Secure-authjs.session-token")?.value ||
+      req.cookies.get("authjs.session-token")?.value ||
+      req.cookies.get("__Secure-next-auth.session-token")?.value ||
+      req.cookies.get("next-auth.session-token")?.value;
     if (!sessionToken) return null;
 
     const payload = decodeJwtPayload(sessionToken);
