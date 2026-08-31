@@ -13,15 +13,16 @@ export async function loginAction(
   const password = String(formData.get("password") ?? "");
 
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
-      redirectTo: "/admin/dashboard",
+      redirect: false,
     });
-  } catch (err) {
-    if (err instanceof Error && err.message === "NEXT_REDIRECT") {
-      redirect("/admin/dashboard");
+
+    if (result?.error) {
+      return { error: "Invalid email or password" };
     }
+  } catch {
     return { error: "Invalid email or password" };
   }
 
