@@ -21,5 +21,5 @@ const config = {
 };
 
 export const GET = createGetHandler(prisma.serviceCategory, config);
-export const PUT = createUpdateHandler(prisma.serviceCategory, config);
+export const PATCH = createUpdateHandler(prisma.serviceCategory, config);
 export const DELETE = createDeleteHandler(prisma.serviceCategory, config);

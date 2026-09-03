@@ -32,7 +32,6 @@ export default async function AboutPage() {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteUrl,
-    logo: siteUrl + "/logo.png",
     description: siteConfig.description,
     address: {
       "@type": "PostalAddress",

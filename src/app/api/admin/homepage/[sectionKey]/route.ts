@@ -14,7 +14,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ sec
   return NextResponse.json(section);
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ sectionKey: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ sectionKey: string }> }) {
   const { session, error } = await requireRole("ADMIN");
   if (error) return error;
 

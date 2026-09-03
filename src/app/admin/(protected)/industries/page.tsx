@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminIndustriesPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/industries",
     pageSize: 20,
   });
@@ -19,12 +19,19 @@ export default function AdminIndustriesPage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const payload: Record<string, any> = { ...formData };
+    if (typeof payload.services === "string") {
+      payload.services = payload.services
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/industries/${editItem.id}` : "/api/admin/industries";
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       toast.success(editItem ? "Industry updated" : "Industry added");
@@ -116,7 +123,13 @@ export default function AdminIndustriesPage() {
         loading={loading}
         searchKeys={["name", "slug", "description"]}
         searchPlaceholder="Search industries..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -133,6 +146,8 @@ export default function AdminIndustriesPage() {
           { name: "slug", label: "Slug", required: true },
           { name: "description", label: "Description", type: "textarea", required: true },
           { name: "icon", label: "Icon Name", placeholder: "Building2" },
+          { name: "image", label: "Image URL", placeholder: "/uploads/... or https://..." },
+          { name: "services", label: "Services offered (comma-separated)", placeholder: "Tax, Audit, Payroll" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
             name: "status",

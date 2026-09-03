@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminFaqsPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/faqs",
     pageSize: 20,
   });
@@ -19,7 +19,7 @@ export default function AdminFaqsPage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/faqs/${editItem.id}` : "/api/admin/faqs";
     const res = await fetch(url, {
       method,
@@ -120,7 +120,13 @@ export default function AdminFaqsPage() {
         loading={loading}
         searchKeys={["question", "answer", "category"]}
         searchPlaceholder="Search FAQs..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog

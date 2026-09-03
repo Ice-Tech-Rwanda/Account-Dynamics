@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     await notifyAdmins({
       type: "inquiry",
       title: `New inquiry from ${parsed.data.name}`,
-      message: parsed.data.subject,
+      message: parsed.data.message,
       link: `/admin/inquiries/${inquiry.id}`,
     });
 

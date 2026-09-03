@@ -42,7 +42,7 @@ export default function AdminConsultationDetailPage() {
 
   const updateStatus = async (status: string) => {
     const res = await fetch(`/api/admin/consultations/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
@@ -57,7 +57,7 @@ export default function AdminConsultationDetailPage() {
   const toggleArchive = async () => {
     const archived = !item.archived;
     const res = await fetch(`/api/admin/consultations/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ archived }),
     });

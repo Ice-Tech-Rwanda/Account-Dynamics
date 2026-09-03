@@ -10,8 +10,52 @@ type EmailOptions = {
   calendar?: string;
 };
 
+function normalizeRecipients(to: string | string[]): string | string[] {
+  return Array.isArray(to) ? to : to;
+}
+
 export async function sendEmail(opts: EmailOptions) {
-  // Try to dynamically load nodemailer if available; otherwise fallback to logging.
+  const from = process.env.EMAIL_FROM || siteConfig.email;
+  const attachments = opts.calendar
+    ? [
+        {
+          filename: "booking.ics",
+          content: opts.calendar,
+          contentType: "text/calendar; charset=utf-8; method=REQUEST",
+        },
+      ]
+    : undefined;
+
+  // Preferred: Resend (best for Next.js/Vercel).
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const { Resend } = await import("resend");
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const payload: Record<string, unknown> = {
+        from,
+        to: normalizeRecipients(opts.to),
+        subject: opts.subject,
+      };
+      if (opts.text) payload.text = opts.text;
+      if (opts.html) {
+        payload.html = opts.html;
+      } else if (opts.text) {
+        payload.html = opts.text.replace(/\n/g, "<br/>");
+      }
+      if (attachments?.length) payload.attachments = attachments;
+      const { data, error } = await resend.emails.send(payload as any);
+      if (error) {
+        throw error;
+      }
+      logger.info("email sent via Resend", { to: opts.to, id: data?.id });
+      return;
+    } catch (err) {
+      logger.warn("Resend send failed", { err: String(err), to: opts.to });
+      // fall through to SMTP fallback below
+    }
+  }
+
+  // Fallback: SMTP via nodemailer.
   try {
     const nodemailer = await import("nodemailer");
     const transportOptions = process.env.SMTP_URL
@@ -26,24 +70,15 @@ export async function sendEmail(opts: EmailOptions) {
         };
 
     const transporter = nodemailer.createTransport(transportOptions as any);
-    const attachments = opts.calendar
-      ? [
-          {
-            filename: "booking.ics",
-            content: opts.calendar,
-            contentType: "text/calendar; charset=utf-8; method=REQUEST",
-          },
-        ]
-      : undefined;
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || siteConfig.email,
-      to: opts.to,
+      from,
+      to: normalizeRecipients(opts.to),
       subject: opts.subject,
       text: opts.text,
       html: opts.html ?? opts.text?.replace(/\n/g, "<br/>"),
       attachments,
     });
-    logger.info("email sent", { to: opts.to });
+    logger.info("email sent via SMTP", { to: opts.to });
   } catch (err) {
     logger.warn("sendEmail fallback - log only", { err: String(err), to: opts.to });
     logger.info("email payload", { to: opts.to, subject: opts.subject });
@@ -129,6 +164,31 @@ export async function replyToCustomer(options: { to: string; subject: string; bo
     to: options.to,
     subject: options.subject,
     text: options.body,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Newsletter
+// ---------------------------------------------------------------------------
+
+export async function sendNewsletterConfirmation(email: string) {
+  const text = [
+    `Dear subscriber,`,
+    ``,
+    `Thank you for subscribing to the Account Dynamics newsletter. You'll receive updates on accounting, tax, and advisory insights.`,
+    ``,
+    `If you did not request this subscription, you can safely ignore this email.`,
+    ``,
+    `Warm regards,`,
+    siteConfig.name,
+    siteConfig.phone,
+    siteConfig.location,
+  ].join("\n");
+
+  await sendEmail({
+    to: email,
+    subject: `Welcome to the ${siteConfig.name} newsletter`,
+    text,
   });
 }
 

@@ -14,7 +14,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pag
   return NextResponse.json(seo);
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ pageKey: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ pageKey: string }> }) {
   const { session, error } = await requireRole("ADMIN");
   if (error) return error;
 
@@ -33,6 +33,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ page
     });
 
     await logAudit({ userId: session.user.id, action: "seo:update", entity: "SeoSetting", entityId: seo.id, details: pageKey });
+
+    try {
+      const { revalidateSite } = await import("@/lib/revalidate");
+      revalidateSite();
+    } catch { /* best-effort */ }
 
     return NextResponse.json(seo);
   } catch (error) {

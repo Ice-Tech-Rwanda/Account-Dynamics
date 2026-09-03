@@ -44,7 +44,7 @@ export default function AdminQuoteDetailPage() {
 
   const updateStatus = async (status: string) => {
     const res = await fetch(`/api/admin/quotes/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
@@ -59,7 +59,7 @@ export default function AdminQuoteDetailPage() {
   const toggleArchive = async () => {
     const archived = !quote.archived;
     const res = await fetch(`/api/admin/quotes/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ archived }),
     });

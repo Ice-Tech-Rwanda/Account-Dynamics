@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { useAdminList } from "@/components/admin/useAdminList";
@@ -11,20 +10,27 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminServicesPage() {
-  const router = useRouter();
-  const { data, loading, search, setSearch, refresh } =
+  const { data: categories } = useAdminList<any>({ endpoint: "/api/admin/service-categories", pageSize: 100 });
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } =
     useAdminList<any>({ endpoint: "/api/admin/services", pageSize: 20 });
   const [editItem, setEditItem] = useState<any>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const payload: Record<string, any> = { ...formData };
+    if (typeof payload.benefits === "string") {
+      payload.benefits = payload.benefits
+        .split(",")
+        .map((b: string) => b.trim())
+        .filter(Boolean);
+    }
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/services/${editItem.id}` : "/api/admin/services";
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       toast.success(editItem ? "Service updated" : "Service created");
@@ -126,7 +132,13 @@ export default function AdminServicesPage() {
         loading={loading}
         searchKeys={["name", "slug", "description"]}
         searchPlaceholder="Search services..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -140,12 +152,24 @@ export default function AdminServicesPage() {
         initial={editItem ?? {}}
         fields={[
           { name: "name", label: "Service Name", required: true },
+          {
+            name: "categoryId",
+            label: "Category",
+            type: "select",
+            required: true,
+            options: categories.map((c) => ({ label: c.title, value: c.id })),
+          },
           { name: "slug", label: "Slug (URL identifier)", required: true },
           { name: "description", label: "Full Description", type: "textarea" },
           { name: "shortDescription", label: "Short Summary", type: "textarea" },
           { name: "icon", label: "Icon Name", placeholder: "Briefcase" },
+          { name: "image", label: "Image URL", placeholder: "/uploads/... or https://..." },
           { name: "ctaLabel", label: "CTA Button Label", placeholder: "Request a Consultation" },
           { name: "ctaUrl", label: "CTA Destination URL", placeholder: "/contact" },
+          { name: "seoTitle", label: "SEO Title", placeholder: "Page title for search engines" },
+          { name: "seoDescription", label: "SEO Description", type: "textarea" },
+          { name: "featured", label: "Featured on Homepage", type: "checkbox" },
+          { name: "benefits", label: "Benefits (comma-separated)", placeholder: "Tax planning, Compliance, Payroll" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
             name: "status",

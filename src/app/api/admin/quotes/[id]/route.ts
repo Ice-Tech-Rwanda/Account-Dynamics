@@ -14,14 +14,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   });
   if (!quote) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (!quote.read) {
-    await prisma.quoteRequest.update({ where: { id }, data: { read: true } });
-  }
-
   return NextResponse.json(quote);
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { session, error } = await requireRole("EDITOR");
   if (error) return error;
 
@@ -33,9 +29,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (key in body) data[key] = body[key];
   }
 
-  // Validate assignedToId
-  if (data.assignedToId !== undefined && data.assignedToId !== null) {
-    if (typeof data.assignedToId === "string") {
+  if (Object.keys(data).length === 0) {
+    return NextResponse.json({ error: "No fields provided to update" }, { status: 400 });
+  }
+
+  // Validate assignedToId (allows null to unassign)
+  if (data.assignedToId !== undefined) {
+    if (data.assignedToId === null) {
+      // Allow unassigning
+    } else if (typeof data.assignedToId === "string") {
       const assignee = await prisma.user.findUnique({ where: { id: data.assignedToId }, select: { id: true, active: true } });
       if (!assignee || !assignee.active) {
         return NextResponse.json({ error: "Assigned user not found or inactive" }, { status: 400 });
@@ -55,8 +57,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const quote = await prisma.quoteRequest.update({ where: { id }, data });
     await logAudit({ userId: session.user.id, action: "quote:update", entity: "QuoteRequest", entityId: id, details: JSON.stringify(Object.keys(data)) });
     return NextResponse.json(quote);
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch (error: any) {
+    if (error?.code === "P2025") return NextResponse.json({ error: "Not found" }, { status: 404 });
+    console.error("[admin:quotes] update error", error);
+    return NextResponse.json({ error: "Failed to update quote" }, { status: 500 });
   }
 }
 
@@ -69,7 +73,9 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     await prisma.quoteRequest.delete({ where: { id } });
     await logAudit({ userId: session.user.id, action: "quote:delete", entity: "QuoteRequest", entityId: id });
     return new NextResponse(null, { status: 204 });
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch (error: any) {
+    if (error?.code === "P2025") return NextResponse.json({ error: "Not found" }, { status: 404 });
+    console.error("[admin:quotes] delete error", error);
+    return NextResponse.json({ error: "Failed to delete quote" }, { status: 500 });
   }
 }

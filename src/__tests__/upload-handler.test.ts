@@ -58,7 +58,10 @@ describe("ALL_ALLOWED_TYPES", () => {
     expect(ALL_ALLOWED_TYPES.has("image/png")).toBe(true);
     expect(ALL_ALLOWED_TYPES.has("image/webp")).toBe(true);
     expect(ALL_ALLOWED_TYPES.has("image/gif")).toBe(true);
-    expect(ALL_ALLOWED_TYPES.has("image/svg+xml")).toBe(true);
+  });
+
+  it("excludes SVG (stored-XSS risk when served same-origin)", () => {
+    expect(ALL_ALLOWED_TYPES.has("image/svg+xml")).toBe(false);
   });
 
   it("includes common document types", () => {

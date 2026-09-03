@@ -8,8 +8,6 @@ import { getSiteSettings } from "@/lib/content/service.server";
 import { getTestimonials } from "@/lib/content/service.server";
 import { getMembershipSection } from "@/lib/content/service.server";
 
-export const dynamic = "force-dynamic";
-
 /** Settings keys that should NOT be exposed to the public API. */
 const SENSITIVE_KEYS = new Set(["adminEmail"]);
 

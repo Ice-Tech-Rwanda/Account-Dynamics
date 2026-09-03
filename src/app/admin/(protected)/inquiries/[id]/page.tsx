@@ -45,7 +45,7 @@ export default function AdminInquiryDetailPage() {
 
   const updateStatus = async (status: string) => {
     const res = await fetch(`/api/admin/inquiries/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
@@ -60,7 +60,7 @@ export default function AdminInquiryDetailPage() {
   const toggleArchive = async () => {
     const archived = !inquiry.archived;
     const res = await fetch(`/api/admin/inquiries/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ archived }),
     });

@@ -16,7 +16,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/users",
     pageSize: 20,
   });
@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
   const handleUpdate = async (formData: Record<string, any>) => {
     if (!editItem) return;
     const res = await fetch(`/api/admin/users/${editItem.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
@@ -146,7 +146,13 @@ export default function AdminUsersPage() {
         loading={loading}
         searchKeys={["name", "email", "role"]}
         searchPlaceholder="Search users by name or email..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -190,6 +196,7 @@ export default function AdminUsersPage() {
               { label: "Super Admin", value: "SUPER_ADMIN" },
             ],
           },
+          { name: "active", label: "Active Account", type: "checkbox" },
         ]}
       />
 

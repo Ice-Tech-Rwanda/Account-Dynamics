@@ -11,5 +11,5 @@ const config = {
 };
 
 export const GET = createGetHandler(prisma.teamMember, config);
-export const PUT = createUpdateHandler(prisma.teamMember, config);
+export const PATCH = createUpdateHandler(prisma.teamMember, config);
 export const DELETE = createDeleteHandler(prisma.teamMember, config);

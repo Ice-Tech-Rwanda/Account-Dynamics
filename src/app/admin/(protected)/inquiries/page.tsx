@@ -20,7 +20,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function AdminInquiriesPage() {
   const router = useRouter();
-  const { data, loading, search, setSearch, page, setPage, totalPages, refresh, params, setParams } =
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh, params, setParams } =
     useAdminList<any>({ endpoint: "/api/admin/inquiries", pageSize: 15, initialParams: { archived: "false" } });
 
   const columns: Column<any>[] = [
@@ -69,6 +69,13 @@ export default function AdminInquiriesPage() {
         data={data}
         loading={loading}
         pageSize={15}
+        searchValue={search}
+        onSearchChange={(v) => { setSearch(v); setParams({ archived: "false" }); }}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
+        searchPlaceholder="Search by name, email, company..."
         filters={
           <div className="flex gap-1.5">
             {["all", "NEW", "CONTACTED", "IN_PROGRESS", "QUALIFIED"].map((s) => (

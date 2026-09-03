@@ -23,7 +23,7 @@ export default function AdminServiceDetailPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    const res = await fetch(`/api/admin/services/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(item) });
+    const res = await fetch(`/api/admin/services/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(item) });
     setSaving(false);
     if (res.ok) { toast.success("Service updated"); router.push("/admin/services"); }
     else toast.error("Failed to update");

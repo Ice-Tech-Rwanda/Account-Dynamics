@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminSoftwarePage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/software-tools",
     pageSize: 20,
   });
@@ -19,7 +19,7 @@ export default function AdminSoftwarePage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/software-tools/${editItem.id}` : "/api/admin/software-tools";
     const res = await fetch(url, {
       method,
@@ -132,7 +132,13 @@ export default function AdminSoftwarePage() {
         loading={loading}
         searchKeys={["name", "description", "websiteUrl"]}
         searchPlaceholder="Search software tools..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -147,6 +153,7 @@ export default function AdminSoftwarePage() {
         fields={[
           { name: "name", label: "Tool Name (e.g. QuickBooks Online)", required: true },
           { name: "description", label: "Description / Usage Note", type: "textarea" },
+          { name: "logo", label: "Logo URL", placeholder: "/uploads/... or https://..." },
           { name: "websiteUrl", label: "Official Website URL" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {

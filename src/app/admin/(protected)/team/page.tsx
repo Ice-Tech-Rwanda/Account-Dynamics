@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminTeamPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/team-members",
     pageSize: 20,
   });
@@ -19,12 +19,19 @@ export default function AdminTeamPage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const payload: Record<string, any> = { ...formData };
+    if (typeof payload.expertise === "string") {
+      payload.expertise = payload.expertise
+        .split(",")
+        .map((e: string) => e.trim())
+        .filter(Boolean);
+    }
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/team-members/${editItem.id}` : "/api/admin/team-members";
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       toast.success(editItem ? "Team member updated" : "Team member added");
@@ -125,7 +132,13 @@ export default function AdminTeamPage() {
         loading={loading}
         searchKeys={["name", "role", "bio"]}
         searchPlaceholder="Search team members..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -141,8 +154,11 @@ export default function AdminTeamPage() {
           { name: "name", label: "Full Name", required: true },
           { name: "role", label: "Position / Role", required: true },
           { name: "bio", label: "Biography", type: "textarea" },
+          { name: "photo", label: "Photo URL", placeholder: "/uploads/... or https://..." },
           { name: "email", label: "Email (optional)", type: "email" },
           { name: "linkedin", label: "LinkedIn Profile URL" },
+          { name: "expertise", label: "Expertise (comma-separated)", placeholder: "Tax Planning, Audit, Advisory" },
+          { name: "isFounder", label: "Company Founder", type: "checkbox" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
             name: "status",

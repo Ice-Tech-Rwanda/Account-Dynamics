@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminTestimonialsPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/testimonials",
     pageSize: 20,
   });
@@ -19,7 +19,7 @@ export default function AdminTestimonialsPage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
-    const method = editItem ? "PUT" : "POST";
+    const method = editItem ? "PATCH" : "POST";
     const url = editItem ? `/api/admin/testimonials/${editItem.id}` : "/api/admin/testimonials";
     const res = await fetch(url, {
       method,
@@ -128,7 +128,13 @@ export default function AdminTestimonialsPage() {
         loading={loading}
         searchKeys={["clientName", "company", "content"]}
         searchPlaceholder="Search testimonials..."
-        pageSize={15}
+        pageSize={20}
+        searchValue={search}
+        onSearchChange={setSearch}
+        serverPage={page}
+        onPageChange={setPage}
+        serverTotalPages={totalPages}
+        serverTotal={total}
       />
 
       <CrudDialog
@@ -145,7 +151,9 @@ export default function AdminTestimonialsPage() {
           { name: "company", label: "Company / Business Name" },
           { name: "position", label: "Title / Position" },
           { name: "content", label: "Testimonial Content", type: "textarea", required: true },
+          { name: "photo", label: "Client Photo URL", placeholder: "/uploads/... or https://..." },
           { name: "rating", label: "Rating (1 to 5)", type: "number", min: 1 },
+          { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
             name: "status",
             label: "Status",

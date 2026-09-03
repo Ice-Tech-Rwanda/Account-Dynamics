@@ -26,8 +26,10 @@ export interface RegistryConfig<TCreate, TUpdate> {
   createSchema: z.ZodType<TCreate>;
   /** Zod schema for update input (partial) */
   updateSchema: z.ZodType<TUpdate>;
-  /** Minimum role required for mutations (create/update/delete). Default: "ADMIN" */
+  /** Minimum role required for create/update. Default: "ADMIN" */
   requiredRole?: "ADMIN" | "SUPER_ADMIN";
+  /** Minimum role required for delete. Defaults to "SUPER_ADMIN" for safety. */
+  deleteRole?: "ADMIN" | "SUPER_ADMIN";
   /** Minimum role required for reads (list/get). Default: "EDITOR" (any authenticated admin) */
   readRole?: "EDITOR" | "ADMIN" | "SUPER_ADMIN";
   /** Prisma model include option */
@@ -240,13 +242,13 @@ export function createGetHandler<TCreate, TUpdate>(
 }
 
 /**
- * PUT /api/admin/[resource]/[id] — Update
+ * PATCH /api/admin/[resource]/[id] — Partial update
  */
 export function createUpdateHandler<TCreate, TUpdate>(
   modelDelegate: any,
   config: RegistryConfig<TCreate, TUpdate>
 ) {
-  return async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  return async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const authCheck = await getSession(config.requiredRole);
     if (!authCheck.ok) return authCheck.response;
 
@@ -258,13 +260,16 @@ export function createUpdateHandler<TCreate, TUpdate>(
         return NextResponse.json({ error: parsed.error }, { status: 400 });
       }
 
+      const data = serializeForPrisma(parsed.data);
+      if (Object.keys(data).length === 0) {
+        return NextResponse.json({ error: "No fields provided to update" }, { status: 400 });
+      }
+
       // Check record exists
       const existing = await modelDelegate.findUnique({ where: { id } });
       if (!existing) {
         return NextResponse.json({ error: "Record not found" }, { status: 404 });
       }
-
-      const data = serializeForPrisma(parsed.data);
 
       const record = await modelDelegate.update({ where: { id }, data });
 
@@ -302,7 +307,8 @@ export function createDeleteHandler<TCreate, TUpdate>(
   config: RegistryConfig<TCreate, TUpdate>
 ) {
   return async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-    const authCheck = await getSession(config.requiredRole ?? "SUPER_ADMIN");
+    const role = config.deleteRole ?? "SUPER_ADMIN";
+    const authCheck = await getSession(role);
     if (!authCheck.ok) return authCheck.response;
 
     try {

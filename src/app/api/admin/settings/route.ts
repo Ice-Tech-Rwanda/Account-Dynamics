@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 /** Only these settings keys can be modified via the admin UI. */
 const ALLOWED_KEYS = new Set([
@@ -25,7 +26,7 @@ export async function GET() {
   return NextResponse.json(settings);
 }
 
-export async function PUT(request: Request) {
+export async function PATCH(request: Request) {
   const { session, error } = await requireRole("ADMIN");
   if (error) return error;
 
@@ -69,5 +70,3 @@ export async function PUT(request: Request) {
 
   return NextResponse.json({ ok: true, updated: entries.length });
 }
-
-import { logger } from "@/lib/logger";

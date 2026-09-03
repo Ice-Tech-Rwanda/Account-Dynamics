@@ -58,7 +58,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       },
     },
     areaServed: "Canada",
-    url: `${siteConfig.siteUrl.replace(/\/$/, "")}/${category.slug}`,
+    url: `${siteConfig.siteUrl.replace(/\/$/, "")}/services/${category.slug}`,
   };
 
   const itemList = {

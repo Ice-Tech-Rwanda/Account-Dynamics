@@ -45,7 +45,7 @@ export default function AdminSeoPage() {
     setSaving(true);
     try {
       const res = await fetch(`/api/admin/seo/${activePage}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(seoData[activePage] || {}),
       });

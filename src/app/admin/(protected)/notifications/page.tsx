@@ -34,14 +34,14 @@ export default function AdminNotificationsPage() {
   useEffect(() => { fetchNotifications(); }, []);
 
   const markAllRead = async () => {
-    await fetch("/api/admin/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ markAllRead: true }) });
+    await fetch("/api/admin/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ markAllRead: true }) });
     toast.success("All notifications marked as read");
     fetchNotifications();
   };
 
   const handleClick = async (n: Notification) => {
     if (!n.read) {
-      await fetch("/api/admin/notifications", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: n.id }) });
+      await fetch("/api/admin/notifications", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: n.id }) });
       fetchNotifications();
     }
     if (n.link) {

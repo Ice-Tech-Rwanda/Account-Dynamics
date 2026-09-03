@@ -3,9 +3,31 @@ import { parseParams, created, ok, serverError } from "@/lib/api-helpers";
 import { newsletterSchema } from "@/lib/validation";
 import { prisma } from "@/lib/prisma";
 import { notifyAdmins } from "@/lib/services/notifications";
+import { sendNewsletterConfirmation, sendEmail } from "@/lib/services/email";
+import { getSiteSettings } from "@/lib/content/service.server";
 import { logger } from "@/lib/logger";
 import { isFormAllowed } from "@/lib/localRateLimiter";
 import { validateOrigin } from "@/lib/csrf";
+
+async function sendNewsletterEmails(email: string, action: "subscribed" | "reactivated") {
+  try {
+    const settings = await getSiteSettings();
+    await sendEmail({
+      to: settings.adminEmail,
+      subject: `New newsletter subscriber — ${email}`,
+      text: [
+        `A new visitor subscribed to the newsletter:`,
+        ``,
+        `Email: ${email}`,
+        `Status: ${action}`,
+        `Date:   ${new Date().toLocaleString()}`,
+      ].join("\n"),
+    });
+    await sendNewsletterConfirmation(email);
+  } catch (e) {
+    logger.warn("Failed to send newsletter emails", { err: String(e) });
+  }
+}
 
 export async function POST(request: Request) {
   const csrf = validateOrigin(request);
@@ -39,6 +61,7 @@ export async function POST(request: Request) {
         where: { email },
         data: { active: true },
       });
+      await sendNewsletterEmails(email, "reactivated");
       return ok({ ok: true, message: "Welcome back! Your subscription has been reactivated." });
     }
 
@@ -51,6 +74,8 @@ export async function POST(request: Request) {
       title: `New newsletter subscriber`,
       message: email,
     });
+
+    await sendNewsletterEmails(email, "subscribed");
 
     return created({ ok: true, subscriber: { id: subscriber.id, email: subscriber.email } });
   } catch (error) {

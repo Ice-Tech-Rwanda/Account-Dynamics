@@ -123,7 +123,7 @@ export default function AdminMembershipPage() {
     setSaving(true);
     try {
       const res = await fetch("/api/admin/membership", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           membership: {

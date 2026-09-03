@@ -11,5 +11,5 @@ const config = {
 };
 
 export const GET = createGetHandler(prisma.softwareTool, config);
-export const PUT = createUpdateHandler(prisma.softwareTool, config);
+export const PATCH = createUpdateHandler(prisma.softwareTool, config);
 export const DELETE = createDeleteHandler(prisma.softwareTool, config);

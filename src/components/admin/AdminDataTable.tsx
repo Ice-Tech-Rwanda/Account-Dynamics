@@ -22,6 +22,14 @@ interface AdminDataTableProps<T> {
   onRowClick?: (item: T) => void;
   pageSize?: number;
   loading?: boolean;
+  /** When provided, enables server-side search (wired to useAdminList.setSearch). */
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  /** When provided, enables server-side pagination (wired to useAdminList.setPage). */
+  serverPage?: number;
+  serverTotalPages?: number;
+  serverTotal?: number;
+  onPageChange?: (page: number) => void;
 }
 
 export function AdminDataTable<T extends Record<string, any>>({
@@ -33,13 +41,24 @@ export function AdminDataTable<T extends Record<string, any>>({
   onRowClick,
   pageSize = 10,
   loading = false,
+  searchValue,
+  onSearchChange,
+  serverPage,
+  serverTotalPages,
+  serverTotal,
+  onPageChange,
 }: AdminDataTableProps<T>) {
-  const [search, setSearch] = useState("");
+  const serverSide = Boolean(onSearchChange || onPageChange);
+  const [localSearch, setLocalSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(0);
 
+  const search = serverSide ? (searchValue ?? "") : localSearch;
+
   const filtered = useMemo(() => {
+    // In server-side mode the data is already filtered/paginated by the server.
+    if (serverSide) return data;
     let result = data;
     if (search && searchKeys.length > 0) {
       const q = search.toLowerCase();
@@ -56,10 +75,29 @@ export function AdminDataTable<T extends Record<string, any>>({
       });
     }
     return result;
-  }, [data, search, sortKey, sortDir, searchKeys]);
+  }, [data, search, sortKey, sortDir, searchKeys, serverSide]);
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  const paged = filtered.slice(page * pageSize, (page + 1) * pageSize);
+  const totalPages = serverSide
+    ? (serverTotalPages ?? Math.ceil(data.length / pageSize))
+    : Math.ceil(filtered.length / pageSize);
+  const paged = serverSide ? filtered : filtered.slice(page * pageSize, (page + 1) * pageSize);
+
+  const handleSearchChange = (value: string) => {
+    if (onSearchChange) {
+      onSearchChange(value);
+    } else {
+      setLocalSearch(value);
+      setPage(0);
+    }
+  };
+
+  const handlePageChange = (target: number) => {
+    if (onPageChange) {
+      onPageChange(target);
+    } else {
+      setPage(target);
+    }
+  };
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -70,6 +108,13 @@ export function AdminDataTable<T extends Record<string, any>>({
     }
   };
 
+  const currentPage = serverSide ? (serverPage ?? 1) - 1 : page;
+  const start = currentPage * pageSize + 1;
+  const end = serverSide
+    ? currentPage * pageSize + data.length
+    : Math.min((currentPage + 1) * pageSize, filtered.length);
+  const total = serverSide ? (serverTotal ?? data.length) : filtered.length;
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row gap-3 mb-4 items-start sm:items-center justify-between">
@@ -78,7 +123,7 @@ export function AdminDataTable<T extends Record<string, any>>({
           <input
             type="text"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+            onChange={(e) => { handleSearchChange(e.target.value); }}
             placeholder={searchPlaceholder}
             className="w-full h-9 pl-9 pr-3 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-brand/30 focus:ring-2 focus:ring-brand/10 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500 transition-all"
           />
@@ -157,12 +202,12 @@ export function AdminDataTable<T extends Record<string, any>>({
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800">
             <p className="text-xs text-slate-400">
-              Showing {page * pageSize + 1}–{Math.min((page + 1) * pageSize, filtered.length)} of {filtered.length}
+              Showing {start}–{Math.max(start, end)} of {total}
             </p>
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
+                onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-800 transition-colors"
               >
                 <ChevronLeft className="size-4" />
@@ -170,10 +215,10 @@ export function AdminDataTable<T extends Record<string, any>>({
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i}
-                  onClick={() => setPage(i)}
+                  onClick={() => handlePageChange(i)}
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition-colors",
-                    page === i
+                    currentPage === i
                       ? "bg-brand text-white"
                       : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
@@ -182,8 +227,8 @@ export function AdminDataTable<T extends Record<string, any>>({
                 </button>
               ))}
               <button
-                onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                disabled={page >= totalPages - 1}
+                onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
+                disabled={currentPage >= totalPages - 1}
                 className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30 dark:hover:bg-slate-800 transition-colors"
               >
                 <ChevronRight className="size-4" />

@@ -7,7 +7,7 @@ import { X } from "lucide-react"
 interface Field {
   name: string
   label: string
-  type?: "text" | "email" | "number" | "textarea" | "select" | "date"
+  type?: "text" | "email" | "number" | "textarea" | "select" | "date" | "checkbox"
   options?: { label: string; value: string }[]
   required?: boolean
   placeholder?: string
@@ -24,16 +24,53 @@ interface CrudDialogProps {
 }
 
 export function CrudDialog({ open, onClose, onSave, fields, initial, title }: CrudDialogProps) {
-  const [form, setForm] = useState<Record<string, any>>(initial ?? {})
-  const [saving, setSaving] = useState(false)
-
   if (!open) return null
 
+  // Re-mount the inner form every time the dialog opens so state resets for a
+  // create and pre-fills the correct data for an edit (prevents stale data).
+  return (
+    <CrudDialogInner
+      key={initial?.id ?? "create"}
+      onClose={onClose}
+      onSave={onSave}
+      fields={fields}
+      initial={initial}
+      title={title}
+    />
+  )
+}
+
+function CrudDialogInner({
+  onClose,
+  onSave,
+  fields,
+  initial,
+  title,
+}: Omit<CrudDialogProps, "open">) {
+  const [form, setForm] = useState<Record<string, any>>(initial ?? {})
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const validate = () => {
+    for (const f of fields) {
+      const value = form[f.name]
+      if (f.required && (value === undefined || value === null || value === "")) {
+        setError(`${f.label} is required.`)
+        return false
+      }
+    }
+    return true
+  }
+
   const handleSave = async () => {
+    if (!validate()) return
     setSaving(true)
+    setError(null)
     try {
       await onSave(form)
       onClose()
+    } catch (e: any) {
+      setError(e?.message ?? "Failed to save. Please try again.")
     } finally {
       setSaving(false)
     }
@@ -47,6 +84,11 @@ export function CrudDialog({ open, onClose, onSave, fields, initial, title }: Cr
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="size-4" /></button>
         </div>
         <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30 px-3 py-2 text-xs text-red-700 dark:text-red-300">
+              {error}
+            </div>
+          )}
           {fields.map((f) => (
             <div key={f.name}>
               <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">{f.label}</Label>
@@ -70,6 +112,16 @@ export function CrudDialog({ open, onClose, onSave, fields, initial, title }: Cr
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
+              ) : f.type === "checkbox" ? (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(form[f.name])}
+                    onChange={(e) => setForm({ ...form, [f.name]: e.target.checked })}
+                    className="size-4 rounded border-slate-300 text-brand focus:ring-brand/30"
+                  />
+                  <span className="text-sm text-slate-600 dark:text-slate-300">{f.label}</span>
+                </div>
               ) : (
                 <Input
                   type={f.type ?? "text"}

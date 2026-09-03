@@ -17,7 +17,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   return NextResponse.json(user);
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { session, error } = await requireRole("SUPER_ADMIN");
   if (error) return error;
 
@@ -26,6 +26,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const parsed = userUpdateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") }, { status: 400 });
+  }
+
+  if (Object.keys(parsed.data).length === 0) {
+    return NextResponse.json({ error: "No fields provided to update" }, { status: 400 });
   }
 
   // Prevent self-deactivation
@@ -39,7 +43,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 
   // Protect last SUPER_ADMIN: prevent demoting or deactivating the last one
-  if (parsed.data.role && parsed.data.role !== "SUPER_ADMIN" || parsed.data.active === false) {
+  const affectsActiveSuperAdmin =
+    (parsed.data.role !== undefined && parsed.data.role !== "SUPER_ADMIN") ||
+    parsed.data.active === false;
+  if (affectsActiveSuperAdmin) {
     const targetUser = await prisma.user.findUnique({ where: { id }, select: { role: true, active: true } });
     if (targetUser?.role === "SUPER_ADMIN" && targetUser.active) {
       const superAdminCount = await prisma.user.count({ where: { role: "SUPER_ADMIN", active: true } });
@@ -87,7 +94,9 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     await prisma.user.delete({ where: { id } });
     await logAudit({ userId: session.user.id, action: "user:delete", entity: "User", entityId: id });
     return new NextResponse(null, { status: 204 });
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch (error: any) {
+    if (error?.code === "P2025") return NextResponse.json({ error: "Not found" }, { status: 404 });
+    console.error("[admin:users] delete error", error);
+    return NextResponse.json({ error: "Failed to delete user" }, { status: 500 });
   }
 }
