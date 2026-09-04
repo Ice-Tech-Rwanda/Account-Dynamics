@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
+import { sendQuoteStatusUpdate } from "@/lib/services/email";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { error } = await requireRole("EDITOR");
@@ -54,8 +55,21 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   try {
+    const old = await prisma.quoteRequest.findUnique({
+      where: { id },
+      select: { status: true, email: true, name: true, service: true },
+    });
+
     const quote = await prisma.quoteRequest.update({ where: { id }, data });
     await logAudit({ userId: session.user.id, action: "quote:update", entity: "QuoteRequest", entityId: id, details: JSON.stringify(Object.keys(data)) });
+
+    if (old && data.status && data.status !== old.status && old.email) {
+      sendQuoteStatusUpdate(
+        { email: old.email, name: old.name, service: old.service },
+        data.status,
+      ).catch((err) => console.error("[quote] status email failed", err));
+    }
+
     return NextResponse.json(quote);
   } catch (error: any) {
     if (error?.code === "P2025") return NextResponse.json({ error: "Not found" }, { status: 404 });

@@ -351,13 +351,176 @@ function bookingText(data: BookingConfirmationData, isTentative: boolean): strin
   ].join("\n");
 }
 
-export async function sendBookingConfirmation(data: BookingConfirmationData) {
-  const isTentative = true; // consultations are confirmed by our team within 1 business day
+export async function sendBookingConfirmation(data: BookingConfirmationData, isTentative = true) {
   await sendEmail({
     to: data.email,
-    subject: `Booking request received — ${data.service}`,
+    subject: isTentative
+      ? `Booking request received — ${data.service}`
+      : `Booking confirmed — ${data.service}`,
     text: bookingText(data, isTentative),
     html: bookingHtml(data, isTentative),
     calendar: buildIcs(data),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Status-change emails  (sent when admin updates a lead's status)
+// ---------------------------------------------------------------------------
+
+type StatusUpdateData = {
+  email: string;
+  name: string;
+  service?: string | null;
+  /** Extra context shown in the email (date, quote amount, etc.) */
+  details?: Record<string, string | null | undefined>;
+};
+
+const STATUS_EMAIL: Record<string, { subject: string; heading: string; body: string }> = {
+  // Consultation
+  CONFIRMED: {
+    subject: "Your consultation has been confirmed",
+    heading: "Consultation Confirmed",
+    body: "Your consultation has been confirmed. We look forward to meeting you.",
+  },
+  CANCELLED: {
+    subject: "Your consultation has been cancelled",
+    heading: "Consultation Cancelled",
+    body: "Your consultation has been cancelled. If this was a mistake, please contact us to rebook.",
+  },
+  // Quote
+  QUOTED: {
+    subject: "Your quote is ready for review",
+    heading: "Quote Ready",
+    body: "We've prepared your quote. Please review the details below or contact us for any questions.",
+  },
+  ACCEPTED: {
+    subject: "Your quote has been accepted",
+    heading: "Quote Accepted",
+    body: "Great news — your quote has been accepted. Our team will be in touch shortly to arrange next steps.",
+  },
+  DECLINED: {
+    subject: "Your quote has been declined",
+    heading: "Quote Declined",
+    body: "Your quote request has been declined. If you have any questions, please don't hesitate to reach out.",
+  },
+  // Inquiry
+  QUALIFIED: {
+    subject: "Your inquiry has been reviewed",
+    heading: "Inquiry Reviewed",
+    body: "Thank you for your inquiry. Our team has reviewed your request and will be in touch with next steps.",
+  },
+  CONVERTED: {
+    subject: "Your inquiry has been processed",
+    heading: "Inquiry Processed",
+    body: "Your inquiry has been processed. Our team will follow up with you shortly.",
+  },
+  CLOSED: {
+    subject: "Your inquiry has been closed",
+    heading: "Inquiry Closed",
+    body: "Your inquiry has been closed. If you need further assistance, please contact us.",
+  },
+};
+
+function statusUpdateHtml(data: StatusUpdateData, status: string, meta: { heading: string; body: string }): string {
+  const extraRows = data.details
+    ? Object.entries(data.details)
+        .filter(([, v]) => v?.trim())
+        .map(
+          ([k, v]) =>
+            `<tr><td style='font-size:12px;color:#64748b;padding:4px 0;text-transform:uppercase;'>${escapeHtml(k)}</td></tr>` +
+            `<tr><td style='font-size:15px;font-weight:600;color:#0f172a;padding:0 0 14px;'>${escapeHtml(v!.trim())}</td></tr>`
+        )
+        .join("")
+    : "";
+
+  return [
+    "<div style='font-family:Arial,Helvetica,sans-serif;color:#1e293b;max-width:600px;margin:0 auto;'>",
+    "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#0A1F45;border-radius:12px 12px 0 0;padding:28px 32px;'>",
+    "<tr><td style='color:#D9FF3A;font-size:22px;font-weight:bold;'>Account Dynamics</td></tr>",
+    "<tr><td style='color:#ffffff;font-size:13px;opacity:.85;padding-top:4px;'>Accounting · Tax · Advisory · Toronto, Canada</td></tr>",
+    "</table>",
+    "<div style='border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:32px;background:#ffffff;'>",
+    `<h2 style='margin:0 0 12px;font-size:18px;'>${escapeHtml(meta.heading)}${data.service ? ` — ${escapeHtml(data.service)}` : ""}</h2>`,
+    `<p style='margin:0 0 20px;font-size:14px;line-height:1.6;color:#475569;'>Hi ${escapeHtml(data.name)},</p>`,
+    `<p style='margin:0 0 24px;font-size:14px;line-height:1.6;color:#475569;'>${escapeHtml(meta.body)}</p>`,
+    extraRows
+      ? `<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 22px;'>${extraRows}</table>`
+      : "",
+    "<p style='margin:24px 0 0;font-size:14px;line-height:1.6;color:#475569;'>If you have any questions, just reply to this email or call us.</p>",
+    "<p style='margin:28px 0 0;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;'>Warm regards,<br/>The Account Dynamics Team<br/><span style='color:#64748b;'>${siteConfig.phone} · ${siteConfig.email}</span></p>",
+    "</div>",
+    "</div>",
+  ].join("");
+}
+
+function statusUpdateText(data: StatusUpdateData, status: string, meta: { heading: string; body: string }): string {
+  const lines = [
+    `${siteConfig.name} — ${meta.heading}`,
+    "",
+    `Hi ${data.name},`,
+    "",
+    meta.body,
+    "",
+  ];
+  if (data.service) lines.push(`Service: ${data.service}`);
+  if (data.details) {
+    for (const [k, v] of Object.entries(data.details)) {
+      if (v?.trim()) lines.push(`${k}: ${v.trim()}`);
+    }
+  }
+  lines.push(
+    "",
+    "If you have any questions, just reply to this email or call us.",
+    "",
+    "Warm regards,",
+    siteConfig.name,
+    siteConfig.phone,
+    siteConfig.email,
+  );
+  return lines.join("\n");
+}
+
+/**
+ * Send a status-change email to the customer for consultations.
+ * Only sends for customer-facing statuses: CONFIRMED, CANCELLED.
+ */
+export async function sendConsultationStatusUpdate(data: StatusUpdateData, newStatus: string) {
+  const meta = STATUS_EMAIL[newStatus];
+  if (!meta) return; // non-customer-facing status, skip
+  await sendEmail({
+    to: data.email,
+    subject: `${meta.subject}${data.service ? ` — ${data.service}` : ""}`.slice(0, 140),
+    text: statusUpdateText(data, newStatus, meta),
+    html: statusUpdateHtml(data, newStatus, meta),
+  });
+}
+
+/**
+ * Send a status-change email to the customer for quotes.
+ * Only sends for customer-facing statuses: QUOTED, ACCEPTED, DECLINED.
+ */
+export async function sendQuoteStatusUpdate(data: StatusUpdateData, newStatus: string) {
+  const meta = STATUS_EMAIL[newStatus];
+  if (!meta) return;
+  await sendEmail({
+    to: data.email,
+    subject: `${meta.subject}${data.service ? ` — ${data.service}` : ""}`.slice(0, 140),
+    text: statusUpdateText(data, newStatus, meta),
+    html: statusUpdateHtml(data, newStatus, meta),
+  });
+}
+
+/**
+ * Send a status-change email to the customer for inquiries.
+ * Only sends for customer-facing statuses: QUALIFIED, CONVERTED, CLOSED.
+ */
+export async function sendInquiryStatusUpdate(data: StatusUpdateData, newStatus: string) {
+  const meta = STATUS_EMAIL[newStatus];
+  if (!meta) return;
+  await sendEmail({
+    to: data.email,
+    subject: `${meta.subject}${data.service ? ` — ${data.service}` : ""}`.slice(0, 140),
+    text: statusUpdateText(data, newStatus, meta),
+    html: statusUpdateHtml(data, newStatus, meta),
   });
 }

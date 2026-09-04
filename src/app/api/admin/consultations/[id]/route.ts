@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
+import { sendConsultationStatusUpdate } from "@/lib/services/email";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { error } = await requireRole("EDITOR");
@@ -54,8 +55,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   try {
+    // Fetch old status before updating (for status-change email)
+    const old = await prisma.consultationRequest.findUnique({
+      where: { id },
+      select: { status: true, email: true, name: true, service: true },
+    });
+
     const consultation = await prisma.consultationRequest.update({ where: { id }, data });
     await logAudit({ userId: session.user.id, action: "consultation:update", entity: "ConsultationRequest", entityId: id, details: JSON.stringify(Object.keys(data)) });
+
+    // Send status-change email if status actually changed
+    if (old && data.status && data.status !== old.status && old.email) {
+      sendConsultationStatusUpdate(
+        { email: old.email, name: old.name, service: old.service },
+        data.status,
+      ).catch((err) => console.error("[consultation] status email failed", err));
+    }
+
     return NextResponse.json(consultation);
   } catch (error: any) {
     if (error?.code === "P2025") return NextResponse.json({ error: "Not found" }, { status: 404 });

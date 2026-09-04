@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 import {
@@ -81,6 +82,19 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+      router.push("/admin/login");
+      router.refresh();
+    } catch {
+      setSigningOut(false);
+    }
+  };
 
   return (
     <aside
@@ -157,7 +171,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
         ))}
       </nav>
 
-      <div className="border-t border-slate-100 p-2 dark:border-slate-800/50">
+      <div className="border-t border-slate-100 p-2 space-y-1 dark:border-slate-800/50">
         <Link
           href="/"
           className={cn(
@@ -165,9 +179,22 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
             collapsed && "justify-center px-0 py-2.5"
           )}
         >
-          <LogOut className="size-[18px] shrink-0" />
+          <Globe className="size-[18px] shrink-0" />
           {!collapsed && <span>View Site</span>}
         </Link>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all disabled:opacity-50",
+            collapsed && "justify-center px-0 py-2.5"
+          )}
+          title={collapsed ? "Sign Out" : undefined}
+        >
+          <LogOut className="size-[18px] shrink-0" />
+          {!collapsed && <span>{signingOut ? "Signing out..." : "Sign Out"}</span>}
+        </button>
       </div>
     </aside>
   );
