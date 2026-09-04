@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 
+// Blob deletion uses Node-only APIs (fs/path) and the server-only blob token.
+export const runtime = "nodejs";
+
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { error } = await requireRole("EDITOR");
   if (error) return error;

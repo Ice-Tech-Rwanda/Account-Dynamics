@@ -4,6 +4,12 @@ import { requireRole } from "@/lib/admin/api-registry";
 import { logAudit } from "@/lib/audit";
 import { validateFile, processUpload } from "@/lib/uploads/handler";
 
+// The Blob upload handler uses Node-only APIs (fs/path, sharp) and reads the
+// server-only BLOB_READ_WRITE_TOKEN from process.env at request time. Pin the
+// route to the Node.js runtime so the token is always available and the
+// @vercel/blob SDK runs on Node, not the Edge runtime.
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   const { session, error } = await requireRole("ADMIN");
   if (error) return error;

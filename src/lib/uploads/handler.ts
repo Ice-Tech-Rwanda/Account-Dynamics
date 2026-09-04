@@ -9,6 +9,7 @@
  */
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { isBlobConfigured } from "@/lib/uploads/config";
 
 const MAX_FILE_SIZE = Number(process.env.RESOURCE_MAX_UPLOAD_BYTES ?? 5 * 1024 * 1024); // 5MB default
 
@@ -136,10 +137,6 @@ async function resizeToWebp(
   }
 }
 
-function isBlobEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-}
-
 /**
  * Store an uploaded file and return metadata for the Media record.
  * Uses Vercel Blob when configured, otherwise the local filesystem.
@@ -182,7 +179,7 @@ export async function processUpload(file: File, detectedMime?: string): Promise<
     ? (generateUniqueFilename(file.name).replace(/\.[^.]+$/, ".webp"))
     : generateUniqueFilename(file.name);
 
-  if (isBlobEnabled()) {
+  if (isBlobConfigured()) {
     // Use a fresh random suffix ourselves (deterministic name); disable Blob's own.
     const { put } = await import("@vercel/blob");
     const { url } = await put(`uploads/${uploadFilename}`, buffer ?? file, {
@@ -196,7 +193,7 @@ export async function processUpload(file: File, detectedMime?: string): Promise<
   // NOTE: In serverless environments (Vercel, etc.) the filesystem is read-only
   // during requests, so a local write here would fail and surface as a 400.
   // Require Vercel Blob (or raise a clear error) instead of failing silently.
-  if (!isBlobEnabled() && process.env.NODE_ENV === "production" && process.env.VERCEL === "1") {
+  if (!isBlobConfigured() && process.env.NODE_ENV === "production" && process.env.VERCEL === "1") {
     throw new Error(
       "Upload storage is not configured for this environment. " +
         "Set BLOB_READ_WRITE_TOKEN (Vercel Blob) to enable file uploads, or use 'Add by URL'."
