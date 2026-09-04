@@ -14,6 +14,19 @@ function normalizeRecipients(to: string | string[]): string | string[] {
   return Array.isArray(to) ? to : to;
 }
 
+function errorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (err && typeof err === "object") {
+    const anyErr = err as any;
+    return (
+      anyErr?.message ||
+      anyErr?.error?.message ||
+      JSON.stringify(anyErr)
+    );
+  }
+  return String(err);
+}
+
 export async function sendEmail(opts: EmailOptions) {
   const from = process.env.EMAIL_FROM || siteConfig.email;
   const attachments = opts.calendar
@@ -45,13 +58,24 @@ export async function sendEmail(opts: EmailOptions) {
       if (attachments?.length) payload.attachments = attachments;
       const { data, error } = await resend.emails.send(payload as any);
       if (error) {
-        throw error;
+        throw new Error(
+          error["message"] || error["name"] || JSON.stringify(error)
+        );
       }
       logger.info("email sent via Resend", { to: opts.to, id: data?.id });
       return;
     } catch (err) {
-      logger.warn("Resend send failed", { err: String(err), to: opts.to });
-      // fall through to SMTP fallback below
+      const msg = errorMessage(err);
+      logger.warn("Resend send failed", { err: msg, to: opts.to, from });
+      // Domain-verification failures are not recoverable via SMTP fallback if
+      // the SMTP backend is Resend too, but still attempt the fallback below
+      // in case a separate SMTP provider is configured.
+      if (/550|domain is not verified|verify your domain/i.test(msg)) {
+        logger.warn(
+          "Resend rejected the sender domain. Verify EARLY the domain used by EMAIL_FROM " +
+            "in your Resend account (https://resend.com/domains). See 'Email setup' in the README."
+        );
+      }
     }
   }
 
@@ -78,9 +102,9 @@ export async function sendEmail(opts: EmailOptions) {
       html: opts.html ?? opts.text?.replace(/\n/g, "<br/>"),
       attachments,
     });
-    logger.info("email sent via SMTP", { to: opts.to });
+    logger.info("email sent via SMTP", { to: opts.to, from });
   } catch (err) {
-    logger.warn("sendEmail fallback - log only", { err: String(err), to: opts.to });
+    logger.warn("sendEmail fallback - log only", { err: errorMessage(err), to: opts.to, from });
     logger.info("email payload", { to: opts.to, subject: opts.subject });
   }
 }

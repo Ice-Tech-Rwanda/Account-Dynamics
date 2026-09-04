@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       }
 
       try {
-        const uploaded = await processUpload(file);
+        const uploaded = await processUpload(file, validation.mimeType);
 
         const media = await prisma.media.create({
           data: {

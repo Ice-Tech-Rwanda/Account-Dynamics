@@ -44,11 +44,22 @@ function clientIp(request: Request): string {
 // Lazy singleton for Upstash (only created if env is configured).
 let upstash: Ratelimit | null | undefined;
 
+function upstashConfigured(): boolean {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  if (!url || !process.env.UPSTASH_REDIS_REST_TOKEN) return false;
+  // Upstash requires an https REST URL. Some setups paste the raw `redis-cli`
+  // connection strings into this var by mistake; treat those as unconfigured.
+  try {
+    return new URL(url).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 function getUpstash(): Ratelimit | null {
   if (upstash !== undefined) return upstash;
 
-  const hasRedis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!hasRedis) {
+  if (!upstashConfigured()) {
     upstash = null;
     return null;
   }

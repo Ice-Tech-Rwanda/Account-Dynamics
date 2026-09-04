@@ -42,15 +42,42 @@ export interface UploadResult {
   height?: number;
 }
 
-export function validateFile(file: File): { ok: true } | { ok: false; error: string } {
+const EXTENSION_MIME: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".pdf": "application/pdf",
+  ".doc": "application/msword",
+  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".xls": "application/vnd.ms-excel",
+  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ".txt": "text/plain",
+  ".md": "text/markdown",
+};
+
+/**
+ * Infer a MIME type from a filename extension. Returns "" when unknown.
+ */
+export function detectMimeFromFilename(filename: string): string {
+  return EXTENSION_MIME[path.extname(filename).toLowerCase()] ?? "";
+}
+
+export function validateFile(file: File): { ok: true; mimeType: string } | { ok: false; error: string } {
   if (file.size > MAX_FILE_SIZE) {
     const maxMB = Math.round(MAX_FILE_SIZE / (1024 * 1024));
     return { ok: false, error: `File too large. Maximum size is ${maxMB}MB.` };
   }
-  if (!ALL_ALLOWED_TYPES.has(file.type)) {
-    return { ok: false, error: `File type "${file.type}" is not allowed.` };
+
+  // Some browsers send an empty MIME type for files with uncommon extensions.
+  // Fall back to detection from the filename extension so valid uploads work.
+  let mimeType = file.type || detectMimeFromFilename(file.name);
+
+  if (!ALL_ALLOWED_TYPES.has(mimeType)) {
+    return { ok: false, error: `File type "${file.type || "unknown"}" is not allowed. Use an image (JPG/PNG/WebP/GIF) or a document (PDF/DOC/DOCX/XLS/XLSX/TXT).` };
   }
-  return { ok: true };
+  return { ok: true, mimeType };
 }
 
 function sanitizeFilename(name: string): string {
@@ -70,8 +97,8 @@ function generateUniqueFilename(originalName: string): string {
   return `${base}-${timestamp}-${random}${ext}`;
 }
 
-function isImage(file: File): boolean {
-  return ALLOWED_IMAGE_TYPES.has(file.type);
+function isImageByMime(mime: string): boolean {
+  return ALLOWED_IMAGE_TYPES.has(mime);
 }
 
 /** Read image dimensions with sharp (best-effort, optional). */
@@ -116,18 +143,24 @@ function isBlobEnabled(): boolean {
 /**
  * Store an uploaded file and return metadata for the Media record.
  * Uses Vercel Blob when configured, otherwise the local filesystem.
+ *
+ * @param file The uploaded File.
+ * @param detectedMime Optional MIME type already validated by validateFile.
+ *        Used as the source of truth when the browser reported an empty/incorrect
+ *        MIME so image processing and storage use a recognized type.
  */
-export async function processUpload(file: File): Promise<UploadResult> {
-  const originalBuffer = isImage(file) ? Buffer.from(await file.arrayBuffer()) : null;
+export async function processUpload(file: File, detectedMime?: string): Promise<UploadResult> {
+  const mime = detectedMime || file.type;
+  const originalBuffer = isImageByMime(mime) ? Buffer.from(await file.arrayBuffer()) : null;
 
   // Resize/recompress raster images (JPEG, PNG, WebP) once, used for BOTH backends.
   let buffer: Buffer | null = originalBuffer;
-  let finalMime = file.type;
+  let finalMime = mime;
   let width: number | undefined;
   let height: number | undefined;
   const dims = originalBuffer ? await imageDimensions(originalBuffer) : {};
 
-  const convertibleImage = isImage(file) && file.type !== "image/gif";
+  const convertibleImage = isImageByMime(mime) && mime !== "image/gif";
   if (convertibleImage) {
     const resized = await resizeToWebp(originalBuffer!);
     if (resized) {

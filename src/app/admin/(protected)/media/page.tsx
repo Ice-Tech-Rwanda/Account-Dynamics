@@ -2,18 +2,24 @@
 
 import { useState, useRef } from "react";
 import { toast } from "sonner";
-import { Upload, Trash2, Copy, Image as ImageIcon, FileText, Pencil } from "lucide-react";
+import { Upload, Trash2, Copy, Image as ImageIcon, FileText, Pencil, Plus } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { useAdminList } from "@/components/admin/useAdminList";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { CrudDialog } from "@/components/admin/CrudDialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AdminMediaPage() {
   const { data, loading, search, setSearch, refresh } = useAdminList<any>({ endpoint: "/api/admin/media", pageSize: 24 });
   const [uploading, setUploading] = useState(false);
   const [deleteItem, setDeleteItem] = useState<any>(null);
   const [editItem, setEditItem] = useState<any>(null);
+  const [urlOpen, setUrlOpen] = useState(false);
+  const [urlValue, setUrlValue] = useState("");
+  const [urlAlt, setUrlAlt] = useState("");
+  const [urlSaving, setUrlSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,18 +30,45 @@ export default function AdminMediaPage() {
     for (const file of files) formData.append("files", file);
     try {
       const res = await fetch("/api/admin/media/upload", { method: "POST", body: formData });
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Upload failed" }));
-        toast.error(err.error || "Upload failed");
+        if (json.errors?.length) {
+          const first = json.errors[0];
+          toast.error(`${first.filename}: ${first.error}`);
+        } else {
+          toast.error(json.error || "Upload failed");
+        }
         return;
       }
-      const json = await res.json();
       if (json.uploaded?.length) toast.success(`${json.uploaded.length} file(s) uploaded`);
-      if (json.errors?.length) toast.error(`${json.errors.length} file(s) failed`);
+      if (json.errors?.length) toast.error(`${json.errors.length} file(s) failed: ${json.errors[0].error}`);
       refresh();
     } catch { toast.error("Upload failed"); }
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const handleAddByUrl = async () => {
+    if (!urlValue.trim()) { toast.error("Please paste an image URL"); return; }
+    setUrlSaving(true);
+    try {
+      const res = await fetch("/api/admin/media/url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlValue, alt: urlAlt }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast.success("Image added from URL");
+        setUrlOpen(false);
+        setUrlValue("");
+        setUrlAlt("");
+        refresh();
+      } else {
+        toast.error(json.error || "Failed to add by URL");
+      }
+    } catch { toast.error("Failed to add by URL"); }
+    setUrlSaving(false);
   };
 
   const handleDelete = async () => {
@@ -82,6 +115,9 @@ export default function AdminMediaPage() {
         <input ref={fileRef} type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" className="hidden" onChange={handleUpload} />
         <Button variant="brand" size="sm" className="rounded-xl gap-1.5" onClick={() => fileRef.current?.click()} disabled={uploading}>
           <Upload className="size-3.5" /> {uploading ? "Uploading..." : "Upload Files"}
+        </Button>
+        <Button variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={() => setUrlOpen(true)}>
+          <Plus className="size-3.5" /> Add by URL
         </Button>
         <div className="relative flex-1 max-w-xs">
           <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search media..." className="w-full h-9 pl-3 pr-3 rounded-lg border border-slate-200 bg-white text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300" />
@@ -133,6 +169,44 @@ export default function AdminMediaPage() {
       />
 
       <ConfirmDialog open={!!deleteItem} onClose={() => setDeleteItem(null)} onConfirm={handleDelete} title="Delete media?" message="This will permanently remove this file." />
+
+      {urlOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setUrlOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white">Add image by URL</h2>
+              <button onClick={() => setUrlOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <div>
+                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">Image URL</Label>
+                <Input
+                  value={urlValue}
+                  onChange={(e) => setUrlValue(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  className="mt-1 rounded-xl"
+                />
+                <p className="mt-1 text-[11px] text-slate-400">Must end in .jpg, .png, .webp, or .gif.</p>
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">Alt text (optional)</Label>
+                <Input
+                  value={urlAlt}
+                  onChange={(e) => setUrlAlt(e.target.value)}
+                  placeholder="Describe the image"
+                  className="mt-1 rounded-xl"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+              <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setUrlOpen(false)}>Cancel</Button>
+              <Button variant="brand" size="sm" className="rounded-xl" onClick={handleAddByUrl} disabled={urlSaving}>
+                {urlSaving ? "Adding..." : "Add"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminPageShell>
   );
 }
