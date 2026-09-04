@@ -196,7 +196,8 @@ export async function processUpload(file: File, detectedMime?: string): Promise<
   if (!isBlobConfigured() && process.env.NODE_ENV === "production" && process.env.VERCEL === "1") {
     throw new Error(
       "Upload storage is not configured for this environment. " +
-        "Set BLOB_READ_WRITE_TOKEN (Vercel Blob) to enable file uploads, or use 'Add by URL'."
+        "Set BLOB_READ_WRITE_TOKEN (Vercel Blob) to enable file uploads, or use 'Add by URL'. " +
+        `(vercel=${process.env.VERCEL === "1"}, nodeEnv=${process.env.NODE_ENV})`
     );
   }
 
