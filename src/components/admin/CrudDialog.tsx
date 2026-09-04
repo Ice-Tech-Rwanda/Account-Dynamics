@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X } from "lucide-react"
+import { ImageUpload } from "@/components/admin/ImageUpload"
 
 interface Field {
   name: string
   label: string
-  type?: "text" | "email" | "number" | "textarea" | "select" | "date" | "checkbox"
+  type?: "text" | "email" | "number" | "textarea" | "select" | "date" | "checkbox" | "image"
   options?: { label: string; value: string }[]
   required?: boolean
   placeholder?: string
@@ -91,6 +92,15 @@ function CrudDialogInner({
           )}
           {fields.map((f) => (
             <div key={f.name}>
+              {f.type === "image" ? (
+                <ImageUpload
+                  label={f.label}
+                  value={form[f.name] ?? ""}
+                  onChange={(url) => setForm({ ...form, [f.name]: url })}
+                  placeholder={f.placeholder}
+                />
+              ) : (
+                <>
               <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">{f.label}</Label>
               {f.type === "textarea" ? (
                 <textarea
@@ -132,6 +142,8 @@ function CrudDialogInner({
                   required={f.required}
                   min={f.min}
                 />
+              )}
+                </>
               )}
             </div>
           ))}

@@ -51,7 +51,11 @@ export async function POST(request: Request) {
         results.push(media);
       } catch (err) {
         console.error("[upload] failed to process file", file.name, err);
-        errors.push({ filename: file.name, error: "Failed to process file" });
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Failed to process file";
+        errors.push({ filename: file.name, error: msg });
       }
     }
 

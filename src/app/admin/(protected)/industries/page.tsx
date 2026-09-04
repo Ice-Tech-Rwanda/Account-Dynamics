@@ -146,7 +146,7 @@ export default function AdminIndustriesPage() {
           { name: "slug", label: "Slug", required: true },
           { name: "description", label: "Description", type: "textarea", required: true },
           { name: "icon", label: "Icon Name", placeholder: "Building2" },
-          { name: "image", label: "Image URL", placeholder: "/uploads/... or https://..." },
+          { name: "image", label: "Image", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "services", label: "Services offered (comma-separated)", placeholder: "Tax, Audit, Payroll" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {

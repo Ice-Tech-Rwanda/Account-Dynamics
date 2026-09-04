@@ -193,6 +193,16 @@ export async function processUpload(file: File, detectedMime?: string): Promise<
   }
 
   // Local filesystem fallback (local dev / self-hosted).
+  // NOTE: In serverless environments (Vercel, etc.) the filesystem is read-only
+  // during requests, so a local write here would fail and surface as a 400.
+  // Require Vercel Blob (or raise a clear error) instead of failing silently.
+  if (!isBlobEnabled() && process.env.NODE_ENV === "production" && process.env.VERCEL === "1") {
+    throw new Error(
+      "Upload storage is not configured for this environment. " +
+        "Set BLOB_READ_WRITE_TOKEN (Vercel Blob) to enable file uploads, or use 'Add by URL'."
+    );
+  }
+
   const finalBuffer = buffer ?? Buffer.from(await file.arrayBuffer());
   const now = new Date();
   const subDir = path.join("uploads", String(now.getFullYear()), String(now.getMonth() + 1).padStart(2, "0"));

@@ -154,7 +154,7 @@ export default function AdminTeamPage() {
           { name: "name", label: "Full Name", required: true },
           { name: "role", label: "Position / Role", required: true },
           { name: "bio", label: "Biography", type: "textarea" },
-          { name: "photo", label: "Photo URL", placeholder: "/uploads/... or https://..." },
+          { name: "photo", label: "Photo", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "email", label: "Email (optional)", type: "email" },
           { name: "linkedin", label: "LinkedIn Profile URL" },
           { name: "expertise", label: "Expertise (comma-separated)", placeholder: "Tax Planning, Audit, Advisory" },

@@ -151,7 +151,7 @@ export default function AdminTestimonialsPage() {
           { name: "company", label: "Company / Business Name" },
           { name: "position", label: "Title / Position" },
           { name: "content", label: "Testimonial Content", type: "textarea", required: true },
-          { name: "photo", label: "Client Photo URL", placeholder: "/uploads/... or https://..." },
+          { name: "photo", label: "Client Photo", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "rating", label: "Rating (1 to 5)", type: "number", min: 1 },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {

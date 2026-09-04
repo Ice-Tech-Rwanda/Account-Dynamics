@@ -143,7 +143,7 @@ export function AdminTopBar() {
                 </div>
                 <div className="p-1.5 space-y-0.5">
                   {[
-                    { label: "Profile", icon: User, href: "/admin/settings" },
+                    { label: "Profile", icon: User, href: "/admin/profile" },
                     { label: "Settings", icon: Settings, href: "/admin/settings" },
                     { label: "Sign Out", icon: LogOut, href: "/admin/login", danger: true },
                   ].map((item) => {

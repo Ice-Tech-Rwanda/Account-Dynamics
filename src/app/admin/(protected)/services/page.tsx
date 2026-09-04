@@ -163,7 +163,7 @@ export default function AdminServicesPage() {
           { name: "description", label: "Full Description", type: "textarea" },
           { name: "shortDescription", label: "Short Summary", type: "textarea" },
           { name: "icon", label: "Icon Name", placeholder: "Briefcase" },
-          { name: "image", label: "Image URL", placeholder: "/uploads/... or https://..." },
+          { name: "image", label: "Image", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "ctaLabel", label: "CTA Button Label", placeholder: "Request a Consultation" },
           { name: "ctaUrl", label: "CTA Destination URL", placeholder: "/contact" },
           { name: "seoTitle", label: "SEO Title", placeholder: "Page title for search engines" },

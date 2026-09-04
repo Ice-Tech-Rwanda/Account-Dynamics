@@ -153,7 +153,7 @@ export default function AdminSoftwarePage() {
         fields={[
           { name: "name", label: "Tool Name (e.g. QuickBooks Online)", required: true },
           { name: "description", label: "Description / Usage Note", type: "textarea" },
-          { name: "logo", label: "Logo URL", placeholder: "/uploads/... or https://..." },
+          { name: "logo", label: "Logo", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "websiteUrl", label: "Official Website URL" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {

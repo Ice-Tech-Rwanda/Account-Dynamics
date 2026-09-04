@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Building2, Phone, Clock, Share2, MessageCircle, Calendar, Shield, Save } from "lucide-react";
+import { Building2, Phone, Clock, Share2, MessageCircle, Calendar, Shield, Save, Image as ImageIcon } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 interface SettingField {
   key: string;
   label: string;
   placeholder?: string;
   description?: string;
-  type?: "text" | "textarea";
+  type?: "text" | "textarea" | "image";
 }
 
 interface SettingGroup {
@@ -25,6 +26,28 @@ interface SettingGroup {
 }
 
 const SETTING_GROUPS: SettingGroup[] = [
+  {
+    id: "branding",
+    label: "Branding & Logos",
+    icon: ImageIcon,
+    description: "Upload or paste your website logo and favicon",
+    fields: [
+      {
+        key: "logo",
+        label: "Website Logo",
+        type: "image",
+        placeholder: "/uploads/... or https://...",
+        description: "Shown in the header and footer. PNG or WebP with a transparent background works best.",
+      },
+      {
+        key: "favicon",
+        label: "Favicon (browser tab icon)",
+        type: "image",
+        placeholder: "/uploads/... or https://...",
+        description: "Small square icon shown in the browser tab. 32x32 or 48x48 PNG recommended.",
+      },
+    ],
+  },
   {
     id: "company",
     label: "Company & Brand",
@@ -239,6 +262,22 @@ export default function AdminSettingsPage() {
           <div className="space-y-4">
             {currentGroup.fields.map((field) => (
               <div key={field.key} className="space-y-1">
+                {field.type === "image" ? (
+                  <div>
+                    <ImageUpload
+                      label={field.label}
+                      value={settings[field.key] ?? ""}
+                      onChange={(url) => update(field.key, url)}
+                      placeholder={field.placeholder}
+                    />
+                    {field.description && (
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 pt-1">
+                        {field.description}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <>
                 <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">
                   {field.label}
                 </Label>
@@ -261,6 +300,8 @@ export default function AdminSettingsPage() {
                   <p className="text-[11px] text-slate-400 dark:text-slate-500 pt-0.5">
                     {field.description}
                   </p>
+                )}
+                  </>
                 )}
               </div>
             ))}
