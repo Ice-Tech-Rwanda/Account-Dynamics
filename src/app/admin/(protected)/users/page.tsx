@@ -7,6 +7,7 @@ import { useAdminList } from "@/components/admin/useAdminList";
 import { AdminDataTable, type Column } from "@/components/admin/AdminDataTable";
 import { CrudDialog } from "@/components/admin/CrudDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { adminFetch } from "@/lib/admin-fetch";
 import { Badge } from "@/components/ui/badge";
 
 const ROLE_COLORS: Record<string, string> = {
@@ -16,7 +17,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function AdminUsersPage() {
-  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
+  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/users",
     pageSize: 20,
   });
@@ -25,7 +26,7 @@ export default function AdminUsersPage() {
   const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleCreate = async (formData: Record<string, any>) => {
-    const res = await fetch("/api/admin/users", {
+    const res = await adminFetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -42,7 +43,7 @@ export default function AdminUsersPage() {
 
   const handleUpdate = async (formData: Record<string, any>) => {
     if (!editItem) return;
-    const res = await fetch(`/api/admin/users/${editItem.id}`, {
+    const res = await adminFetch(`/api/admin/users/${editItem.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -59,7 +60,7 @@ export default function AdminUsersPage() {
 
   const handleDelete = async () => {
     if (!deleteItem) return;
-    const res = await fetch(`/api/admin/users/${deleteItem.id}`, { method: "DELETE" });
+    const res = await adminFetch(`/api/admin/users/${deleteItem.id}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("User deleted");
       refresh();
@@ -153,6 +154,8 @@ export default function AdminUsersPage() {
         onPageChange={setPage}
         serverTotalPages={totalPages}
         serverTotal={total}
+        error={error}
+        onRetry={refresh}
       />
 
       <CrudDialog
@@ -163,7 +166,7 @@ export default function AdminUsersPage() {
         fields={[
           { name: "name", label: "Full Name", required: true },
           { name: "email", label: "Email Address", type: "email", required: true },
-          { name: "password", label: "Password", required: true, placeholder: "Min 8 characters" },
+          { name: "password", label: "Password", required: true, placeholder: "Min 12 characters, letters + numbers" },
           {
             name: "role",
             label: "Role",

@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminIndustriesPage() {
-  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
+  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/industries",
     pageSize: 20,
   });
@@ -130,6 +130,8 @@ export default function AdminIndustriesPage() {
         onPageChange={setPage}
         serverTotalPages={totalPages}
         serverTotal={total}
+        error={error}
+        onRetry={refresh}
       />
 
       <CrudDialog

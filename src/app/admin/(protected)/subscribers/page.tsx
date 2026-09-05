@@ -9,7 +9,7 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminSubscribersPage() {
-  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
+  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
     endpoint: "/api/admin/subscribers",
     pageSize: 20,
   });
@@ -92,6 +92,8 @@ export default function AdminSubscribersPage() {
         onPageChange={setPage}
         serverTotalPages={totalPages}
         serverTotal={total}
+        error={error}
+        onRetry={refresh}
       />
 
       <ConfirmDialog

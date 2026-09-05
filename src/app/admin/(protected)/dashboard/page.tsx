@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   Clock,
   TrendingUp,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import {
   AreaChart,
@@ -30,6 +32,8 @@ import {
 } from "recharts";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { adminFetch } from "@/lib/admin-fetch";
 
 interface LeadItem {
   id: string;
@@ -115,13 +119,20 @@ function ChartTooltip({ active, payload, label }: any) {
 export default function AdminDashboardPage() {
   const [data, setData] = useState<DashboardPayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchStats = () => {
     setLoading(true);
-    fetch("/api/admin/stats")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((payload) => setData(payload))
-      .catch(() => {})
+    setError(null);
+    adminFetch("/api/admin/stats")
+      .then(async (r) => {
+        if (!r.ok) {
+          setError("Failed to load dashboard statistics.");
+          return;
+        }
+        setData(await r.json());
+      })
+      .catch(() => setError("Failed to load dashboard statistics."))
       .finally(() => setLoading(false));
   };
 
@@ -191,6 +202,15 @@ export default function AdminDashboardPage() {
       onRefresh={fetchStats}
       loading={loading}
     >
+      {error && (
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-red-200 bg-red-50 dark:bg-red-500/10 dark:border-red-500/30 px-6 py-5 mb-8 text-center">
+          <AlertTriangle className="size-6 text-red-400" />
+          <p className="text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>
+          <Button variant="outline" size="sm" className="rounded-xl gap-1.5 mt-1" onClick={fetchStats}>
+            <RefreshCw className="size-3.5" /> Retry
+          </Button>
+        </div>
+      )}
       {/* 1. KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {kpiCards.map((card) => {

@@ -9,6 +9,21 @@ const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
+const DEFAULT_ADMIN_PASSWORD = "change-me";
+
+function isDefaultPassword(password) {
+  return password === DEFAULT_ADMIN_PASSWORD;
+}
+
+function isStrongPassword(password) {
+  return (
+    typeof password === "string" &&
+    password.length >= 12 &&
+    /[a-zA-Z]/.test(password) &&
+    /\d/.test(password)
+  );
+}
+
 async function main() {
   console.log("🌱 Seeding Account Dynamics database with full verified data...\n");
 
@@ -16,25 +31,59 @@ async function main() {
   // 1. Admin User
   // -----------------------------------------------------------------------
   const adminEmail = process.env.ADMIN_EMAIL || "admin@accountdynamics.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "change-me";
+  const adminPassword = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // Production guard: never allow a known default or weak password to be
+  // written to a live database. The seed exits hard instead of compromising
+  // the SUPER_ADMIN account.
+  if (isProduction && (isDefaultPassword(adminPassword) || !isStrongPassword(adminPassword))) {
+    console.error(
+      "\n❌ Refusing to seed the SUPER_ADMIN user in production.\n" +
+        "   ADMIN_PASSWORD must be set to a strong password (min 12 chars, " +
+        "letters and numbers) and may NOT be the default 'change-me'.\n" +
+        "   Example: ADMIN_PASSWORD='$(openssl rand -base64 18)' npm run db:seed\n"
+    );
+    process.exit(1);
+  }
+
   const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {
-      password: hashedPassword,
-      role: "SUPER_ADMIN",
-      active: true,
-    },
-    create: {
-      email: adminEmail,
-      name: "Admin",
-      password: hashedPassword,
-      role: "SUPER_ADMIN",
-      active: true,
-    },
-  });
-  console.log(`✅ Super Admin user: ${admin.email} (${admin.role})`);
+  let admin = await prisma.user.findUnique({ where: { email: adminEmail } });
+
+  if (isProduction) {
+    if (admin) {
+      console.log(`✅ Super Admin user: ${admin.email} (${admin.role}) — password preserved (production guard prevents auto-reset)`);
+    } else {
+      admin = await prisma.user.create({
+        data: {
+          email: adminEmail,
+          name: "Admin",
+          password: hashedPassword,
+          role: "SUPER_ADMIN",
+          active: true,
+        },
+      });
+      console.log(`✅ Created Super Admin user: ${admin.email} (${admin.role})`);
+    }
+  } else {
+    admin = await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {
+        password: hashedPassword,
+        role: "SUPER_ADMIN",
+        active: true,
+      },
+      create: {
+        email: adminEmail,
+        name: "Admin",
+        password: hashedPassword,
+        role: "SUPER_ADMIN",
+        active: true,
+      },
+    });
+    console.log(`✅ Super Admin user: ${admin.email} (${admin.role})`);
+  }
 
   // -----------------------------------------------------------------------
   // 2. Service Categories, Services & Service Benefits

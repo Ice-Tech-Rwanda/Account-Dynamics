@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminServicesPage() {
   const { data: categories } = useAdminList<any>({ endpoint: "/api/admin/service-categories", pageSize: 100 });
-  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } =
+  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } =
     useAdminList<any>({ endpoint: "/api/admin/services", pageSize: 20 });
   const [editItem, setEditItem] = useState<any>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -139,6 +139,8 @@ export default function AdminServicesPage() {
         onPageChange={setPage}
         serverTotalPages={totalPages}
         serverTotal={total}
+        error={error}
+        onRetry={refresh}
       />
 
       <CrudDialog

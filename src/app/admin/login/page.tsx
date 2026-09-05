@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -26,6 +27,9 @@ function AdminLoginForm() {
     LoginState | undefined,
     FormData
   >(loginAction, undefined);
+
+  const sessionExpired = searchParams.get("expired") === "1";
+  const resetDone = searchParams.get("reset") === "1";
 
   return (
     <div className="min-h-screen bg-white">
@@ -105,6 +109,24 @@ function AdminLoginForm() {
             </div>
 
             {/* Form */}
+            {sessionExpired && (
+              <div
+                role="status"
+                className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700"
+              >
+                Your session expired. Please sign in again to continue.
+              </div>
+            )}
+            {resetDone && (
+              <div
+                role="status"
+                className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+              >
+                Your password has been reset. Please sign in with your new
+                password.
+              </div>
+            )}
+
             <form action={formAction} className="space-y-5">
               <input type="hidden" name="redirectTo" value={redirectTo} />
               {/* Email */}
@@ -167,6 +189,16 @@ function AdminLoginForm() {
                     )}
                   </button>
                 </div>
+              </div>
+
+              {/* Forgot password */}
+              <div className="flex justify-end">
+                <Link
+                  href="/admin/forgot-password"
+                  className="text-xs font-semibold text-brand hover:underline"
+                >
+                  Forgot your password?
+                </Link>
               </div>
 
               {/* Error */}

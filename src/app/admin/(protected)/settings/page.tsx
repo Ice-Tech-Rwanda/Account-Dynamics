@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Building2, Phone, Clock, Share2, MessageCircle, Calendar, Shield, Save, Image as ImageIcon } from "lucide-react";
+import { Building2, Phone, Clock, Share2, MessageCircle, Calendar, Shield, Save, Image as ImageIcon, AlertTriangle, RefreshCw } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { adminFetch } from "@/lib/admin-fetch";
 
 interface SettingField {
   key: string;
@@ -165,19 +166,38 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("company");
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadSettings = useCallback(async () => {
+    try {
+      const res = await adminFetch("/api/admin/settings");
+      if (!res.ok) {
+        setLoadError("Failed to load website settings.");
+        return;
+      }
+      setSettings(await res.json());
+    } catch {
+      setLoadError("Failed to load website settings.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch("/api/admin/settings")
-      .then((r) => (r.ok ? r.json() : {}))
-      .then(setSettings)
-      .catch(() => toast.error("Failed to load settings"))
-      .finally(() => setLoading(false));
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadSettings();
+  }, [loadSettings]);
+
+  const reloadSettings = useCallback(() => {
+    setLoadError(null);
+    setLoading(true);
+    loadSettings();
+  }, [loadSettings]);
 
   const saveAll = async () => {
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/settings", {
+      const res = await adminFetch("/api/admin/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
@@ -200,6 +220,20 @@ export default function AdminSettingsPage() {
 
   const currentGroup = SETTING_GROUPS.find((g) => g.id === activeTab) || SETTING_GROUPS[0];
   const CurrentIcon = currentGroup.icon;
+
+  if (loadError) {
+    return (
+      <AdminPageShell title="Website Settings" subtitle="Manage firm contact details, business hours, WhatsApp integration, and global configurations">
+        <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700/50 px-6 py-10 text-center">
+          <AlertTriangle className="size-7 text-red-400 mx-auto mb-3" />
+          <p className="text-sm text-slate-500">{loadError}</p>
+          <Button variant="outline" size="sm" className="rounded-xl gap-1.5 mt-4" onClick={reloadSettings}>
+            <RefreshCw className="size-3.5" /> Retry
+          </Button>
+        </div>
+      </AdminPageShell>
+    );
+  }
 
   return (
     <AdminPageShell

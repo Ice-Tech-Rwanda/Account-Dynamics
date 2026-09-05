@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Search, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, RefreshCw, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T> {
@@ -30,6 +30,10 @@ interface AdminDataTableProps<T> {
   serverTotalPages?: number;
   serverTotal?: number;
   onPageChange?: (page: number) => void;
+  /** Load/request error message. When set, an error state is shown instead of "No results found." */
+  error?: string | null;
+  /** Called by the Retry button in the error state. */
+  onRetry?: () => void;
 }
 
 export function AdminDataTable<T extends Record<string, any>>({
@@ -47,6 +51,8 @@ export function AdminDataTable<T extends Record<string, any>>({
   serverTotalPages,
   serverTotal,
   onPageChange,
+  error = null,
+  onRetry,
 }: AdminDataTableProps<T>) {
   const serverSide = Boolean(onSearchChange || onPageChange);
   const [localSearch, setLocalSearch] = useState("");
@@ -166,6 +172,25 @@ export function AdminDataTable<T extends Record<string, any>>({
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-12 text-center text-sm text-slate-400">
                     Loading...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={columns.length} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <AlertTriangle className="size-6 text-red-400" />
+                      <p className="text-sm text-slate-500">
+                        {error === "Failed to fetch" ? "Could not load data. Please check your connection and try again." : error}
+                      </p>
+                      {onRetry && (
+                        <button
+                          onClick={onRetry}
+                          className="inline-flex items-center gap-1.5 h-8 px-3 mt-1 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 transition-colors"
+                        >
+                          <RefreshCw className="size-3.5" /> Retry
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : paged.length === 0 ? (

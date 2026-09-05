@@ -1,26 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useActionState } from "react";
 import { toast } from "sonner";
-import { Save, Mail, ShieldCheck } from "lucide-react";
+import { Save, Mail, ShieldCheck, Lock, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { adminFetch } from "@/lib/admin-fetch";
+import { changePasswordAction, type ChangePasswordState } from "./actions";
 
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [pwState, pwFormAction, pwPending] = useActionState<
+    ChangePasswordState | undefined,
+    FormData
+  >(changePasswordAction, undefined);
+
+  const loadProfile = useCallback(async () => {
+    try {
+      const res = await adminFetch("/api/admin/me");
+      if (!res.ok) {
+        setLoadError("Failed to load your profile.");
+        return;
+      }
+      setProfile(await res.json());
+    } catch {
+      setLoadError("Failed to load your profile.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch("/api/admin/me")
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setProfile)
-      .catch(() => toast.error("Failed to load profile"))
-      .finally(() => setLoading(false));
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadProfile();
+  }, [loadProfile]);
+
+  const reloadProfile = useCallback(() => {
+    setLoadError(null);
+    setLoading(true);
+    loadProfile();
+  }, [loadProfile]);
 
   const update = (key: string, value: any) =>
     setProfile((prev) => (prev ? { ...prev, [key]: value } : prev));
@@ -35,7 +61,7 @@ export default function AdminProfilePage() {
         bio: profile.bio ?? "",
         image: profile.image ?? "",
       };
-      const res = await fetch("/api/admin/me", {
+      const res = await adminFetch("/api/admin/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -54,6 +80,22 @@ export default function AdminProfilePage() {
       setSaving(false);
     }
   };
+
+  if (loadError) {
+    return (
+      <AdminPageShell title="My Profile" subtitle="Edit your account information">
+        <div className="max-w-2xl">
+          <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700/50 px-6 py-10 text-center">
+            <AlertTriangle className="size-7 text-red-400 mx-auto mb-3" />
+            <p className="text-sm text-slate-500">{loadError}</p>
+            <Button variant="outline" size="sm" className="rounded-xl gap-1.5 mt-4" onClick={reloadProfile}>
+              <RefreshCw className="size-3.5" /> Retry
+            </Button>
+          </div>
+        </div>
+      </AdminPageShell>
+    );
+  }
 
   return (
     <AdminPageShell
@@ -121,6 +163,75 @@ export default function AdminProfilePage() {
               />
             </div>
           </div>
+
+          {/* Change password */}
+          <form action={pwFormAction} className="rounded-2xl border border-slate-200/80 bg-white p-6 space-y-5 dark:bg-slate-900 dark:border-slate-700/50">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/10 text-brand">
+                <Lock className="size-4" />
+              </div>
+              <div>
+                <h2 className="text-sm font-black text-slate-900 dark:text-white">Change Password</h2>
+                <p className="text-xs text-slate-400 mt-0.5">Minimum 12 characters, at least one letter and one number</p>
+              </div>
+            </div>
+
+            {pwState?.success && (
+              <div role="status" className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                <CheckCircle2 className="size-4 shrink-0" />
+                Password changed successfully.
+              </div>
+            )}
+            {pwState?.error && (
+              <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {pwState.error}
+              </div>
+            )}
+
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">Current Password</Label>
+              <Input
+                type="password"
+                name="currentPassword"
+                autoComplete="current-password"
+                required
+                placeholder="Enter your current password"
+                className="rounded-xl"
+                disabled={pwPending}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">New Password</Label>
+              <Input
+                type="password"
+                name="newPassword"
+                autoComplete="new-password"
+                required
+                placeholder="12+ characters, letters and numbers"
+                className="rounded-xl"
+                disabled={pwPending}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">Confirm New Password</Label>
+              <Input
+                type="password"
+                name="confirmPassword"
+                autoComplete="new-password"
+                required
+                placeholder="Repeat your new password"
+                className="rounded-xl"
+                disabled={pwPending}
+              />
+            </div>
+
+            <Button type="submit" variant="outline" size="sm" className="rounded-xl gap-1.5" disabled={pwPending}>
+              <Lock className="size-3.5" />
+              {pwPending ? "Updating..." : "Update Password"}
+            </Button>
+          </form>
 
           <div className="flex justify-end">
             <Button variant="brand" size="sm" className="rounded-xl px-5" onClick={handleSave} disabled={saving}>

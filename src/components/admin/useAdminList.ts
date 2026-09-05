@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { adminFetch } from "@/lib/admin-fetch";
 
 interface UseAdminListOptions {
   endpoint: string;
@@ -50,7 +51,7 @@ export function useAdminList<T extends { id: string }>({
         if (v) sp.set(k, v);
       }
 
-      const res = await fetch(`${endpoint}?${sp.toString()}`);
+      const res = await adminFetch(`${endpoint}?${sp.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch");
       const json = await res.json();
 

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, ShieldCheck, Sparkles, Check } from "lucide-react";
+import { Plus, Trash2, ShieldCheck, Sparkles, Check, AlertTriangle, RefreshCw } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { adminFetch } from "@/lib/admin-fetch";
 
 interface Plan {
   id?: string;
@@ -42,40 +43,58 @@ export default function AdminMembershipPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadMembership = useCallback(async () => {
+    try {
+      const res = await adminFetch("/api/admin/membership");
+      if (!res.ok) {
+        setLoadError("Failed to load membership data.");
+        return;
+      }
+      const data = await res.json();
+      if (data?.membership) {
+        let parsedBenefits: string[] = [];
+        try {
+          parsedBenefits = typeof data.membership.benefits === "string"
+            ? JSON.parse(data.membership.benefits)
+            : data.membership.benefits || [];
+        } catch {
+          parsedBenefits = [];
+        }
+        setMembership({
+          title: data.membership.title || "",
+          description: data.membership.description || "",
+          ctaLabel: data.membership.ctaLabel || "Explore Membership Options",
+          ctaUrl: data.membership.ctaUrl || "/book",
+          benefits: parsedBenefits,
+          status: data.membership.status || "PUBLISHED",
+        });
+      }
+      if (data?.plans) {
+        const parsedPlans = data.plans.map((p: any) => ({
+          ...p,
+          features: typeof p.features === "string" ? JSON.parse(p.features || "[]") : p.features || [],
+        }));
+        setPlans(parsedPlans);
+      }
+    } catch {
+      setLoadError("Failed to load membership data.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch("/api/admin/membership")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data?.membership) {
-          let parsedBenefits: string[] = [];
-          try {
-            parsedBenefits = typeof data.membership.benefits === "string"
-              ? JSON.parse(data.membership.benefits)
-              : data.membership.benefits || [];
-          } catch {
-            parsedBenefits = [];
-          }
-          setMembership({
-            title: data.membership.title || "",
-            description: data.membership.description || "",
-            ctaLabel: data.membership.ctaLabel || "Explore Membership Options",
-            ctaUrl: data.membership.ctaUrl || "/book",
-            benefits: parsedBenefits,
-            status: data.membership.status || "PUBLISHED",
-          });
-        }
-        if (data?.plans) {
-          const parsedPlans = data.plans.map((p: any) => ({
-            ...p,
-            features: typeof p.features === "string" ? JSON.parse(p.features || "[]") : p.features || [],
-          }));
-          setPlans(parsedPlans);
-        }
-      })
-      .catch(() => toast.error("Failed to load membership data"))
-      .finally(() => setLoading(false));
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadMembership();
+  }, [loadMembership]);
+
+  const reloadMembership = useCallback(() => {
+    setLoadError(null);
+    setLoading(true);
+    loadMembership();
+  }, [loadMembership]);
 
   const addBenefit = () => {
     if (!benefitInput.trim()) return;
@@ -122,7 +141,7 @@ export default function AdminMembershipPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/membership", {
+      const res = await adminFetch("/api/admin/membership", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -150,6 +169,22 @@ export default function AdminMembershipPage() {
       setSaving(false);
     }
   };
+
+  if (loadError) {
+    return (
+      <AdminPageShell title="Membership Management" subtitle="Manage membership overview, client benefits, and optional pricing tiers">
+        <div className="max-w-4xl">
+          <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700/50 px-6 py-10 text-center">
+            <AlertTriangle className="size-7 text-red-400 mx-auto mb-3" />
+            <p className="text-sm text-slate-500">{loadError}</p>
+            <Button variant="outline" size="sm" className="rounded-xl gap-1.5 mt-4" onClick={reloadMembership}>
+              <RefreshCw className="size-3.5" /> Retry
+            </Button>
+          </div>
+        </div>
+      </AdminPageShell>
+    );
+  }
 
   return (
     <AdminPageShell

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -13,9 +13,12 @@ import {
   MessageCircle,
   Archive,
   CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { adminFetch } from "@/lib/admin-fetch";
 import Link from "next/link";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -34,17 +37,40 @@ export default function AdminInquiryDetailPage() {
   const id = params.id as string;
   const [inquiry, setInquiry] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch(`/api/admin/inquiries/${id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setInquiry)
-      .catch(() => toast.error("Failed to load inquiry"))
-      .finally(() => setLoading(false));
+  const loadInquiry = useCallback(async () => {
+    try {
+      const res = await adminFetch(`/api/admin/inquiries/${id}`);
+      if (res.status === 404) {
+        setLoadError("notfound");
+        return;
+      }
+      if (!res.ok) {
+        setLoadError("Failed to load this inquiry.");
+        return;
+      }
+      setInquiry(await res.json());
+    } catch {
+      setLoadError("Failed to load this inquiry.");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadInquiry();
+  }, [loadInquiry]);
+
+  const reloadInquiry = useCallback(() => {
+    setLoadError(null);
+    setLoading(true);
+    loadInquiry();
+  }, [loadInquiry]);
+
   const updateStatus = async (status: string) => {
-    const res = await fetch(`/api/admin/inquiries/${id}`, {
+    const res = await adminFetch(`/api/admin/inquiries/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -59,7 +85,7 @@ export default function AdminInquiryDetailPage() {
 
   const toggleArchive = async () => {
     const archived = !inquiry.archived;
-    const res = await fetch(`/api/admin/inquiries/${id}`, {
+    const res = await adminFetch(`/api/admin/inquiries/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ archived }),
@@ -73,7 +99,35 @@ export default function AdminInquiryDetailPage() {
   };
 
   if (loading) return <div className="p-8 text-center text-slate-400">Loading inquiry...</div>;
-  if (!inquiry) return <div className="p-8 text-center text-slate-400">Inquiry not found</div>;
+  if (loadError) {
+    return (
+      <div className="max-w-3xl py-16 text-center">
+        <Link
+          href="/admin/inquiries"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-brand transition-colors mb-8"
+        >
+          <ArrowLeft className="size-3.5" /> Back to Inquiries
+        </Link>
+        <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700/50 px-6 py-10">
+          {loadError === "notfound" ? (
+            <>
+              <AlertTriangle className="size-7 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm text-slate-500">This inquiry could not be found. It may have been deleted.</p>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="size-7 text-red-400 mx-auto mb-3" />
+              <p className="text-sm text-slate-500">{loadError}</p>
+              <Button variant="outline" size="sm" className="rounded-xl gap-1.5 mt-4" onClick={reloadInquiry}>
+                <RefreshCw className="size-3.5" /> Retry
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+  if (!inquiry) return null;
 
   const cleanPhone = inquiry.phone ? inquiry.phone.replace(/[^0-9]/g, "") : null;
   const whatsappUrl = cleanPhone

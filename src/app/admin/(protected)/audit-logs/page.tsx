@@ -5,7 +5,7 @@ import { useAdminList } from "@/components/admin/useAdminList";
 import { AdminDataTable, type Column } from "@/components/admin/AdminDataTable";
 
 export default function AdminAuditLogsPage() {
-  const { data, loading, refresh } = useAdminList<any>({
+  const { data, loading, error, refresh } = useAdminList<any>({
     endpoint: "/api/admin/audit-logs",
     pageSize: 20,
   });
@@ -68,6 +68,8 @@ export default function AdminAuditLogsPage() {
         searchKeys={["action", "entity", "details"]}
         searchPlaceholder="Search audit logs..."
         pageSize={20}
+        error={error}
+        onRetry={refresh}
       />
     </AdminPageShell>
   );

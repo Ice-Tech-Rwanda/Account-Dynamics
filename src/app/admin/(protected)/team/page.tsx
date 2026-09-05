@@ -10,8 +10,8 @@ import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminTeamPage() {
-  const { data, loading, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
-    endpoint: "/api/admin/team-members",
+const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
+    endpoint: "/api/admin/team",
     pageSize: 20,
   });
   const [editItem, setEditItem] = useState<any>(null);
@@ -139,6 +139,8 @@ export default function AdminTeamPage() {
         onPageChange={setPage}
         serverTotalPages={totalPages}
         serverTotal={total}
+        error={error}
+        onRetry={refresh}
       />
 
       <CrudDialog
