@@ -2,6 +2,20 @@ import { z } from "zod";
 
 export const emailSchema = z.string().email("Invalid email address").max(255);
 
+/**
+ * Password policy for admin accounts.
+ * Returns an error message when the password is too weak, or null when valid.
+ */
+export function validatePassword(password: string): string | null {
+  if (typeof password !== "string" || password.length < 12) {
+    return "Password must be at least 12 characters long.";
+  }
+  if (!/[a-zA-Z]/.test(password) || !/\d/.test(password)) {
+    return "Password must contain at least one letter and one number.";
+  }
+  return null;
+}
+
 export const slugSchema = z.string().max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug format").optional();
 
 export const paginationSchema = z.object({
@@ -24,11 +38,23 @@ export function parsePagination(params: URLSearchParams): Pagination {
 // Public form schemas
 // ---------------------------------------------------------------------------
 
+// Client-generated UUID used to make a form submission idempotent.
+const idempotencyKeySchema = z
+  .string()
+  .min(16, "Invalid submission key")
+  .max(128)
+  .regex(/^[A-Za-z0-9_-]+$/, "Invalid submission key")
+  .optional();
+
 export const contactSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
   email: emailSchema,
   subject: z.string().min(1, "Subject is required").max(300),
   message: z.string().min(1, "Message is required").max(5000),
+  phone: z.string().max(50).nullable().optional(),
+  company: z.string().max(200).nullable().optional(),
+  service: z.string().max(200).nullable().optional(),
+  idempotencyKey: idempotencyKeySchema,
 });
 
 export const quoteSchema = z.object({
@@ -40,6 +66,7 @@ export const quoteSchema = z.object({
   businessType: z.string().max(200).nullable().optional(),
   message: z.string().max(5000).nullable().optional(),
   preferredContact: z.enum(["email", "phone"]).default("email"),
+  idempotencyKey: idempotencyKeySchema,
 });
 
 export const bookingSchema = z.object({
@@ -50,6 +77,7 @@ export const bookingSchema = z.object({
   date: z.string().max(20).nullable().optional(),
   time: z.string().max(20).nullable().optional(),
   notes: z.string().max(5000).nullable().optional(),
+  idempotencyKey: idempotencyKeySchema,
 });
 
 export const newsletterSchema = z.object({
@@ -181,7 +209,12 @@ export const seoSettingSchema = z.object({
 export const userCreateSchema = z.object({
   name: z.string().min(1).max(200),
   email: emailSchema,
-  password: z.string().min(8).max(200),
+  password: z
+    .string()
+    .min(12, "Password must be at least 12 characters long.")
+    .max(200)
+    .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+    .regex(/\d/, "Password must contain at least one number"),
   role: z.enum(["SUPER_ADMIN", "ADMIN", "EDITOR"]).default("EDITOR"),
   phone: z.string().max(50).nullable().optional(),
   bio: z.string().max(1000).nullable().optional(),

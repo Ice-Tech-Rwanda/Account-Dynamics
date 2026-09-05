@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { submitErrorMessage, isDuplicateSubmit } from "@/lib/client/submit-errors";
 import { Button } from "@/components/ui/button";
 import {
   Send,
@@ -49,6 +50,18 @@ export function ContactForm() {
     company: "", // honeypot
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
+
+  function idempotencyKey() {
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `f-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+    return idempotencyKeyRef.current;
+  }
 
   function validate() {
     const newErrors: Record<string, string> = {};
@@ -75,6 +88,7 @@ export function ContactForm() {
       return;
     }
     setErrors({});
+    setErrorMessage(null);
     setFormState("loading");
 
     try {
@@ -86,28 +100,35 @@ export function ContactForm() {
         .join(" — ")
         .slice(0, 300);
 
-      const message = [
-        formData.phone ? `Phone: ${formData.phone}` : "",
-        formData.message,
-      ]
-        .filter(Boolean)
-        .join("\n")
-        .slice(0, 5000);
-
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: formData.name, email: formData.email, subject, message }),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          company: formData.business || null,
+          service: formData.service || null,
+          subject,
+          message: formData.message.slice(0, 5000),
+          idempotencyKey: idempotencyKey(),
+        }),
       });
 
       if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `Request failed with status ${res.status}`);
+        throw new Error(await submitErrorMessage(res, "Your message could not be sent. Please try again."));
+      }
+
+      if (await isDuplicateSubmit(res)) {
+        // Same key already created this exact message; treat as success.
+        setFormState("success");
+        return;
       }
 
       setFormState("success");
     } catch (err) {
       console.error("Contact form submission failed", err);
+      setErrorMessage(err instanceof Error ? err.message : "Your message could not be sent. Please try again.");
       setFormState("error");
     }
   }
@@ -146,6 +167,8 @@ export function ContactForm() {
           className="mt-8 gap-2 rounded-xl"
           onClick={() => {
             setFormState("idle");
+            setErrorMessage(null);
+            idempotencyKeyRef.current = null;
             setFormData({
               name: "",
               email: "",
@@ -345,10 +368,7 @@ export function ContactForm() {
             className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-600 dark:text-red-400"
           >
             <AlertCircle className="mt-0.5 size-4 shrink-0" />
-            <span>
-              We couldn&apos;t send your message. Please try again in a moment,
-              or contact us directly by phone or email.
-            </span>
+            <span>{errorMessage || "Your message could not be sent. Please try again."}</span>
           </div>
         )}
 

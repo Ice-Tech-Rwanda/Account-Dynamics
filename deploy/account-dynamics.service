@@ -7,42 +7,48 @@
 #
 # NOTE: Before first start, create the production env file (see deploy/.env.production)
 # and rebuild with the correct public URL:
-#   NEXT_PUBLIC_APP_URL=http://localhost:3000 NEXTAUTH_URL=http://localhost:3000 npm run build
-# Then edit WorkingDirectory / ExecStart paths to match this machine.
+#   NEXT_PUBLIC_APP_URL=http://localhost:3100 NEXTAUTH_URL=http://localhost:3100 npm run build
+#
+# Port 3100 is used intentionally: 3000/3002 are taken by adjacent projects on this
+# machine. If the site moves behind a real domain, update the three *_URL vars here,
+# rebuild, and point your reverse proxy at port 3100.
+#
+# Optional: put extra overrides/secrets in /etc/account-dynamics/env (root-only,
+# e.g. DATABASE_URL, RESEND_API_KEY, SMTP_*) and uncomment EnvironmentFile below.
 
 [Unit]
-Description=Account Dynamics Next.js (production, port 3000)
-After=network-online.target docker.service
+Description=Account Dynamics Next.js (production, port 3100)
+After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-# Run as a non-root user. Change to match the app owner on this machine.
+# Run as a non-root user. Matches this machine's app owner.
 User=ice-tech-rwanda
 Group=ice-tech-rwanda
 
-WorkingDirectory=/mnt/windows_files/Advanced Real World Project/Account-Dynamics
+WorkingDirectory=/mnt/new-volume/Advanced Real World Project/Account-Dynamics
 
-# Load production secrets/overrides. Change path as needed.
+# Load production secrets/overrides. Create this file (root-only readable).
 # EnvironmentFile=/etc/account-dynamics/env
 
-# Full path to the Node binary (nvm path shown; adjust to this machine).
-Environment=PORT=3000
+Environment=PORT=3100
 Environment=NODE_ENV=production
-Environment=NEXT_PUBLIC_APP_URL=http://localhost:3000
-Environment=NEXTAUTH_URL=http://localhost:3000
+Environment=NEXT_PUBLIC_APP_URL=http://localhost:3100
+Environment=NEXTAUTH_URL=http://localhost:3100
 
 # Run the compiled Next server via the project's local Next CLI.
 # `node_modules/...` is relative and resolved against WorkingDirectory above
 # (avoids the space in the app path). Full path to the Node binary, no spaces.
 ExecStart=/home/ice-tech-rwanda/.nvm/versions/node/v24.19.0/bin/node \
-  node_modules/next/dist/bin/next start -p 3000
+  node_modules/next/dist/bin/next start -p 3100
 Restart=always
 RestartSec=5
 
 # Hardening. NOTE: the app dir path contains spaces, so ReadWritePaths= cannot be
 # used safely; ProtectSystem=full alone keeps /usr, /boot, /etc read-only while the
-# app writes to /mnt normally. ProtectHome=full keeps the nvm home read-only.
+# app writes normally under /mnt and the DB runs in Docker. ProtectHome=read-only
+# keeps the nvm home read-only.
 NoNewPrivileges=true
 PrivateTmp=true
 RestrictSUIDSGID=true

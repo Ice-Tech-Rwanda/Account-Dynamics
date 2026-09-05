@@ -42,6 +42,31 @@ describe("Contact Schema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("accepts structured contact fields and an idempotency key", () => {
+    const result = contactSchema.safeParse({
+      name: "John Smith",
+      email: "john@example.com",
+      subject: "Service: Bookkeeping",
+      message: "Hello",
+      phone: "416-555-0100",
+      company: "Acme Inc",
+      service: "Bookkeeping",
+      idempotencyKey: "a1b2c3d4e5f6g7h8i9j0k1l2m3",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a malformed idempotency key", () => {
+    const result = contactSchema.safeParse({
+      name: "John",
+      email: "john@example.com",
+      subject: "Test",
+      message: "Hello",
+      idempotencyKey: "../etc/passwd",
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("Quote Schema", () => {
@@ -279,7 +304,7 @@ describe("User Create Schema", () => {
     const result = userCreateSchema.safeParse({
       name: "User",
       email: "user@example.com",
-      password: "password123",
+      password: "Str0ngPassw0rd123!",
     });
     expect(result.success).toBe(true);
     if (result.success) {

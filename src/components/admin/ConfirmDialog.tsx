@@ -1,5 +1,16 @@
+"use client"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, X } from "lucide-react"
+import { AlertTriangle } from "lucide-react"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface ConfirmDialogProps {
   open: boolean
@@ -16,33 +27,40 @@ export function ConfirmDialog({
   title = "Delete item?",
   message = "This action cannot be undone.",
 }: ConfirmDialogProps) {
-  if (!open) return null
+  const [busy, setBusy] = useState(false)
 
   const handleConfirm = async () => {
-    await onConfirm()
-    onClose()
+    if (busy) return
+    setBusy(true)
+    try {
+      await onConfirm()
+      onClose()
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
+    <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
+      <DialogContent className="max-w-sm p-6">
         <div className="flex items-start gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 dark:bg-red-500/10">
             <AlertTriangle className="size-5 text-red-500" />
           </div>
           <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">{title}</h3>
-              <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="size-4" /></button>
-            </div>
-            <p className="mt-2 text-xs text-slate-500">{message}</p>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription className="mt-2">{message}</DialogDescription>
           </div>
         </div>
-        <div className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" size="sm" className="rounded-xl" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" size="sm" className="rounded-xl" onClick={handleConfirm}>Delete</Button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter className="mt-5">
+          <DialogClose asChild>
+            <Button variant="outline" size="sm" className="rounded-xl">Cancel</Button>
+          </DialogClose>
+          <Button variant="destructive" size="sm" className="rounded-xl" onClick={handleConfirm} disabled={busy}>
+            {busy ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

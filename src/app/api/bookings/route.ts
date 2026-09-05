@@ -7,6 +7,7 @@ import { notifyAdminOfLead, sendBookingConfirmation, sendLeadConfirmation } from
 import { getSiteSettings } from "@/lib/content/service.server";
 import { logger } from "@/lib/logger";
 import { isFormAllowed } from "@/lib/localRateLimiter";
+import { claimIdempotency, releaseIdempotency } from "@/lib/idempotency";
 import { validateOrigin } from "@/lib/csrf";
 
 export async function POST(request: Request) {
@@ -19,10 +20,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
+  let idemKey = "";
+
   try {
     const body = await request.json();
     const parsed = parseParams(bookingSchema, body);
     if (!parsed.success) return parsed.error;
+    idemKey = parsed.data.idempotencyKey ?? "";
+
+    // Idempotency: a second submission with the same key is a duplicate.
+    if (idemKey && !claimIdempotency("booking", idemKey)) {
+      return NextResponse.json(
+        { ok: true, duplicate: true, message: "This booking was already received." },
+        { status: 200 }
+      );
+    }
 
     const settings = await getSiteSettings();
 
@@ -75,6 +87,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json(consultation, { status: 201 });
   } catch (error) {
+    // A failed request releases the claim so a genuine retry can proceed.
+    if (idemKey) releaseIdempotency("booking", idemKey);
     logger.error("Failed to create booking", { error: String(error) });
     return serverError();
   }

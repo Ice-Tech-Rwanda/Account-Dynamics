@@ -7,6 +7,7 @@ import { notifyAdminOfLead, sendLeadConfirmation } from "@/lib/services/email";
 import { getSiteSettings } from "@/lib/content/service.server";
 import { logger } from "@/lib/logger";
 import { isFormAllowed } from "@/lib/localRateLimiter";
+import { claimIdempotency, releaseIdempotency } from "@/lib/idempotency";
 import { validateOrigin } from "@/lib/csrf";
 
 // Simple spam detection: reject if message contains suspicious patterns
@@ -30,10 +31,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
+  let idemKey = "";
+
   try {
     const body = await request.json();
     const parsed = parseParams(quoteSchema, body);
     if (!parsed.success) return parsed.error;
+    idemKey = parsed.data.idempotencyKey ?? "";
+
+    // Idempotency: a second submission with the same key is a duplicate.
+    if (idemKey && !claimIdempotency("quote", idemKey)) {
+      return NextResponse.json(
+        { ok: true, duplicate: true, message: "This quote request was already received." },
+        { status: 200 }
+      );
+    }
 
     // Basic spam detection
     if (isSpam(parsed.data)) {
@@ -84,6 +96,8 @@ export async function POST(request: Request) {
 
     return created(quote);
   } catch (error) {
+    // A failed request releases the claim so a genuine retry can proceed.
+    if (idemKey) releaseIdempotency("quote", idemKey);
     logger.error("Failed to create quote request", { error: String(error) });
     return serverError();
   }

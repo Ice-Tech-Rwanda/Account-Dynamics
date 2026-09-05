@@ -3,12 +3,13 @@ import { Phone, MapPin, Clock, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { footerGroups } from "@/lib/navigation";
 import { Logo } from "@/components/brand/Logo";
+import { NewsletterForm } from "@/components/layout/NewsletterForm";
 
 export function Footer() {
   return (
     <footer className="border-t border-slate-200/80 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 dark:border-slate-800/80">
       <div className="it-container px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-6">
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Logo />
@@ -62,6 +63,11 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Newsletter */}
+          <div>
+            <NewsletterForm />
+          </div>
         </div>
 
         {/* Bottom bar */}

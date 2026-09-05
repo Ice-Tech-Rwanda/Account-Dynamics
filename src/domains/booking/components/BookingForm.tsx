@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { submitErrorMessage, isDuplicateSubmit } from "@/lib/client/submit-errors";
 import { Button } from "@/components/ui/button";
 import {
   Send,
@@ -64,6 +65,17 @@ export function BookingForm() {
     notes: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const idempotencyKeyRef = useRef<string | null>(null);
+
+  function idempotencyKey() {
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `f-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+    return idempotencyKeyRef.current;
+  }
 
   function formattedDate(iso: string): string {
     if (!iso) return "";
@@ -96,7 +108,9 @@ export function BookingForm() {
   }
 
   async function handleConfirm() {
+    if (formState === "loading") return;
     setFormState("loading");
+    setErrors({});
     try {
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -109,10 +123,21 @@ export function BookingForm() {
           date: formData.date || null,
           time: formData.time || null,
           notes: formData.notes || null,
+          idempotencyKey: idempotencyKey(),
         }),
       });
 
-      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+      if (!res.ok) {
+        throw new Error(await submitErrorMessage(res, "We couldn't submit your booking. Please try again."));
+      }
+
+      if (await isDuplicateSubmit(res)) {
+        // Same key already created this exact booking; treat as success.
+        setSubmitted({ ...formData });
+        setStep("success");
+        setFormState("idle");
+        return;
+      }
 
       setSubmitted({ ...formData });
       setStep("success");
@@ -120,9 +145,8 @@ export function BookingForm() {
     } catch (err) {
       console.error("Booking form submission failed", err);
       setFormState("idle");
-      setStep("details");
       setErrors({
-        _form: "We couldn't submit your booking. Please try again in a moment.",
+        _form: err instanceof Error ? err.message : "We couldn't submit your booking. Please try again.",
       });
     }
   }
@@ -138,6 +162,7 @@ export function BookingForm() {
 
   function reset() {
     setStep("details");
+    idempotencyKeyRef.current = null;
     setFormData({
       name: "",
       email: "",

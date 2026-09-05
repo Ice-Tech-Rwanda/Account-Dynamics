@@ -192,6 +192,31 @@ export async function replyToCustomer(options: { to: string; subject: string; bo
 }
 
 // ---------------------------------------------------------------------------
+// Admin password reset
+// ---------------------------------------------------------------------------
+
+export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+  const text = [
+    "We received a request to reset your Account Dynamics admin password.",
+    "",
+    "Open the following link to choose a new password. It expires in 30 minutes:",
+    resetUrl,
+    "",
+    "If you didn't request this, you can safely ignore this email — your password will not change.",
+    "",
+    "Warm regards,",
+    siteConfig.name,
+    siteConfig.phone,
+  ].join("\n");
+
+  await sendEmail({
+    to: email,
+    subject: "Reset your Account Dynamics admin password",
+    text,
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Newsletter
 // ---------------------------------------------------------------------------
 
@@ -202,6 +227,8 @@ export async function sendNewsletterConfirmation(email: string) {
     `Thank you for subscribing to the Account Dynamics newsletter. You'll receive updates on accounting, tax, and advisory insights.`,
     ``,
     `If you did not request this subscription, you can safely ignore this email.`,
+    ``,
+    `To unsubscribe at any time, visit: ${siteConfig.siteUrl}/unsubscribe`,
     ``,
     `Warm regards,`,
     siteConfig.name,

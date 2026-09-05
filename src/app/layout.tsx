@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AdminGuard } from "@/components/layout/AdminGuard";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { FloatingWhatsApp } from "@/components/shared/FloatingWhatsApp";
+import { Analytics } from "@/components/analytics/Analytics";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/lib/site";
 
@@ -72,6 +73,7 @@ export default function RootLayout({
           <Toaster position="top-right" richColors />
         </ThemeProvider>
         <FloatingWhatsApp />
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? <Analytics /> : null}
       </body>
     </html>
   );

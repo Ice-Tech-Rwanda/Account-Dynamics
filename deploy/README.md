@@ -84,15 +84,26 @@ Points to the local Postgres (`localhost:5433`). See `deploy/account-dynamics.se
 
 ```bash
 # build with the correct public URL (inlined at build time)
-NEXT_PUBLIC_APP_URL=http://localhost:3000 NEXTAUTH_URL=http://localhost:3000 npm run build
+NEXT_PUBLIC_APP_URL=http://localhost:3100 NEXTAUTH_URL=http://localhost:3100 npm run build
 
-# stop any stale server on 3000, then install+start the service (as root)
+# stop any stale server on 3100, then install+start the service (as root)
 sudo cp deploy/account-dynamics.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now account-dynamics
 ```
 
+Port **3100** is intentional — 3000/3002 belong to adjacent projects on this machine.
+The systemd unit (`deploy/account-dynamics.service`) already pins port 3100 and the
+Node binary; only `WorkingDirectory` must point at the real app path.
+
+If the site moves behind a real domain, change `NEXT_PUBLIC_APP_URL`/`NEXTAUTH_URL`
+(rebuild since the app URL is inlined) and have the reverse proxy → 3100.
+
 Management: `sudo systemctl status/restart account-dynamics`, `journalctl -u account-dynamics -f`.
+
+Required env before first start (values from `deploy/.env.production`, installed as
+`/etc/account-dynamics/env` root-only): `NEXTAUTH_SECRET` (REAL random value — never
+commit one), `DATABASE_URL`/`DIRECT_URL`, and email credentials (Resend or SMTP).
 
 ---
 
@@ -101,9 +112,62 @@ Management: `sudo systemctl status/restart account-dynamics`, `journalctl -u acc
 ```bash
 npm run typecheck   # 0 errors
 npm run lint        # 0 errors (pre-existing warnings only)
-npm test            # 54 passed
-npm run build       # succeeds
+npm test            # 63 passed
+npm run build       # succeeds (needs the local Postgres container running)
 ```
+
+## Launch checklist (self-hosted, port 3100)
+
+After the service is up, smoke-test the money paths:
+
+```bash
+BASE=http://localhost:3100
+
+# Static + deep-link redirect + session choreography
+curl -s -o /dev/null -w "home %{http_code}\n" $BASE/
+curl -s -o /dev/null -w "admin deep-link: %{http_code}\n" -L $BASE/admin/dashboard
+curl -s -o /dev/null -w "unauth api: %{http_code}\n" $BASE/api/admin/stats
+
+# CSP present with nonce, no unsafe-inline in production
+curl -sI $BASE/ | rg -i "content-security-policy" | rg -v "unsafe-inline|unsafe-eval"
+
+# Public form: 201, then duplicate with same idempotency key -> 200 duplicate
+curl -s -o /dev/null -w "contact: %{http_code}\n" -X POST $BASE/api/contact \
+  -H "Content-Type: application/json" -H "Origin: http://localhost:3100" \
+  -d '{"name":"T","email":"t@example.com","subject":"s","message":"m","idempotencyKey":"test-key-123abc-456def"}'
+curl -s -X POST $BASE/api/contact -H "Content-Type: application/json" \
+  -H "Origin: http://localhost:3100" \
+  -d '{"name":"T","email":"t@example.com","subject":"s","message":"m","idempotencyKey":"test-key-123abc-456def"}' \
+  | rg -o '"duplicate":true'    # expect match
+
+# Newsletter subscribe (200/201) and unsubscribe (200); then /unsubscribe page
+curl -s -o /dev/null -w "nl subscribe: %{http_code}\n" -X POST $BASE/api/newsletter \
+  -H "Content-Type: application/json" -H "Origin: http://localhost:3100" \
+  -d '{"email":"reader@example.com"}'
+curl -s -o /dev/null -w "nl unsubscribe: %{http_code}\n" -X POST $BASE/api/newsletter/unsubscribe \
+  -H "Content-Type: application/json" -H "Origin: http://localhost:3100" \
+  -d '{"email":"reader@example.com"}'
+curl -s -o /dev/null -w "unsubscribe page: %{http_code}\n" $BASE/unsubscribe
+
+# Admin login round-trip (create the admin with a REAL password first, see seed)
+curl -s -o /dev/null -w "login page: %{http_code}\n" $BASE/admin/login
+```
+
+### Analytics (optional, GA4)
+
+Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` (e.g. `G-XXXXXXXXXX` **at build time** — it is
+inlined). When set, the root layout loads the GA script via `next/script` and the
+production CSP automatically adds `googletagmanager.com` / `google-analytics.com`
+to `script-src`/`connect-src`. When unset, analytics is completely absent and the
+CSP stays strict. No other change needed.
+
+### Newsletter / unsubscribe
+
+The footer now has a subscribe form (POST `/api/newsletter`); the confirmation
+email includes an unsubscribe link to `/unsubscribe`, which POSTs to
+`/api/newsletter/unsubscribe` (marks the subscriber inactive, kept for admin stats).
+Subscribe is already idempotent via the unique email; unsubscribing a non-subscriber
+still returns success (no enumeration).
 
 ---
 
@@ -121,4 +185,5 @@ npm run build       # succeeds
 | `SMTP_*`, `EMAIL_FROM` | server | for real email delivery |
 | `UPLOADS_SIGNING_SECRET` | server | optional, falls back to NEXTAUTH_SECRET |
 | `ADMIN_EMAIL`/`ADMIN_PASSWORD` | seed | bootstrap admin |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | client/build | optional GA4; enables analytics + opens CSP |
 | `LOG_LEVEL` | server | default `info` |
