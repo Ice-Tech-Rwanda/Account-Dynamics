@@ -22,9 +22,13 @@ describe("Upload Handler - validateFile", () => {
     expect(validateFile(file)).toEqual({ ok: true, mimeType: "image/webp" });
   });
 
-  it("accepts PDF documents", () => {
+  it("rejects PDF documents (images-only library)", () => {
     const file = createMockFile("doc.pdf", "application/pdf", 50000);
-    expect(validateFile(file)).toEqual({ ok: true, mimeType: "application/pdf" });
+    const result = validateFile(file);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain("not allowed");
+    }
   });
 
   it("infers MIME from extension when the browser sends an empty type", () => {
@@ -82,8 +86,9 @@ describe("ALL_ALLOWED_TYPES", () => {
     expect(ALL_ALLOWED_TYPES.has("image/svg+xml")).toBe(false);
   });
 
-  it("includes common document types", () => {
-    expect(ALL_ALLOWED_TYPES.has("application/pdf")).toBe(true);
-    expect(ALL_ALLOWED_TYPES.has("text/plain")).toBe(true);
+  it("excludes document types (images-only library)", () => {
+    expect(ALL_ALLOWED_TYPES.has("application/pdf")).toBe(false);
+    expect(ALL_ALLOWED_TYPES.has("text/plain")).toBe(false);
+    expect(ALL_ALLOWED_TYPES.has("application/msword")).toBe(false);
   });
 });

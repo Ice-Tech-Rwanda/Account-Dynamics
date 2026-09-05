@@ -15,6 +15,11 @@ const MAX_FILE_SIZE = Number(process.env.RESOURCE_MAX_UPLOAD_BYTES ?? 5 * 1024 *
 
 // NOTE: SVG is intentionally excluded — raw SVG uploads can contain script
 // (stored-XSS) when served same-origin. Use PNG/WebP for logos and graphics.
+//
+// NOTE: Only images are accepted. The media library is consumed exclusively by
+// <img> elements across the marketing site; accepting PDFs/DOCX etc. would
+// publish potentially sensitive client documents to public-by-URL paths with no
+// access control. Documents have no supported home in this system yet.
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/jpeg",
   "image/png",
@@ -22,17 +27,7 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/gif",
 ]);
 
-const ALLOWED_DOC_TYPES = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "text/plain",
-  "text/markdown",
-]);
-
-export const ALL_ALLOWED_TYPES = new Set([...ALLOWED_IMAGE_TYPES, ...ALLOWED_DOC_TYPES]);
+export const ALL_ALLOWED_TYPES = ALLOWED_IMAGE_TYPES;
 
 export interface UploadResult {
   url: string;
@@ -49,13 +44,6 @@ const EXTENSION_MIME: Record<string, string> = {
   ".png": "image/png",
   ".webp": "image/webp",
   ".gif": "image/gif",
-  ".pdf": "application/pdf",
-  ".doc": "application/msword",
-  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  ".xls": "application/vnd.ms-excel",
-  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  ".txt": "text/plain",
-  ".md": "text/markdown",
 };
 
 /**
@@ -76,7 +64,7 @@ export function validateFile(file: File): { ok: true; mimeType: string } | { ok:
   let mimeType = file.type || detectMimeFromFilename(file.name);
 
   if (!ALL_ALLOWED_TYPES.has(mimeType)) {
-    return { ok: false, error: `File type "${file.type || "unknown"}" is not allowed. Use an image (JPG/PNG/WebP/GIF) or a document (PDF/DOC/DOCX/XLS/XLSX/TXT).` };
+    return { ok: false, error: `File type "${file.type || "unknown"}" is not allowed. Use an image (JPG/PNG/WebP/GIF) only — documents are not permitted in the media library.` };
   }
   return { ok: true, mimeType };
 }
