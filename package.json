@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Global Line Safaris — premium Rwanda and East Africa tourism website and content management system.",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

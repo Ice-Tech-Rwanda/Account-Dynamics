@@ -1,45 +1,41 @@
 # Dependencies
-node_modules
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
 
 # Next.js
-.next
-out
+/.next/
+/out/
 
-# Logs
-logs
-*.log
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Environment
+# Local env files
 .env
 .env.local
-.env.*
-!.env.example
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Build
-dist
-build
+# Vercel
+.vercel
 
-# Cache
-.cache
-.turbo
+# TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
-# IDE
-.vscode
-.idea
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Database
-*.db
-*.db-journal
-prisma/dev.db
-
-# Runtime-uploaded media (managed via Vercel Blob in prod, local disk in dev)
-public/uploads/
+# Prisma
+prisma/migrations/dev.db
+prisma/migrations/dev.db-journal
