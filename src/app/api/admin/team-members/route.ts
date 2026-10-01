@@ -3,9 +3,6 @@ import { teamMemberSchema, teamMemberUpdateSchema } from "@/lib/validation";
 import {
   createListHandler,
   createCreateHandler,
-  createGetHandler,
-  createUpdateHandler,
-  createDeleteHandler,
 } from "@/lib/admin/api-registry";
 
 const config = {
@@ -16,6 +13,8 @@ const config = {
   searchFields: ["name", "role", "bio"],
   orderBy: { displayOrder: "asc" },
   contentTags: ["team"],
+  filterParams: ["status"],
+  hideArchivedByDefault: true,
 };
 
 export const GET = createListHandler(prisma.teamMember, config);

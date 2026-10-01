@@ -10,8 +10,12 @@ const CONTENT_TAGS = [
   "faqs",
   "homepage",
   "media",
-  "membership",
-  "software",
+  "destinations",
+  "packages",
+  "blog",
+  "trip-inquiries",
+  "internship-inquiries",
+  "seo",
 ] as const;
 
 /** Invalidates all CMS caches + public routes after an admin mutation. */
@@ -32,6 +36,20 @@ export function revalidateSite() {
     "/why-choose-us",
     "/contact",
     "/book",
+    "/destinations",
+    "/destinations/[slug]",
+    "/tour-packages",
+    "/tour-packages/[slug]",
+    "/plan-your-trip",
+    "/gallery",
+    "/blog",
+    "/blog/[slug]",
+    "/training",
+    "/mission-and-values",
+    "/terms",
+    "/privacy-policy",
+    "/about/team/[slug]",
+    "/unsubscribe",
   ]) {
     try {
       revalidatePath(path, path.includes("[") ? "page" : "layout");

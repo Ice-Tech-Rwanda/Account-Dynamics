@@ -4,18 +4,15 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { siteConfig } from "@/lib/site";
+import { Logo } from "@/components/brand/Logo";
+import { useCurrentUserRole } from "@/components/admin/useCurrentUserRole";
 import {
   LayoutDashboard,
   MessageSquare,
-  FileText,
-  CalendarCheck,
   Briefcase,
   Users,
   Building2,
   HelpCircle,
-  Star,
-  Monitor,
   Image,
   Globe,
   Search,
@@ -26,7 +23,12 @@ import {
   UserCog,
   ShieldCheck,
   Bell,
-  Sparkles,
+  Map,
+  Package,
+  Navigation,
+  Newspaper,
+  Mail,
+  GraduationCap,
 } from "lucide-react";
 
 const navGroups = [
@@ -40,20 +42,21 @@ const navGroups = [
     label: "Leads",
     items: [
       { label: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
-      { label: "Quotes", href: "/admin/quotes", icon: FileText },
-      { label: "Consultations", href: "/admin/consultations", icon: CalendarCheck },
+      { label: "Trip Inquiries", href: "/admin/trip-inquiries", icon: Navigation },
+      { label: "Internships", href: "/admin/internship-inquiries", icon: GraduationCap },
+      { label: "Subscribers", href: "/admin/subscribers", icon: Mail },
     ],
   },
   {
     label: "Content",
     items: [
+      { label: "Destinations", href: "/admin/destinations", icon: Map },
+      { label: "Tour Packages", href: "/admin/tour-packages", icon: Package },
       { label: "Services", href: "/admin/services", icon: Briefcase },
       { label: "Team", href: "/admin/team", icon: Users },
       { label: "Industries", href: "/admin/industries", icon: Building2 },
       { label: "FAQs", href: "/admin/faqs", icon: HelpCircle },
-      { label: "Testimonials", href: "/admin/testimonials", icon: Star },
-      { label: "Membership", href: "/admin/membership", icon: Sparkles },
-      { label: "Software", href: "/admin/software", icon: Monitor },
+      { label: "Blog Posts", href: "/admin/blog-posts", icon: Newspaper },
     ],
   },
   {
@@ -68,22 +71,26 @@ const navGroups = [
   {
     label: "System",
     items: [
-      { label: "Users", href: "/admin/users", icon: UserCog },
-      { label: "Audit Logs", href: "/admin/audit-logs", icon: ShieldCheck },
+      // Listing users and reading the audit trail both require ADMIN+.
+      { label: "Users", href: "/admin/users", icon: UserCog, minRole: "ADMIN" as const },
+      { label: "Audit Logs", href: "/admin/audit-logs", icon: ShieldCheck, minRole: "ADMIN" as const },
       { label: "Notifications", href: "/admin/notifications", icon: Bell },
     ],
   },
 ];
 
 interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onNavigate: () => void;
   collapsed: boolean;
   onToggle: () => void;
 }
 
-export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed, onToggle, mobileOpen, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const { atLeast } = useCurrentUserRole();
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -97,36 +104,34 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
   };
 
   return (
-    <aside
+    <aside id="admin-navigation"
+      onKeyDown={(event) => { if (event.key === "Escape") onNavigate(); }}
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-screen flex-col border-r bg-white transition-all duration-300 dark:bg-slate-950/95",
+        "admin-sidebar fixed left-0 top-0 z-40 flex h-screen flex-col border-r bg-white transition-all duration-300 dark:bg-slate-950/95",
         collapsed ? "w-[68px]" : "w-60",
+        mobileOpen && "admin-sidebar-open",
         "border-slate-200/60 dark:border-slate-800/60"
       )}
       style={{ boxShadow: collapsed ? "none" : "inset -1px 0 0 rgba(0,0,0,0.02)" }}
     >
       <div className="flex h-14 items-center justify-between border-b border-slate-100 px-3 dark:border-slate-800/50">
-        <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-brand-strong text-xs font-black text-white shadow-sm shadow-brand/20">
-            {siteConfig.initials}
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-black text-slate-900 dark:text-white">Admin</span>
-              <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-slate-400">v{siteConfig.version}</span>
-            </div>
-          )}
-        </Link>
+        <div className="admin-sidebar-brand"><Logo href="/admin/dashboard" size="sm" showWordmark={false} /></div>
         <button
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           onClick={onToggle}
-          className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-100 hover:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300 transition-colors"
+          className="admin-collapse-button flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 hover:bg-slate-100 hover:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300 transition-colors"
         >
           {collapsed ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-5">
-        {navGroups.map((group) => (
+      <nav aria-label="Administration" onClick={onNavigate} className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-5">
+        {navGroups.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) => !item.minRole || atLeast(item.minRole)
+          );
+          if (visibleItems.length === 0) return null;
+          return (
           <div key={group.label}>
             {!collapsed && (
               <p className="px-2.5 mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
@@ -134,7 +139,7 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
               </p>
             )}
             <div className="space-y-0.5">
-              {group.items.map((item) => {
+              {visibleItems.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
@@ -148,16 +153,12 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
                         ? "bg-gradient-to-r from-brand/10 to-transparent text-brand dark:from-brand/15"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200"
                     )}
+                    aria-current={active ? "page" : undefined}
+                    aria-label={item.label}
                     title={collapsed ? item.label : undefined}
                   >
                     <div className="relative">
                       <Icon className={cn("size-[18px] shrink-0", active && "drop-shadow-sm")} />
-                      {active && (
-                        <span className="absolute -right-1 -top-1 flex h-2 w-2">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-40" />
-                          <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-                        </span>
-                      )}
                     </div>
                     {!collapsed && <span>{item.label}</span>}
                     {!collapsed && active && (
@@ -168,11 +169,13 @@ export function AdminSidebar({ collapsed, onToggle }: AdminSidebarProps) {
               })}
             </div>
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="border-t border-slate-100 p-2 space-y-1 dark:border-slate-800/50">
         <Link
+          aria-label="View website"
           href="/"
           className={cn(
             "flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-600 dark:hover:bg-slate-800/50 dark:hover:text-slate-300 transition-all",

@@ -27,6 +27,7 @@ export interface TeamMember {
   bio: string;
   expertise: string[];
   image?: string | null;
+  photo?: string | null;
   isFounder?: boolean;
   email?: string;
   linkedin?: string;
@@ -54,34 +55,6 @@ export interface WhoWeServe {
   services: string[];
 }
 
-export interface TechnologyItem {
-  title: string;
-  description?: string;
-  icon: string;
-  logo?: string;
-  websiteUrl?: string;
-}
-
-export interface Testimonial {
-  id: string;
-  clientName: string;
-  company?: string | null;
-  position?: string | null;
-  content: string;
-  photo?: string | null;
-  rating?: number | null;
-}
-
-export interface MembershipPlanData {
-  id: string;
-  name: string;
-  price?: number | null;
-  billingFrequency?: string | null;
-  description?: string | null;
-  features: string[];
-  featured: boolean;
-}
-
 export interface HomepageSectionData {
   sectionKey: string;
   eyebrow?: string | null;
@@ -92,19 +65,17 @@ export interface HomepageSectionData {
   image?: string | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
-  plans?: MembershipPlanData[];
 }
 
 export interface HomepageContent {
   hero: HomepageSectionData;
   services: HomepageSectionData;
-  advisory: HomepageSectionData;
   about: HomepageSectionData;
   whyChoose: HomepageSectionData;
-  whoWeServe: HomepageSectionData;
-  technology: HomepageSectionData;
-  membership: HomepageSectionData;
-  faq: HomepageSectionData;
+  destinations: HomepageSectionData;
+  packages: HomepageSectionData;
+  gallery: HomepageSectionData;
+  partners: HomepageSectionData;
   finalCta: HomepageSectionData;
 }
 
@@ -142,4 +113,88 @@ export interface SiteImageSetting {
   key: string;
   url: string;
   alt?: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Tourism content
+// ---------------------------------------------------------------------------
+
+export interface Destination {
+  id?: string;
+  name: string;
+  slug: string;
+  shortDescription?: string | null;
+  description: string;
+  location?: string | null;
+  category?: string | null;
+  image?: string | null;
+  galleryImages?: string[] | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  displayOrder?: number;
+  featured?: boolean;
+}
+
+export interface TourPackageDay {
+  heading?: string;
+  body?: string;
+}
+
+export interface TourPackage {
+  id?: string;
+  title: string;
+  slug: string;
+  location?: string | null;
+  category?: string | null;
+  duration?: string | null;
+  price?: string | null;
+  priceNote?: string | null;
+  overview: string;
+  facts?: string | null;
+  highlights?: string[] | null;
+  itinerary?: TourPackageDay[] | null;
+  inclusions?: string[] | null;
+  exclusions?: string[] | null;
+  note?: string | null;
+  image?: string | null;
+  galleryImages?: string[] | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  featured?: boolean;
+  displayOrder?: number;
+}
+
+export interface BlogPost {
+  id?: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: string | null;
+  category?: string | null;
+  image?: string | null;
+  author?: string | null;
+  readTime?: number | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  featured?: boolean;
+  displayOrder?: number;
+  status?: string;
+  createdAt?: string;
+}
+
+export interface TripInquiry {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  travelDate?: string | null;
+  duration?: string | null;
+  travelers?: string | null;
+  preferredPackage?: string | null;
+  budget?: string | null;
+  destination?: string | null;
+  message?: string | null;
+  status?: string;
+  read?: boolean;
+  createdAt?: string;
 }

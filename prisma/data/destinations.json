@@ -1,0 +1,132 @@
+[
+  {
+    "slug": "rwanda",
+    "name": "Rwanda",
+    "location": "Rwanda",
+    "category": "Country",
+    "image": "/gls/destinations/destination_1787676580_9b68dfe032.jpg",
+    "featured": true,
+    "shortDescription": "Known as the \"Land of a Thousand Hills\", Rwanda pairs dramatic scenery with extraordinary wildlife and warm, welcoming culture.",
+    "description": "Rwanda, known as the \"Land of a Thousand Hills\", is a compact East African country of rolling terraced hills, rainforests, volcanoes, lakes and savannah. It is one of the most rewarding destinations on the continent, offering mountain gorilla trekking in Volcanoes National Park, chimpanzee tracking and canopy walks in Nyungwe Forest, Big Five game drives in Akagera National Park, and relaxed lakeside escapes along Lake Kivu.\n\nBeyond its wildlife, Rwanda is a country of rich heritage and modern energy. Kigali is a clean, vibrant capital, while cultural sites such as the King's Palace in Nyanza and the National Museum in Huye tell the story of the nation. Global Line Safaris designs itineraries that bring these experiences together in one seamless journey."
+  },
+  {
+    "slug": "lake-muhazi",
+    "name": "Lake Muhazi",
+    "location": "Eastern Rwanda",
+    "category": "Lake",
+    "image": "/gls/destinations/destination_1787675613_43b1880104.jpg",
+    "featured": false,
+    "shortDescription": "Just an hour from Kigali, Lake Muhazi is a tranquil escape with calm waters, green shorelines and relaxed lakeside dining.",
+    "description": "Just an hour from Kigali, Lake Muhazi is a tranquil escape with calm waters, green shorelines and relaxed lakeside dining. It is an easy add-on to a city stay and a pleasant spot for a day trip, boat ride, or a quiet overnight stop en route to eastern Rwanda."
+  },
+  {
+    "slug": "twin-lakes-burera-ruhondo",
+    "name": "Twin Lakes (Burera & Ruhondo)",
+    "location": "Northern Province",
+    "category": "Lake",
+    "image": "/gls/destinations/destination_1787676127_7ba3b4ed2e.jpg",
+    "featured": false,
+    "shortDescription": "Nestled in Rwanda's Northern Province, the twin lakes of Burera and Ruhondo offer some of the country's most photographed volcanic scenery.",
+    "description": "Nestled in Rwanda's Northern Province, the twin lakes of Burera and Ruhondo offer some of the country's most photographed volcanic scenery. Surrounded by steep hills and close to the Virunga volcanoes, the area is ideal for scenic drives, boat trips, cultural walks and community visits that reveal everyday life in rural Rwanda."
+  },
+  {
+    "slug": "gishwati-mukura-national-park",
+    "name": "Gishwati-Mukura National Park",
+    "location": "Western Rwanda",
+    "category": "National Park",
+    "image": "/gls/destinations/destination_1787674690_bc6a987f23.jpg",
+    "featured": false,
+    "shortDescription": "Rwanda's newest national park protects a regenerating mountain rainforest on the Congo-Nile Divide.",
+    "description": "Rwanda's newest national park protects a regenerating mountain rainforest on the Congo-Nile Divide, home to chimpanzees, golden monkeys and a remarkable diversity of birds. Community-led trails, primate tracking and nature walks make Gishwati-Mukura a quieter, off-the-beaten-path alternative to Rwanda's larger parks."
+  },
+  {
+    "slug": "bigogwe",
+    "name": "Bigogwe",
+    "location": "Western Highlands, Rwanda",
+    "category": "Highlands",
+    "image": "/gls/destinations/destination_1787675758_7a3913e26a.jpg",
+    "featured": false,
+    "shortDescription": "Perched in Rwanda's cool highlands, Bigogwe is known for its rolling pastures, open landscapes and living pastoral culture.",
+    "description": "Perched in Rwanda's cool highlands, Bigogwe is known for its rolling pastures, open landscapes and living pastoral culture. Visitors come for scenic walks, cultural encounters with local communities and the sense of space that makes this part of western Rwanda feel a world away from the city."
+  },
+  {
+    "slug": "congo-nile-trail",
+    "name": "Congo Nile Trail",
+    "location": "Western Rwanda / Lake Kivu shore",
+    "category": "Adventure Trail",
+    "image": "/gls/destinations/destination_1787676513_ee1c31891f.jpg",
+    "featured": true,
+    "shortDescription": "Hike or bike Rwanda's legendary route through forests, tea plantations and lakeside villages along Lake Kivu.",
+    "description": "Hike or bike Rwanda's legendary route through forests, tea plantations and lakeside villages along Lake Kivu. The Congo Nile Trail stretches along the shoreline between Rubavu and Rusizi, rewarding travellers with sweeping views, warm community welcomes and a genuine sense of adventure."
+  },
+  {
+    "slug": "cyamudongo-forest",
+    "name": "Cyamudongo Forest",
+    "location": "South-western Rwanda",
+    "category": "Forest",
+    "image": "/gls/destinations/destination_1787674965_deef1c5a3d.jpg",
+    "featured": false,
+    "shortDescription": "Tucked away as an isolated fragment of Nyungwe National Park, Cyamudongo Forest is one of Rwanda's best places to track chimpanzees.",
+    "description": "Tucked away as an isolated fragment of Nyungwe National Park, Cyamudongo Forest is one of Rwanda's best places to track chimpanzees. The smaller, intimate forest makes for a focused primate experience, with guided walks through dense greenery and excellent birding along the way."
+  },
+  {
+    "slug": "southern-corridor",
+    "name": "Southern Corridor of Rwanda's Cultural Heritage",
+    "location": "Southern Rwanda",
+    "category": "Culture & Heritage",
+    "image": "/gls/destinations/destination_1787674844_314119702f.jpg",
+    "featured": false,
+    "shortDescription": "Discover the soul of Rwanda along the Southern Corridor, a route rich in history, tradition and cultural landmarks.",
+    "description": "Discover the soul of Rwanda along the Southern Corridor, a route rich in history, tradition and cultural landmarks. From the royal heritage of Nyanza to the museums and craft workshops of the south, this journey connects travellers with the stories, music, dance and craftsmanship that shaped the nation."
+  },
+  {
+    "slug": "lake-kivu",
+    "name": "Lake Kivu",
+    "location": "Western Rwanda",
+    "category": "Lake",
+    "image": "/gls/destinations/destination_1787675907_9ab0af2cc2.jpg",
+    "featured": true,
+    "shortDescription": "Nestled between rolling hills and volcanic peaks, Lake Kivu is one of Africa's most beautiful and relaxing inland seas.",
+    "description": "Nestled between rolling hills and volcanic peaks, Lake Kivu is one of Africa's most beautiful and relaxing inland seas. Its resort towns, sandy bays and islands make it perfect for boat cruises, kayaking, coffee and tea experiences, and simply unwinding after a trek. The lakeside towns of Rubavu, Karongi and Rusizi each offer their own character and views."
+  },
+  {
+    "slug": "kigali-city",
+    "name": "Kigali City",
+    "location": "Kigali, Rwanda",
+    "category": "City",
+    "image": "/gls/destinations/destination_1787674747_3163daf1ae.jpg",
+    "featured": true,
+    "shortDescription": "Explore the vibrant heart of Rwanda through Kigali's diverse attractions, combining modern city life with history and culture.",
+    "description": "Explore the vibrant heart of Rwanda through Kigali's diverse attractions, combining modern city life with history and culture. Highlights include the Kigali Genocide Memorial, the Kandt House Museum of Natural History, craft cooperatives and lively local markets, all set against a backdrop of green hills and a fast-modernising skyline."
+  },
+  {
+    "slug": "volcanoes-national-park",
+    "name": "Volcanoes National Park",
+    "location": "Northern Rwanda",
+    "category": "National Park",
+    "image": "/gls/destinations/destination_1787674099_6e7a612fc4.jpg",
+    "featured": true,
+    "shortDescription": "Discover the spectacular Volcanoes National Park, home to Rwanda's famous mountain gorillas and the dramatic Virunga volcanoes.",
+    "description": "Discover the spectacular Volcanoes National Park, home to Rwanda's famous mountain gorillas and the dramatic Virunga volcanoes. In the far northwest of the country, the park offers gorilla trekking, golden monkey tracking, volcano hikes and cultural visits to nearby communities, all in misty high-altitude rainforest."
+  },
+  {
+    "slug": "nyungwe-national-park",
+    "name": "Nyungwe National Park",
+    "location": "South-western Rwanda",
+    "category": "National Park",
+    "image": "/gls/destinations/destination_1787674480_e95f50f580.jpg",
+    "featured": true,
+    "shortDescription": "Discover the breathtaking beauty of Nyungwe National Park, a spectacular rainforest in south-western Rwanda.",
+    "description": "Discover the breathtaking beauty of Nyungwe National Park, a spectacular rainforest in south-western Rwanda. One of Africa's oldest forests, it is famous for its canopy walkway, chimpanzee and colobus monkey tracking, waterfall hikes and exceptional birdlife, with tea plantations bordering the forest edge."
+  },
+  {
+    "slug": "akagera-national-park",
+    "name": "Akagera National Park",
+    "location": "Eastern Rwanda",
+    "category": "National Park",
+    "image": "/gls/destinations/destination_1787674351_a7daeb9128.jpg",
+    "featured": true,
+    "shortDescription": "Explore the incredible wildlife and scenic landscapes of Akagera National Park, Rwanda's Big Five savannah destination.",
+    "description": "Explore the incredible wildlife and scenic landscapes of Akagera National Park, Rwanda's Big Five savannah destination. In eastern Rwanda along the border with Tanzania, the park's wetlands, lakes and grasslands support elephant, buffalo, lion, rhino, leopard, giraffe, zebra and hundreds of bird species, best experienced on game drives and a boat safari on Lake Ihema."
+  }
+]

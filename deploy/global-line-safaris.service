@@ -1,0 +1,63 @@
+# Global Line Safaris - Next.js production service
+#
+# INSTALL (as root):
+#   sudo cp deploy/global-line-safaris-cms.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now global-line-safaris-cms
+#
+# NOTE: Before first start, create the production env file (see deploy/.env.production)
+# and rebuild with the correct public URL:
+#   NEXT_PUBLIC_APP_URL=http://localhost:3100 NEXTAUTH_URL=http://localhost:3100 npm run build
+#
+# Port 3100 is used intentionally: 3000/3002 are taken by adjacent projects on this
+# machine. If the site moves behind a real domain, update the three *_URL vars here,
+# rebuild, and point your reverse proxy at port 3100.
+#
+# Optional: put extra overrides/secrets in /etc/global-line-safaris-cms/env (root-only,
+# e.g. DATABASE_URL, RESEND_API_KEY, SMTP_*) and uncomment EnvironmentFile below.
+
+[Unit]
+Description=Global Line Safaris Next.js (production, port 3100)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Run as a non-root user. Matches this machine's app owner.
+User=ice-tech-rwanda
+Group=ice-tech-rwanda
+
+WorkingDirectory=/home/ice-tech-rwanda/Ice Tech Rwanda/Global Line Safaris
+
+# Load production secrets/overrides. Create this file (root-only readable).
+# EnvironmentFile=/etc/global-line-safaris-cms/env
+
+Environment=PORT=3100
+Environment=NODE_ENV=production
+Environment=NEXT_PUBLIC_APP_URL=http://localhost:3100
+Environment=NEXTAUTH_URL=http://localhost:3100
+
+# Run the compiled Next server via the project's local Next CLI.
+# `node_modules/...` is relative and resolved against WorkingDirectory above
+# (avoids the space in the app path). Full path to the Node binary, no spaces.
+ExecStart=/home/ice-tech-rwanda/.nvm/versions/node/v24.19.0/bin/node \
+  node_modules/next/dist/bin/next start -p 3100
+Restart=always
+RestartSec=5
+
+# Hardening. NOTE: the app dir path contains spaces, so ReadWritePaths= cannot be
+# used safely; ProtectSystem=full alone keeps /usr, /boot, /etc read-only while the
+# app writes normally under /mnt and the DB runs in Docker. ProtectHome=read-only
+# keeps the nvm home read-only.
+NoNewPrivileges=true
+PrivateTmp=true
+RestrictSUIDSGID=true
+ProtectSystem=full
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectControlGroups=true
+
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

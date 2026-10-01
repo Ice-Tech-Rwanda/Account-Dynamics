@@ -7,16 +7,19 @@ import { useAdminList } from "@/components/admin/useAdminList";
 import { AdminDataTable, type Column } from "@/components/admin/AdminDataTable";
 import { CrudDialog } from "@/components/admin/CrudDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { useContentActions } from "@/components/admin/useContentActions";
+import { StatusFilter } from "@/components/admin/StatusFilter";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminTeamPage() {
-const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
-    endpoint: "/api/admin/team",
+const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh, params, setParams } = useAdminList<any>({
+    endpoint: "/api/admin/team-members",
     pageSize: 20,
   });
+  const { canDelete, deleteItem, setDeleteItem, toggleArchive, confirmDelete } =
+    useContentActions<any>("/api/admin/team-members", refresh, { singular: "team member" });
   const [editItem, setEditItem] = useState<any>(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
     const payload: Record<string, any> = { ...formData };
@@ -41,18 +44,6 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
     } else {
       const e = await res.json().catch(() => ({}));
       toast.error(e.error || "Failed to save team member");
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deleteItem) return;
-    const res = await fetch(`/api/admin/team-members/${deleteItem.id}`, { method: "DELETE" });
-    if (res.ok) {
-      toast.success("Team member deleted");
-      refresh();
-      setDeleteItem(null);
-    } else {
-      toast.error("Failed to delete team member");
     }
   };
 
@@ -82,7 +73,9 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
           className={
             item.status === "PUBLISHED"
               ? "bg-emerald-100 text-emerald-700 border-0 text-[10px]"
-              : "bg-slate-100 text-slate-600 border-0 text-[10px]"
+              : item.status === "ARCHIVED"
+              ? "bg-slate-200 text-slate-600 border-0 text-[10px] dark:bg-slate-700/60"
+              : "bg-amber-100 text-amber-700 border-0 text-[10px]"
           }
         >
           {item.status}
@@ -103,15 +96,38 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
           >
             Edit
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteItem(item);
-            }}
-            className="text-xs font-semibold text-red-500 hover:underline"
-          >
-            Delete
-          </button>
+          {item.status === "ARCHIVED" ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleArchive(item);
+              }}
+              className="text-xs font-semibold text-brand hover:underline"
+            >
+              Restore
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleArchive(item);
+              }}
+              className="text-xs font-semibold text-amber-600 hover:underline"
+            >
+              Archive
+            </button>
+          )}
+          {canDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteItem(item);
+              }}
+              className="text-xs font-semibold text-red-500 hover:underline"
+            >
+              Delete
+            </button>
+          )}
         </div>
       ),
     },
@@ -120,7 +136,7 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
   return (
     <AdminPageShell
       title="Team Members"
-      subtitle="Manage Account Dynamics leadership and accounting staff"
+      subtitle="Manage Global Line Safaris team profiles"
       onRefresh={refresh}
       loading={loading}
       onAdd={() => setShowCreate(true)}
@@ -132,6 +148,12 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
         loading={loading}
         searchKeys={["name", "role", "bio"]}
         searchPlaceholder="Search team members..."
+        filters={(
+          <StatusFilter
+            value={params.status ?? ""}
+            onChange={(status) => setParams({ status })}
+          />
+        )}
         pageSize={20}
         searchValue={search}
         onSearchChange={setSearch}
@@ -159,7 +181,7 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
           { name: "photo", label: "Photo", type: "image", placeholder: "/uploads/... or https://..." },
           { name: "email", label: "Email (optional)", type: "email" },
           { name: "linkedin", label: "LinkedIn Profile URL" },
-          { name: "expertise", label: "Expertise (comma-separated)", placeholder: "Tax Planning, Audit, Advisory" },
+          { name: "expertise", label: "Expertise", type: "stringList", itemLabel: "skill", addLabel: "Add", placeholder: "Gorilla trekking, Safari guiding..." },
           { name: "isFounder", label: "Company Founder", type: "checkbox" },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
@@ -169,6 +191,7 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
             options: [
               { label: "Published", value: "PUBLISHED" },
               { label: "Draft", value: "DRAFT" },
+              { label: "Archived", value: "ARCHIVED" },
             ],
           },
         ]}
@@ -177,7 +200,7 @@ const { data, loading, error, search, setSearch, page, setPage, totalPages, tota
       <ConfirmDialog
         open={!!deleteItem}
         onClose={() => setDeleteItem(null)}
-        onConfirm={handleDelete}
+        onConfirm={confirmDelete}
         title="Delete team member?"
         message={`Are you sure you want to delete "${deleteItem?.name}"?`}
       />

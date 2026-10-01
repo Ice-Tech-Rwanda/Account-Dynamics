@@ -4,7 +4,7 @@ You are the lead engineer assigned to a new project built on the **Next.js templ
 
 ## Your Context
 
-The template is a production-grade Next.js 16 starter: a public site + admin dashboard + API layer + Prisma schema, all styled by one design system. The current project is **Account Dynamics** — a Canadian accounting, tax, advisory and business analytics firm.
+The template is a production-grade Next.js 16 starter: a public site + admin dashboard + API layer + Prisma schema, all styled by one design system. The current project is **Global Line Safaris** — a Rwandan tour operator and safari company.
 
 ## The Extraction Procedure (do this FIRST, before writing any new code)
 

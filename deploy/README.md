@@ -1,10 +1,10 @@
-# Account Dynamics — Deployment
+# Global Line Safaris — Deployment
 
 Two production paths are supported:
 
 - **A. Vercel + Neon** (primary, recommended) — serverless hosting + managed Postgres.
 - **B. Self-hosted `next start` + local Postgres (systemd)** — the current setup on this
-  machine (`deploy/account-dynamics.service`).
+  machine (`deploy/global-line-safaris-cms.service`).
 
 The code is already configured for both. Uploads use **Vercel Blob** when
 `BLOB_READ_WRITE_TOKEN` is set, otherwise fall back to the local filesystem.
@@ -80,29 +80,29 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST https://<your-app>.vercel.app/a
 
 ## B. Self-hosted (systemd) — current local production
 
-Points to the local Postgres (`localhost:5433`). See `deploy/account-dynamics.service`.
+Points to the local Postgres (`localhost:5433`). See `deploy/global-line-safaris-cms.service`.
 
 ```bash
 # build with the correct public URL (inlined at build time)
 NEXT_PUBLIC_APP_URL=http://localhost:3100 NEXTAUTH_URL=http://localhost:3100 npm run build
 
 # stop any stale server on 3100, then install+start the service (as root)
-sudo cp deploy/account-dynamics.service /etc/systemd/system/
+sudo cp deploy/global-line-safaris-cms.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now account-dynamics
+sudo systemctl enable --now global-line-safaris-cms
 ```
 
 Port **3100** is intentional — 3000/3002 belong to adjacent projects on this machine.
-The systemd unit (`deploy/account-dynamics.service`) already pins port 3100 and the
+The systemd unit (`deploy/global-line-safaris-cms.service`) already pins port 3100 and the
 Node binary; only `WorkingDirectory` must point at the real app path.
 
 If the site moves behind a real domain, change `NEXT_PUBLIC_APP_URL`/`NEXTAUTH_URL`
 (rebuild since the app URL is inlined) and have the reverse proxy → 3100.
 
-Management: `sudo systemctl status/restart account-dynamics`, `journalctl -u account-dynamics -f`.
+Management: `sudo systemctl status/restart global-line-safaris-cms`, `journalctl -u global-line-safaris-cms -f`.
 
 Required env before first start (values from `deploy/.env.production`, installed as
-`/etc/account-dynamics/env` root-only): `NEXTAUTH_SECRET` (REAL random value — never
+`/etc/global-line-safaris-cms/env` root-only): `NEXTAUTH_SECRET` (REAL random value — never
 commit one), `DATABASE_URL`/`DIRECT_URL`, and email credentials (Resend or SMTP).
 
 ---

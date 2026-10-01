@@ -1,24 +1,18 @@
+import type { Metadata } from "next";
 import { ServicesHero } from "@/domains/services/components/ServicesHero";
 import { ServiceCard } from "@/domains/services/components/ServiceCard";
 import { CTASection } from "@/domains/home/components/CTASection";
-import { getServiceCategories } from "@/lib/content/service.server";
+import { buildPageMetadata, getServiceCategories } from "@/lib/content/service.server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Services",
-  description:
-    "Explore the full range of accounting, tax, advisory and business analytics services offered by Account Dynamics in Toronto, Canada.",
-  openGraph: {
-    title: "Services | Account Dynamics",
-    description:
-      "Explore the full range of accounting, tax, advisory and business analytics services offered by Account Dynamics.",
-    url: "/services",
-  },
-  alternates: {
-    canonical: "/services",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata('services', {
+    title: 'Services',
+    description: "Explore Global Line Safaris' tours, safaris and travel services in Rwanda and East Africa — wildlife safaris, cultural tours, car rental, accommodation and more.",
+    path: '/services',
+  });
+}
 
 export default async function ServicesPage() {
   const categories = await getServiceCategories();

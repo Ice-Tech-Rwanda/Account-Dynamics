@@ -33,3 +33,17 @@ export function truncate(str: string, length: number): string {
   if (str.length <= length) return str
   return str.slice(0, length) + "..."
 }
+
+/**
+ * Returns a displayable price, or null when the value is a placeholder.
+ * The source site shows "From $0.00" for packages without a published price,
+ * so those must never be rendered.
+ */
+export function displayPackagePrice(price?: string | null): string | null {
+  if (!price) return null
+  const normalized = price.trim()
+  if (!normalized) return null
+  const numeric = Number(normalized.replace(/[^0-9.]/g, ""))
+  if (Number.isNaN(numeric) || numeric <= 0) return null
+  return normalized
+}

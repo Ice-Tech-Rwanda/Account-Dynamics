@@ -26,13 +26,14 @@ export function AdminPageShell({
   children,
 }: AdminPageShellProps) {
   return (
-    <motion.div
+    <motion.div className="admin-page-shell"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div className="admin-page-heading flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
+          <p className="admin-eyebrow">Global Line Safaris / Administration</p>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
             {title}
           </h1>

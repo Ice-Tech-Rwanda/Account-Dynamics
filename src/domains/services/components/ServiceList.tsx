@@ -1,29 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { Check, ArrowRight, BookOpen, ShieldCheck, FileText, Clock, Wallet, Building2, CheckCircle, Lightbulb, Shield, TrendingUp, Briefcase, LayoutGrid, Clipboard, Rocket, Calculator, User, Globe, Handshake } from "lucide-react";
+import { Check, ArrowRight, Compass, Mountain, Landmark, GraduationCap, Building2, Globe, Map, Users, Car, BedDouble } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ServiceCategory } from "@/lib/content/types";
 
 const iconMap: Record<string, React.ElementType> = {
-  BookOpen,
-  ShieldCheck,
-  FileText,
-  Clock,
-  Wallet,
+  Compass,
+  Mountain,
+  Landmark,
+  GraduationCap,
   Building2,
-  CheckCircle,
-  Lightbulb,
-  Shield,
-  TrendingUp,
-  Briefcase,
-  LayoutGrid,
-  Clipboard,
-  Rocket,
-  Calculator,
-  User,
   Globe,
-  Handshake,
+  Map,
+  Users,
+  Car,
+  BedDouble,
 };
 
 interface ServiceListProps {
@@ -36,7 +28,7 @@ export function ServiceList({ category }: ServiceListProps) {
       <div className="it-container px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {category.services.map((service) => {
-            const Icon = iconMap[service.icon] || Building2;
+            const Icon = iconMap[service.icon] || Compass;
             return (
               <div
                 key={service.name}
@@ -78,7 +70,7 @@ export function ServiceList({ category }: ServiceListProps) {
             </Button>
           </Link>
           <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-            Speak with an Account Dynamics professional about your {category.title.toLowerCase()} needs.
+            Speak with a Global Line Safaris travel specialist about your {category.title.toLowerCase()} needs.
           </p>
         </div>
       </div>

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/content/service.server";
 import { CTASection } from "@/domains/home/components/CTASection";
 
-export const metadata: Metadata = {
-  title: "Terms of Use",
-  description: `Terms of Use for ${siteConfig.name}, ${siteConfig.location}.`,
-  alternates: { canonical: "/terms" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("terms", {
+    title: "Terms of Use",
+    description: `Terms of Use for ${siteConfig.name}, ${siteConfig.location}.`,
+    path: "/terms",
+  });
+}
 
 export default function TermsPage() {
   return (
@@ -66,13 +69,14 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                4. No Professional Advice
+                4. Travel Information
               </h2>
               <p className="mt-3">
                 Information on this website is provided for general information
-                purposes only and does not constitute accounting, tax, legal or
-                financial advice. You should consult a qualified professional
-                regarding your specific circumstances.
+                purposes only. Tour itineraries, prices, availability and travel
+                conditions are subject to change and will be confirmed with you
+                directly before booking. Please review all trip details
+                carefully.
               </p>
             </section>
 
@@ -91,8 +95,8 @@ export default function TermsPage() {
                 6. Governing Law
               </h2>
               <p className="mt-3">
-                These Terms of Use are governed by the laws of the Province of
-                Ontario and the laws of Canada applicable therein.
+                These Terms of Use are governed by the laws of the Republic of
+                Rwanda.
               </p>
             </section>
 

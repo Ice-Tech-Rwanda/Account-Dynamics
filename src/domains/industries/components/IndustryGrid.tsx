@@ -1,15 +1,15 @@
 "use client";
 
-import { Building2, User, Globe, Briefcase, Calculator, FileText } from "lucide-react";
+import { Mountain, Binoculars, Landmark, Users, GraduationCap, Footprints } from "lucide-react";
 import type { Industry } from "@/lib/content/types";
 
 const iconMap: Record<string, React.ElementType> = {
-  Building2,
-  User,
-  Globe,
-  Briefcase,
-  Calculator,
-  FileText,
+  Mountain,
+  Binoculars,
+  Landmark,
+  Users,
+  GraduationCap,
+  Footprints,
 };
 
 interface IndustryGridProps {
@@ -20,7 +20,7 @@ export function IndustryGrid({ industries }: IndustryGridProps) {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {industries.map((industry) => {
-        const Icon = iconMap[industry.icon] || Building2;
+        const Icon = iconMap[industry.icon] || Mountain;
         return (
           <div
             key={industry.slug || industry.name}
@@ -40,8 +40,8 @@ export function IndustryGrid({ industries }: IndustryGridProps) {
       })}
       {industries.length === 0 && (
         <div className="col-span-full text-center py-12 text-slate-400">
-          <Building2 className="size-12 mx-auto mb-3 text-slate-200" />
-          <p className="text-sm">Industries will appear here once added via the admin panel.</p>
+          <Mountain className="size-12 mx-auto mb-3 text-slate-200" />
+          <p className="text-sm">Traveler types will appear here once added via the admin panel.</p>
         </div>
       )}
     </div>

@@ -115,7 +115,7 @@ type LeadMailData = {
   phone?: string | null;
   company?: string | null;
   service?: string | null;
-  type: "inquiry" | "quote" | "consultation";
+  type: "inquiry" | "internship";
   createdAt: Date;
   message?: string | null;
   extra?: Record<string, string | null | undefined>;
@@ -129,8 +129,7 @@ function textForLine(label: string, value?: string | null): string {
 export async function notifyAdminOfLead(data: LeadMailData, adminEmail: string) {
   const labels: Record<LeadMailData["type"], string> = {
     inquiry: "New Website Inquiry",
-    quote: "New Quote Request",
-    consultation: "New Consultation Request",
+    internship: "New Internship Application",
   };
 
   let text = `${labels[data.type]} — ${data.service || "General"}\n\n`;
@@ -157,15 +156,19 @@ export async function notifyAdminOfLead(data: LeadMailData, adminEmail: string) 
 
 export async function sendLeadConfirmation(email: string, type: LeadMailData["type"], preferredContact?: string | null) {
   const subjects: Record<LeadMailData["type"], string> = {
-    inquiry: "Thank you for contacting Account Dynamics",
-    quote: "Thank you for requesting a quote",
-    consultation: "Thank you for booking a consultation",
+    inquiry: "Thank you for contacting Global Line Safaris",
+    internship: "Thank you for your application to Global Line Safaris",
+  };
+
+  const nouns: Record<LeadMailData["type"], string> = {
+    inquiry: "message",
+    internship: "application",
   };
 
   const text = [
-    `Dear Account Dynamics client,`,
+    `Dear traveler,`,
     ``,
-    `Thank you for reaching out. We have received your ${type === "inquiry" ? "message" : type === "quote" ? "quote request" : "consultation request"} and our team will get back to you within one business day.`,
+    `Thank you for reaching out. We have received your ${nouns[type]} and our team will get back to you within one business day.`,
     preferredContact === "phone"
       ? `We will contact you by phone.`
       : `We will respond to your inquiry by email.`,
@@ -197,7 +200,7 @@ export async function replyToCustomer(options: { to: string; subject: string; bo
 
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   const text = [
-    "We received a request to reset your Account Dynamics admin password.",
+    "We received a request to reset your Global Line Safaris admin password.",
     "",
     "Open the following link to choose a new password. It expires in 30 minutes:",
     resetUrl,
@@ -211,7 +214,7 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
 
   await sendEmail({
     to: email,
-    subject: "Reset your Account Dynamics admin password",
+    subject: "Reset your Global Line Safaris admin password",
     text,
   });
 }
@@ -224,7 +227,7 @@ export async function sendNewsletterConfirmation(email: string) {
   const text = [
     `Dear subscriber,`,
     ``,
-    `Thank you for subscribing to the Account Dynamics newsletter. You'll receive updates on accounting, tax, and advisory insights.`,
+    `Thank you for subscribing to the Global Line Safaris newsletter. You'll receive travel inspiration and updates about Rwanda and East Africa.`,
     ``,
     `If you did not request this subscription, you can safely ignore this email.`,
     ``,
@@ -289,17 +292,17 @@ function buildIcs(data: BookingConfirmationData): string {
     ? fmt(new Date(start.getTime() + 60 * 60 * 1000))
     : fmt(new Date(now.getTime() + 60 * 60 * 1000));
 
-  const summary = `Account Dynamics consultation — ${data.service}`;
-  const location = "Account Dynamics, 55 Baywood Road, 2nd Floor, Toronto, ON";
+  const summary = `Global Line Safaris consultation — ${data.service}`;
+  const location = siteConfig.location;
 
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Account Dynamics//Booking//EN",
+    "PRODID:-//Global Line Safaris//Booking//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:REQUEST",
     "BEGIN:VEVENT",
-    `UID:booking-${now.getTime()}@accountdynamics.ca`,
+    `UID:booking-${now.getTime()}@globallinesafaris.rw`,
     `DTSTAMP:${fmt(now)}`,
     `DTSTART:${dtStart}`,
     `DTEND:${dtEnd}`,
@@ -323,8 +326,8 @@ function bookingHtml(data: BookingConfirmationData, isTentative: boolean): strin
   return [
     "<div style='font-family:Arial,Helvetica,sans-serif;color:#1e293b;max-width:600px;margin:0 auto;'>",
     "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#0A1F45;border-radius:12px 12px 0 0;padding:28px 32px;'>",
-    "<tr><td style='color:#D9FF3A;font-size:22px;font-weight:bold;'>Account Dynamics</td></tr>",
-    "<tr><td style='color:#ffffff;font-size:13px;opacity:.85;padding-top:4px;'>Accounting · Tax · Advisory · Toronto, Canada</td></tr>",
+    "<tr><td style='color:#C7A46A;font-size:22px;font-weight:bold;'>Global Line Safaris</td></tr>",
+    "<tr><td style='color:#ffffff;font-size:13px;opacity:.85;padding-top:4px;'>Travel · Safaris · Rwanda &amp; East Africa</td></tr>",
     "</table>",
     "<div style='border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:32px;background:#ffffff;'>",
     `<h2 style='margin:0 0 12px;font-size:18px;'>Booking ${isTentative ? "Request Received" : "Confirmed"} — ${escapeHtml(data.service)}</h2>`,
@@ -343,7 +346,7 @@ function bookingHtml(data: BookingConfirmationData, isTentative: boolean): strin
     `<tr><td style='font-size:15px;font-weight:600;color:#0f172a;'>in-person or virtual — we'll confirm</td></tr>`,
     "</table>",
     "<p style='margin:24px 0 0;font-size:14px;line-height:1.6;color:#475569;'>If anything changes, just reply to this email or call us. See you soon!</p>",
-    "<p style='margin:28px 0 0;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;'>Warm regards,<br/>The Account Dynamics Team<br/><span style='color:#64748b;'>${escapeHtml(siteConfig.phone)} · ${escapeHtml(siteConfig.email)}</span></p>",
+    `<p style='margin:28px 0 0;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;'>Warm regards,<br/>The Global Line Safaris Team<br/><span style='color:#64748b;'>${escapeHtml(siteConfig.phone)} · ${escapeHtml(siteConfig.email)}</span></p>`,
     "</div>",
     "</div>",
   ].join("");
@@ -463,8 +466,8 @@ function statusUpdateHtml(data: StatusUpdateData, status: string, meta: { headin
   return [
     "<div style='font-family:Arial,Helvetica,sans-serif;color:#1e293b;max-width:600px;margin:0 auto;'>",
     "<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#0A1F45;border-radius:12px 12px 0 0;padding:28px 32px;'>",
-    "<tr><td style='color:#D9FF3A;font-size:22px;font-weight:bold;'>Account Dynamics</td></tr>",
-    "<tr><td style='color:#ffffff;font-size:13px;opacity:.85;padding-top:4px;'>Accounting · Tax · Advisory · Toronto, Canada</td></tr>",
+    "<tr><td style='color:#C7A46A;font-size:22px;font-weight:bold;'>Global Line Safaris</td></tr>",
+    "<tr><td style='color:#ffffff;font-size:13px;opacity:.85;padding-top:4px;'>Travel · Safaris · Rwanda &amp; East Africa</td></tr>",
     "</table>",
     "<div style='border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:32px;background:#ffffff;'>",
     `<h2 style='margin:0 0 12px;font-size:18px;'>${escapeHtml(meta.heading)}${data.service ? ` — ${escapeHtml(data.service)}` : ""}</h2>`,
@@ -474,7 +477,7 @@ function statusUpdateHtml(data: StatusUpdateData, status: string, meta: { headin
       ? `<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 22px;'>${extraRows}</table>`
       : "",
     "<p style='margin:24px 0 0;font-size:14px;line-height:1.6;color:#475569;'>If you have any questions, just reply to this email or call us.</p>",
-    "<p style='margin:28px 0 0;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;'>Warm regards,<br/>The Account Dynamics Team<br/><span style='color:#64748b;'>${siteConfig.phone} · ${siteConfig.email}</span></p>",
+    `<p style='margin:28px 0 0;font-size:13px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px;'>Warm regards,<br/>The Global Line Safaris Team<br/><span style='color:#64748b;'>${siteConfig.phone} · ${siteConfig.email}</span></p>`,
     "</div>",
     "</div>",
   ].join("");

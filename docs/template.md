@@ -1,6 +1,6 @@
-# Account Dynamics — Project Template
+# Global Line Safaris — Project Template
 
-This repository is the **Account Dynamics** website, built on a reusable, production-ready Next.js starter. The shared design system, component vocabulary, and architecture were originally built for a client-specific starter and adapted for a Canadian accounting, tax, advisory and business analytics firm.
+This repository is the **Global Line Safaris** website and CMS, built on a reusable, production-ready Next.js starter. The shared design system, component vocabulary, and architecture were originally built for a client-specific starter and adapted for a Rwandan tour operator and safari company.
 
 ## Source Of Truth
 

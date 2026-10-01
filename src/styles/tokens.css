@@ -1,24 +1,26 @@
 /* =============================================================================
-   Account Dynamics — Design Tokens
+   Global Line Safaris — Design Tokens
    -----------------------------------------------------------------------------
-   Professional accounting firm design system.
-   Primary (brand)  = vivid blue  #0245EC
-   Secondary (accent) = lime       #D9FF3A
+   Premium safari / travel design system.
+   Primary (brand)  = deep forest green  #0F2318
+   Secondary (accent) = safari gold  #C9A84C
+   Base surface     = warm ivory    #FAF7F0
+   Dark surface     = deep forest  #0F2318
    ============================================================================= */
 
 @theme inline {
   /* ---------------------------------------------------------------------------
      1. TYPOGRAPHY
-  --------------------------------------------------------------------------- */
-  --font-sans: var(--font-lexend);
-  --font-serif: var(--font-merriweather);
-  --font-mono: var(--font-lexend);
+   --------------------------------------------------------------------------- */
+  --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-editorial), Georgia, serif;
+  --font-mono: var(--font-inter), sans-serif;
 
   /* ---------------------------------------------------------------------------
-     2. BRAND COLORS — Account Dynamics blue/lime family
-        brand  #0245EC  vivid blue (primary)
-        accent #D9FF3A  lime (secondary)
-  --------------------------------------------------------------------------- */
+     2. BRAND COLORS — deep forest green / safari gold family
+         brand  #0F2318  deep forest green (primary)
+         accent #C9A84C  safari gold (secondary)
+   --------------------------------------------------------------------------- */
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
   --color-brand-soft: var(--brand-soft);
@@ -34,7 +36,7 @@
 
   /* ---------------------------------------------------------------------------
      3. SEMANTIC UI COLORS (shadcn/ui contract)
-  --------------------------------------------------------------------------- */
+   --------------------------------------------------------------------------- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -55,30 +57,30 @@
   --color-ring: var(--ring);
 
   /* ---------------------------------------------------------------------------
-     4. RADIUS SCALE
-  --------------------------------------------------------------------------- */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+     4. RADIUS SCALE — restrained, editorial
+   --------------------------------------------------------------------------- */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --radius-4xl: 12px;
 
   /* ---------------------------------------------------------------------------
-     5. SHADOWS
-  --------------------------------------------------------------------------- */
-  --shadow-soft: 0 14px 28px rgba(2, 45, 140, 0.06);
-  --shadow-card: 0 20px 48px rgba(2, 45, 140, 0.08);
-  --shadow-lift: 0 24px 60px rgba(2, 45, 140, 0.16);
-  --shadow-glow-brand: 0 14px 30px color-mix(in srgb, var(--brand) 24%, transparent);
-  --shadow-glow-brand-strong: 0 18px 38px color-mix(in srgb, var(--brand) 30%, transparent);
-  --shadow-glow-accent: 0 14px 30px color-mix(in srgb, var(--accent) 24%, transparent);
-  --shadow-glow-accent-strong: 0 18px 38px color-mix(in srgb, var(--accent) 30%, transparent);
+     5. SHADOWS — minimal, natural
+   --------------------------------------------------------------------------- */
+  --shadow-soft: 0 2px 8px rgba(15, 35, 24, 0.04);
+  --shadow-card: 0 4px 16px rgba(15, 35, 24, 0.06);
+  --shadow-lift: 0 8px 32px rgba(15, 35, 24, 0.10);
+  --shadow-glow-brand: 0 4px 16px color-mix(in srgb, var(--brand) 12%, transparent);
+  --shadow-glow-brand-strong: 0 6px 24px color-mix(in srgb, var(--brand) 18%, transparent);
+  --shadow-glow-accent: 0 4px 16px color-mix(in srgb, var(--accent) 12%, transparent);
+  --shadow-glow-accent-strong: 0 6px 24px color-mix(in srgb, var(--accent) 18%, transparent);
 
   /* ---------------------------------------------------------------------------
      6. MOTION
-  --------------------------------------------------------------------------- */
+   --------------------------------------------------------------------------- */
   --animate-float: float 7.5s ease-in-out infinite;
   --animate-float-slow: float 8.5s ease-in-out infinite;
   --animate-glow: glow-pulse 7.5s ease-in-out infinite;
@@ -87,45 +89,46 @@
 }
 
 /* ---------------------------------------------------------------------------
-   PALETTE — LIGHT MODE — Account Dynamics
-   Vivid blue brand (#0245EC) + lime accent (#D9FF3A)
+   PALETTE — LIGHT MODE — Global Line Safaris
+   Deep forest green brand (#0F2318) + safari gold accent (#C9A84C) on warm ivory
 --------------------------------------------------------------------------- */
 :root {
-  /* Brand — Vivid blue (primary) */
-  --brand: #0245EC;
-  --brand-strong: #0230A6;
-  --brand-soft: #5B81F0;
-  --brand-subtle: rgba(2, 69, 236, 0.08);
+  /* Brand — Deep Forest Green (primary) */
+  --brand: #0f2318;
+  --brand-strong: #0a1a11;
+  --brand-soft: #2d5a3d;
+  --brand-subtle: rgba(15, 35, 24, 0.06);
 
-  /* Accent — Lime (secondary) */
-  --accent: #D9FF3A;
-  --accent-strong: #B3D920;
-  --accent-soft: #E7FF6E;
-  --accent-subtle: rgba(217, 255, 58, 0.16);
+  /* Accent — Safari Gold (secondary) */
+  --accent: #c9a84c;
+  --accent-strong: #b8923a;
+  --accent-soft: #e8c97a;
+  --accent-subtle: rgba(201, 168, 76, 0.12);
 
   /* Surfaces */
-  --brand-bg-light: #F5F8FF;
-  --brand-bg-dark: #0A1F45;
-  --brand-bg-dark-mid: #162E5C;
+  --white: #ffffff;
+  --brand-bg-light: #faf7f0;
+  --brand-bg-dark: #0f2318;
+  --brand-bg-dark-mid: #1a3a2a;
 
   /* Neutral / semantic (shadcn contract) */
-  --radius: 0.75rem;
-  --background: oklch(0.985 0.005 268);
-  --foreground: oklch(0.22 0.04 265);
+  --radius: 4px;
+  --background: oklch(0.97 0.006 95);
+  --foreground: oklch(0.15 0.02 155);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 265);
+  --card-foreground: oklch(0.15 0.02 155);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 265);
-  --primary: oklch(0.488 0.254 263.4);
-  --primary-foreground: oklch(0.985 0.005 268);
-  --secondary: oklch(0.941 0.209 120.5);
-  --secondary-foreground: oklch(0.30 0.10 261.9);
-  --accent-foreground: oklch(0.30 0.10 261.9);
-  --muted: oklch(0.958 0.008 268);
-  --muted-foreground: oklch(0.50 0.02 265);
+  --popover-foreground: oklch(0.15 0.02 155);
+  --primary: oklch(0.15 0.02 155);
+  --primary-foreground: oklch(0.98 0.005 95);
+  --secondary: oklch(0.94 0.008 95);
+  --secondary-foreground: oklch(0.25 0.02 155);
+  --accent-foreground: oklch(0.25 0.02 155);
+  --muted: oklch(0.95 0.008 95);
+  --muted-foreground: oklch(0.45 0.02 155);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.008 268);
-  --input: oklch(0.92 0.008 268);
+  --border: oklch(0.90 0.012 85);
+  --input: oklch(0.90 0.012 85);
   --ring: var(--brand);
 }
 
@@ -133,21 +136,21 @@
    PALETTE — DARK MODE
 --------------------------------------------------------------------------- */
 .dark {
-  --background: oklch(0.17 0.05 262);
-  --foreground: oklch(0.96 0.01 262);
-  --card: oklch(0.21 0.05 262);
-  --card-foreground: oklch(0.96 0.01 262);
-  --popover: oklch(0.21 0.05 262);
-  --popover-foreground: oklch(0.96 0.01 262);
-  --primary: oklch(0.60 0.19 263.4);
-  --primary-foreground: oklch(0.16 0.05 262);
-  --secondary: oklch(0.90 0.19 120.5);
-  --secondary-foreground: oklch(0.22 0.08 262);
-  --accent-foreground: oklch(0.22 0.08 262);
-  --muted: oklch(0.25 0.04 262);
-  --muted-foreground: oklch(0.68 0.02 262);
+  --background: oklch(0.12 0.02 155);
+  --foreground: oklch(0.95 0.008 95);
+  --card: oklch(0.16 0.02 155);
+  --card-foreground: oklch(0.95 0.008 95);
+  --popover: oklch(0.16 0.02 155);
+  --popover-foreground: oklch(0.95 0.008 95);
+  --primary: oklch(0.68 0.07 85);
+  --primary-foreground: oklch(0.12 0.02 155);
+  --secondary: oklch(0.25 0.02 155);
+  --secondary-foreground: oklch(0.95 0.008 95);
+  --accent-foreground: oklch(0.12 0.02 155);
+  --muted: oklch(0.20 0.02 155);
+  --muted-foreground: oklch(0.7 0.015 95);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.60 0.19 263.4);
+  --ring: oklch(0.68 0.07 85);
 }

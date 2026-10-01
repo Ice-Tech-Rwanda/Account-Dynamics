@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/content/service.server";
 import { CTASection } from "@/domains/home/components/CTASection";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: `Privacy Policy for ${siteConfig.name}, ${siteConfig.location}.`,
-  alternates: { canonical: "/privacy-policy" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("privacy-policy", {
+    title: "Privacy Policy",
+    description: `Privacy Policy for ${siteConfig.name}, ${siteConfig.location}.`,
+    path: "/privacy-policy",
+  });
+}
 
 export default function PrivacyPolicyPage() {
   return (

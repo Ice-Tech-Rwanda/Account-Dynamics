@@ -4,27 +4,27 @@ import { usePathname } from "next/navigation";
 import { siteConfig } from "@/lib/site";
 import { WhatsAppIcon } from "@/components/brand/WhatsAppIcon";
 
-// Context-aware pre-filled messages keyed by pathname prefix.
+// Context-aware pre-filled messages keyed by public tourism routes.
 const CONTEXT_MESSAGES: Array<{ matcher: string; message: string }> = [
   {
-    matcher: "/services/small-business",
+    matcher: "/destinations",
     message:
-      "Hello Account Dynamics, I would like to learn more about your Small Business accounting services.",
+      "Hello Global Line Safaris, I would like help choosing a destination in Rwanda or East Africa.",
   },
   {
-    matcher: "/services/personal-taxes",
+    matcher: "/tour-packages",
     message:
-      "Hello Account Dynamics, I would like to learn more about your Personal Tax services.",
+      "Hello Global Line Safaris, I would like to learn more about your tour packages.",
   },
   {
-    matcher: "/services/outsourcing",
+    matcher: "/services",
     message:
-      "Hello Account Dynamics, I would like to learn more about your Outsourcing services.",
+      "Hello Global Line Safaris, I would like to learn more about your travel services.",
   },
   {
-    matcher: "/services/allied-services",
+    matcher: "/plan-your-trip",
     message:
-      "Hello Account Dynamics, I would like to learn more about your Allied Services.",
+      "Hello Global Line Safaris, I would like help planning a personalised trip.",
   },
 ];
 
@@ -38,7 +38,7 @@ export function FloatingWhatsApp() {
     siteConfig.whatsappMessage;
 
   const href = `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(contextMessage)}`;
-  const ariaLabel = "Chat with Account Dynamics on WhatsApp";
+  const ariaLabel = "Chat with Global Line Safaris on WhatsApp";
 
   return (
     <div className="fixed right-[18px] bottom-[18px] z-40 sm:right-6 sm:bottom-6 animate-in fade-in slide-in-from-bottom-5 duration-500">
@@ -47,7 +47,7 @@ export function FloatingWhatsApp() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
-        title="Chat with Account Dynamics"
+        title="Chat with Global Line Safaris"
         className="group flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lift transition-all duration-300 hover:scale-[1.08] hover:shadow-glow-accent-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto sm:min-w-0 sm:px-0 sm:hover:px-5"
         style={{ backgroundColor: WHATSAPP_GREEN }}
       >

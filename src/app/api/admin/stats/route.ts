@@ -18,12 +18,12 @@ export async function GET() {
       totalInquiries,
       newInquiries,
       unreadInquiries,
-      totalQuotes,
-      newQuotes,
-      unreadQuotes,
-      totalConsultations,
-      newConsultations,
-      unreadConsultations,
+      totalTripInquiries,
+      newTripInquiries,
+      unreadTripInquiries,
+      totalInternshipInquiries,
+      newInternshipInquiries,
+      unreadInternshipInquiries,
       totalSubscribers,
       recentSubscribers,
       unreadNotifications,
@@ -31,25 +31,27 @@ export async function GET() {
       publishedTeamMembers,
       publishedFaqs,
       publishedIndustries,
-      publishedSoftware,
-      publishedTestimonials,
+      publishedDestinations,
+      publishedTourPackages,
+      publishedBlogPosts,
+      homepageSectionCount,
       recentInquiriesList,
-      recentQuotesList,
-      recentConsultationsList,
+      recentTripInquiriesList,
+      recentInternshipList,
       recentAuditLogs,
       sixMonthInquiries,
-      sixMonthQuotes,
-      sixMonthConsultations,
+      sixMonthTripInquiries,
+      sixMonthInternships,
     ] = await Promise.all([
       prisma.inquiry.count(),
       prisma.inquiry.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
       prisma.inquiry.count({ where: { read: false, archived: false } }),
-      prisma.quoteRequest.count(),
-      prisma.quoteRequest.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-      prisma.quoteRequest.count({ where: { read: false, archived: false } }),
-      prisma.consultationRequest.count(),
-      prisma.consultationRequest.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
-      prisma.consultationRequest.count({ where: { read: false, archived: false } }),
+      prisma.tripInquiry.count(),
+      prisma.tripInquiry.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.tripInquiry.count({ where: { read: false, archived: false } }),
+      prisma.internshipInquiry.count(),
+      prisma.internshipInquiry.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.internshipInquiry.count({ where: { read: false, archived: false } }),
       prisma.newsletterSubscriber.count({ where: { active: true } }),
       prisma.newsletterSubscriber.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
       prisma.notification.count({ where: { read: false } }),
@@ -57,22 +59,24 @@ export async function GET() {
       prisma.teamMember.count({ where: { status: "PUBLISHED" } }),
       prisma.faqItem.count({ where: { status: "PUBLISHED" } }),
       prisma.industry.count({ where: { status: "PUBLISHED" } }),
-      prisma.softwareTool.count({ where: { status: "PUBLISHED" } }),
-      prisma.testimonial.count({ where: { status: "PUBLISHED" } }),
+      prisma.destination.count({ where: { status: "PUBLISHED" } }),
+      prisma.tourPackage.count({ where: { status: "PUBLISHED" } }),
+      prisma.blogPost.count({ where: { status: "PUBLISHED" } }),
+      prisma.homepageSection.count(),
       prisma.inquiry.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
         select: { id: true, name: true, email: true, service: true, status: true, read: true, createdAt: true },
       }),
-      prisma.quoteRequest.findMany({
+      prisma.tripInquiry.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
-        select: { id: true, name: true, email: true, service: true, status: true, read: true, createdAt: true },
+        select: { id: true, name: true, email: true, destination: true, preferredPackage: true, status: true, read: true, createdAt: true },
       }),
-      prisma.consultationRequest.findMany({
+      prisma.internshipInquiry.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
-        select: { id: true, name: true, email: true, service: true, preferredDate: true, status: true, read: true, createdAt: true },
+        select: { id: true, name: true, email: true, university: true, programType: true, status: true, read: true, createdAt: true },
       }),
       prisma.auditLog.findMany({
         take: 8,
@@ -83,11 +87,11 @@ export async function GET() {
         where: { createdAt: { gte: sixMonthsAgo } },
         select: { createdAt: true },
       }),
-      prisma.quoteRequest.findMany({
+      prisma.tripInquiry.findMany({
         where: { createdAt: { gte: sixMonthsAgo } },
         select: { createdAt: true },
       }),
-      prisma.consultationRequest.findMany({
+      prisma.internshipInquiry.findMany({
         where: { createdAt: { gte: sixMonthsAgo } },
         select: { createdAt: true },
       }),
@@ -107,12 +111,12 @@ export async function GET() {
         return rd.getMonth() === mIdx && rd.getFullYear() === yr;
       }).length;
 
-      const quoteCount = sixMonthQuotes.filter((r) => {
+      const tripCount = sixMonthTripInquiries.filter((r) => {
         const rd = new Date(r.createdAt);
         return rd.getMonth() === mIdx && rd.getFullYear() === yr;
       }).length;
 
-      const consultCount = sixMonthConsultations.filter((r) => {
+      const internshipCount = sixMonthInternships.filter((r) => {
         const rd = new Date(r.createdAt);
         return rd.getMonth() === mIdx && rd.getFullYear() === yr;
       }).length;
@@ -120,9 +124,9 @@ export async function GET() {
       monthlyTrends.push({
         month: mName,
         inquiries: inqCount,
-        quotes: quoteCount,
-        consultations: consultCount,
-        totalLeads: inqCount + quoteCount + consultCount,
+        tripInquiries: tripCount,
+        internshipInquiries: internshipCount,
+        totalLeads: inqCount + tripCount + internshipCount,
       });
     }
 
@@ -134,8 +138,12 @@ export async function GET() {
       },
       stats: {
         inquiries: { total: totalInquiries, recent: newInquiries, unread: unreadInquiries },
-        quotes: { total: totalQuotes, recent: newQuotes, unread: unreadQuotes },
-        consultations: { total: totalConsultations, recent: newConsultations, unread: unreadConsultations },
+        tripInquiries: { total: totalTripInquiries, recent: newTripInquiries, unread: unreadTripInquiries },
+        internshipInquiries: {
+          total: totalInternshipInquiries,
+          recent: newInternshipInquiries,
+          unread: unreadInternshipInquiries,
+        },
         subscribers: { total: totalSubscribers, recent: recentSubscribers },
         unreadNotifications,
         content: {
@@ -143,14 +151,16 @@ export async function GET() {
           teamMembers: publishedTeamMembers,
           faqs: publishedFaqs,
           industries: publishedIndustries,
-          software: publishedSoftware,
-          testimonials: publishedTestimonials,
+          destinations: publishedDestinations,
+          tourPackages: publishedTourPackages,
+          blogPosts: publishedBlogPosts,
+          homepageSections: homepageSectionCount,
         },
       },
       monthlyTrends,
       recentInquiries: recentInquiriesList,
-      recentQuotes: recentQuotesList,
-      recentConsultations: recentConsultationsList,
+      recentTripInquiries: recentTripInquiriesList,
+      recentInternshipInquiries: recentInternshipList,
       recentActivity: recentAuditLogs.map((log) => ({
         id: log.id,
         action: log.action,

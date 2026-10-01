@@ -4,6 +4,8 @@
 @import "../styles/tokens.css";
 @import "../styles/components.css";
 @import "../styles/animations.css";
+@import "../styles/safari.css";
+@import "../styles/admin.css";
 
 @custom-variant dark (&:is(.dark *));
 

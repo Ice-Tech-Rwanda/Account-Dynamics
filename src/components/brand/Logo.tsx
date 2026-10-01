@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { siteConfig } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -9,9 +10,23 @@ interface LogoProps {
   showWordmark?: boolean;
 }
 
+/**
+ * Intrinsic pixel dimensions of the file at /gls/logo.png.
+ * Keep these in step with the artwork — a mismatch is what squashes the mark.
+ */
+const LOGO_INTRINSIC = { width: 1600, height: 659 } as const;
+
+const LOGO_RATIO = LOGO_INTRINSIC.width / LOGO_INTRINSIC.height;
+
 const sizeStyles = {
-  sm: { box: "h-9 w-9 rounded-lg text-sm", title: "text-sm", subtitle: "text-[10px]" },
-  md: { box: "h-10 w-10 rounded-lg text-base", title: "text-base", subtitle: "text-[11px]" },
+  sm: { box: "h-8 w-8 rounded-lg text-sm", title: "text-sm", subtitle: "text-[10px]" },
+  md: { box: "h-9 w-9 rounded-lg text-base", title: "text-base", subtitle: "text-[11px]" },
+} as const;
+
+/** Width is the design intent; height is derived so the mark is never distorted. */
+const logoSizes = {
+  sm: { width: 120, height: Math.round(120 / LOGO_RATIO) },
+  md: { width: 150, height: Math.round(150 / LOGO_RATIO) },
 } as const;
 
 export function Logo({
@@ -28,16 +43,16 @@ export function Logo({
       aria-label={`${siteConfig.name} — Home`}
       className={cn("flex items-center gap-2.5", className)}
     >
-      <span
-        className={cn(
-          "flex shrink-0 items-center justify-center bg-gradient-to-br from-brand to-brand-strong font-bold text-white shadow-md",
-          styles.box
-        )}
-      >
-        {siteConfig.initials}
-      </span>
+      <Image
+        src="/gls/logo.png"
+        alt={`${siteConfig.name} logo`}
+        width={logoSizes[size].width}
+        height={logoSizes[size].height}
+        priority
+        className="h-auto w-auto shrink-0 object-contain"
+      />
       {showWordmark && (
-        <span className="flex flex-col leading-none">
+        <span className="hidden flex-col leading-none lg:flex">
           <span
             className={cn(
               "font-bold tracking-tight text-slate-900 dark:text-white",

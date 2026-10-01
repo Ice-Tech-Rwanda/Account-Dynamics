@@ -7,16 +7,19 @@ import { useAdminList } from "@/components/admin/useAdminList";
 import { AdminDataTable, type Column } from "@/components/admin/AdminDataTable";
 import { CrudDialog } from "@/components/admin/CrudDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { useContentActions } from "@/components/admin/useContentActions";
+import { StatusFilter } from "@/components/admin/StatusFilter";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminIndustriesPage() {
-  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh } = useAdminList<any>({
+  const { data, loading, error, search, setSearch, page, setPage, totalPages, total, refresh, params, setParams } = useAdminList<any>({
     endpoint: "/api/admin/industries",
     pageSize: 20,
   });
+  const { canDelete, deleteItem, setDeleteItem, toggleArchive, confirmDelete } =
+    useContentActions<any>("/api/admin/industries", refresh, { singular: "industry" });
   const [editItem, setEditItem] = useState<any>(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [deleteItem, setDeleteItem] = useState<any>(null);
 
   const handleSave = async (formData: Record<string, any>) => {
     const payload: Record<string, any> = { ...formData };
@@ -44,18 +47,6 @@ export default function AdminIndustriesPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!deleteItem) return;
-    const res = await fetch(`/api/admin/industries/${deleteItem.id}`, { method: "DELETE" });
-    if (res.ok) {
-      toast.success("Industry deleted");
-      refresh();
-      setDeleteItem(null);
-    } else {
-      toast.error("Failed to delete industry");
-    }
-  };
-
   const columns: Column<any>[] = [
     {
       key: "name",
@@ -73,7 +64,9 @@ export default function AdminIndustriesPage() {
           className={
             item.status === "PUBLISHED"
               ? "bg-emerald-100 text-emerald-700 border-0 text-[10px]"
-              : "bg-slate-100 text-slate-600 border-0 text-[10px]"
+              : item.status === "ARCHIVED"
+              ? "bg-slate-200 text-slate-600 border-0 text-[10px] dark:bg-slate-700/60"
+              : "bg-amber-100 text-amber-700 border-0 text-[10px]"
           }
         >
           {item.status}
@@ -94,15 +87,38 @@ export default function AdminIndustriesPage() {
           >
             Edit
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteItem(item);
-            }}
-            className="text-xs font-semibold text-red-500 hover:underline"
-          >
-            Delete
-          </button>
+          {item.status === "ARCHIVED" ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleArchive(item);
+              }}
+              className="text-xs font-semibold text-brand hover:underline"
+            >
+              Restore
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleArchive(item);
+              }}
+              className="text-xs font-semibold text-amber-600 hover:underline"
+            >
+              Archive
+            </button>
+          )}
+          {canDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteItem(item);
+              }}
+              className="text-xs font-semibold text-red-500 hover:underline"
+            >
+              Delete
+            </button>
+          )}
         </div>
       ),
     },
@@ -123,6 +139,12 @@ export default function AdminIndustriesPage() {
         loading={loading}
         searchKeys={["name", "slug", "description"]}
         searchPlaceholder="Search industries..."
+        filters={(
+          <StatusFilter
+            value={params.status ?? ""}
+            onChange={(status) => setParams({ status })}
+          />
+        )}
         pageSize={20}
         searchValue={search}
         onSearchChange={setSearch}
@@ -149,7 +171,7 @@ export default function AdminIndustriesPage() {
           { name: "description", label: "Description", type: "textarea", required: true },
           { name: "icon", label: "Icon Name", placeholder: "Building2" },
           { name: "image", label: "Image", type: "image", placeholder: "/uploads/... or https://..." },
-          { name: "services", label: "Services offered (comma-separated)", placeholder: "Tax, Audit, Payroll" },
+          { name: "services", label: "Services Offered", type: "stringList", itemLabel: "service", addLabel: "Add", placeholder: "Gorilla safaris, Cultural tours..." },
           { name: "displayOrder", label: "Display Order", type: "number", min: 0 },
           {
             name: "status",
@@ -158,6 +180,7 @@ export default function AdminIndustriesPage() {
             options: [
               { label: "Published", value: "PUBLISHED" },
               { label: "Draft", value: "DRAFT" },
+              { label: "Archived", value: "ARCHIVED" },
             ],
           },
         ]}
@@ -166,7 +189,7 @@ export default function AdminIndustriesPage() {
       <ConfirmDialog
         open={!!deleteItem}
         onClose={() => setDeleteItem(null)}
-        onConfirm={handleDelete}
+        onConfirm={confirmDelete}
         title="Delete industry?"
         message={`Are you sure you want to delete "${deleteItem?.name}"?`}
       />

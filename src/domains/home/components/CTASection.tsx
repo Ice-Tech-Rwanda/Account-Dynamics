@@ -1,45 +1,30 @@
-"use client";
-
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone } from "lucide-react";
-import { siteConfig } from "@/lib/site";
+import { ArrowUpRight } from "lucide-react";
+import type { HomepageSectionData } from "@/lib/content/types";
 
-export function CTASection() {
+export function CTASection({ section }: { section?: HomepageSectionData }) {
   return (
-    <section className="relative py-24 sm:py-32 px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-brand-bg-dark to-slate-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(14,124,123,0.08),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(27,58,92,0.08),transparent_50%)]" />
-
-      <div className="relative z-10 max-w-3xl mx-auto text-center">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/5 backdrop-blur-xl px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-accent border border-accent/20 mb-6">
-          Get Started Today
-        </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-white">
-          Ready to Take Control of Your Finances?
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Whether you need tax preparation, bookkeeping, or strategic business
-          advisory, our team is here to help you succeed.
+    <section className="safari-cta">
+      <div className="safari-container">
+        <div className="safari-eyebrow">
+          <span className="safari-eyebrow-line" />
+          <span>{section?.eyebrow || "Start your journey"}</span>
+        </div>
+        <h2>{section?.title || "Your Next Adventure Starts Here"}</h2>
+        <p>
+          {section?.subtitle ||
+            "Tell us what you dream of experiencing. We'll help you plan a journey through Rwanda and East Africa, shaped around you."}
         </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Link href="/book">
-            <Button
-              variant="accent"
-              size="xl"
-              className="gap-2.5 rounded-xl shadow-xl shadow-accent/25 hover:shadow-accent/35 transition-all duration-300 text-base"
-            >
-              <ArrowRight className="size-4" /> Book a Free Consultation
-            </Button>
+        <div className="hero-actions" style={{ justifyContent: "center" }}>
+          <Link
+            className="safari-button safari-button-ivory"
+            href={section?.ctaUrl || "/plan-your-trip"}
+          >
+            {section?.ctaLabel || "Plan Your Trip"}
+            <ArrowUpRight width={14} height={14} />
           </Link>
-          <Link href={siteConfig.bookOnlineUrl}>
-            <Button
-              size="xl"
-              className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-300 gap-2.5 text-base shadow-lg"
-            >
-              <Phone className="size-4" /> Book a Consultation
-            </Button>
+          <Link className="safari-text-link light-link" href="/contact">
+            Contact Us
           </Link>
         </div>
       </div>

@@ -57,29 +57,6 @@ export const contactSchema = z.object({
   idempotencyKey: idempotencyKeySchema,
 });
 
-export const quoteSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
-  email: emailSchema,
-  phone: z.string().max(50).nullable().optional(),
-  company: z.string().max(200).nullable().optional(),
-  service: z.string().max(200).nullable().optional(),
-  businessType: z.string().max(200).nullable().optional(),
-  message: z.string().max(5000).nullable().optional(),
-  preferredContact: z.enum(["email", "phone"]).default("email"),
-  idempotencyKey: idempotencyKeySchema,
-});
-
-export const bookingSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
-  email: emailSchema,
-  phone: z.string().max(50).nullable().optional(),
-  service: z.string().min(1, "Service is required").max(200),
-  date: z.string().max(20).nullable().optional(),
-  time: z.string().max(20).nullable().optional(),
-  notes: z.string().max(5000).nullable().optional(),
-  idempotencyKey: idempotencyKeySchema,
-});
-
 export const newsletterSchema = z.object({
   email: emailSchema,
 });
@@ -96,7 +73,7 @@ export const serviceCategorySchema = z.object({
   description: z.string().min(1).max(2000),
   icon: z.string().max(100).default("Building2"),
   image: z.string().max(500).nullable().optional(),
-  cta: z.string().max(200).default("Talk to an Accountant"),
+  cta: z.string().max(200).default("Plan Your Trip"),
   seoTitle: z.string().max(200).nullable().optional(),
   seoDescription: z.string().max(500).nullable().optional(),
   displayOrder: z.number().int().default(0),
@@ -163,30 +140,6 @@ export const faqSchema = z.object({
 
 export const faqUpdateSchema = faqSchema.partial();
 
-export const testimonialSchema = z.object({
-  clientName: z.string().min(1).max(200),
-  company: z.string().max(200).nullable().optional(),
-  position: z.string().max(200).nullable().optional(),
-  content: z.string().min(1).max(5000),
-  photo: z.string().max(500).nullable().optional(),
-  rating: z.number().int().min(1).max(5).nullable().optional(),
-  displayOrder: z.number().int().default(0),
-  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).default("DRAFT"),
-});
-
-export const testimonialUpdateSchema = testimonialSchema.partial();
-
-export const softwareToolSchema = z.object({
-  name: z.string().min(1).max(200),
-  logo: z.string().max(500).nullable().optional(),
-  description: z.string().max(2000).nullable().optional(),
-  websiteUrl: z.string().url().max(500).nullable().optional(),
-  displayOrder: z.number().int().default(0),
-  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).default("PUBLISHED"),
-});
-
-export const softwareToolUpdateSchema = softwareToolSchema.partial();
-
 export const homepageSectionSchema = z.object({
   eyebrow: z.string().max(200).nullable().optional(),
   title: z.string().max(300).nullable().optional(),
@@ -228,3 +181,156 @@ export const userUpdateSchema = z.object({
   phone: z.string().max(50).nullable().optional(),
   bio: z.string().max(1000).nullable().optional(),
 });
+
+// ---------------------------------------------------------------------------
+// Tourism schemas
+// ---------------------------------------------------------------------------
+
+export const tripInquirySchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: emailSchema,
+  phone: z.string().max(50).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  travelDate: z.string().max(50).nullable().optional(),
+  duration: z.string().max(100).nullable().optional(),
+  travelers: z.string().max(50).nullable().optional(),
+  preferredPackage: z.string().max(300).nullable().optional(),
+  budget: z.string().max(100).nullable().optional(),
+  destination: z.string().max(200).nullable().optional(),
+  message: z.string().max(5000).nullable().optional(),
+  idempotencyKey: idempotencyKeySchema,
+});
+
+export const tripInquiryUpdateSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  email: emailSchema.optional(),
+  phone: z.string().max(50).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  travelDate: z.string().max(50).nullable().optional(),
+  duration: z.string().max(100).nullable().optional(),
+  travelers: z.string().max(50).nullable().optional(),
+  preferredPackage: z.string().max(300).nullable().optional(),
+  budget: z.string().max(100).nullable().optional(),
+  destination: z.string().max(200).nullable().optional(),
+  message: z.string().max(5000).nullable().optional(),
+  status: z.enum(["NEW", "CONTACTED", "IN_PROGRESS", "QUALIFIED", "CONVERTED", "CLOSED", "SPAM"]).optional(),
+  read: z.boolean().optional(),
+  archived: z.boolean().optional(),
+  assignedToId: z.string().max(100).nullable().optional(),
+});
+
+/** Programme types an applicant can apply for. Shared by the public form and admin editor. */
+export const PROGRAM_TYPE_VALUES = [
+  "INTERNSHIP",
+  "INDUSTRIAL_ATTACHMENT",
+  "APPRENTICESHIP",
+  "VOLUNTEER",
+] as const;
+
+export const PROGRAM_TYPE_LABELS: Record<(typeof PROGRAM_TYPE_VALUES)[number], string> = {
+  INTERNSHIP: "Internship",
+  INDUSTRIAL_ATTACHMENT: "Industrial Attachment",
+  APPRENTICESHIP: "Apprenticeship",
+  VOLUNTEER: "Volunteering",
+};
+
+const PROGRAM_TYPE_ENUM = z.enum(PROGRAM_TYPE_VALUES);
+
+export const internshipInquirySchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: emailSchema,
+  phone: z.string().max(50).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  university: z.string().max(200).nullable().optional(),
+  fieldOfStudy: z.string().max(200).nullable().optional(),
+  programType: PROGRAM_TYPE_ENUM.nullable().optional(),
+  preferredStartDate: z.string().max(50).nullable().optional(),
+  duration: z.string().max(100).nullable().optional(),
+  experience: z.string().max(1000).nullable().optional(),
+  areasOfInterest: z.string().max(500).nullable().optional(),
+  message: z.string().max(5000).nullable().optional(),
+  idempotencyKey: idempotencyKeySchema,
+});
+
+export const internshipInquiryUpdateSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  email: emailSchema.optional(),
+  phone: z.string().max(50).nullable().optional(),
+  country: z.string().max(100).nullable().optional(),
+  university: z.string().max(200).nullable().optional(),
+  fieldOfStudy: z.string().max(200).nullable().optional(),
+  programType: PROGRAM_TYPE_ENUM.nullable().optional(),
+  preferredStartDate: z.string().max(50).nullable().optional(),
+  duration: z.string().max(100).nullable().optional(),
+  experience: z.string().max(1000).nullable().optional(),
+  areasOfInterest: z.string().max(500).nullable().optional(),
+  message: z.string().max(5000).nullable().optional(),
+  status: z
+    .enum(["NEW", "CONTACTED", "IN_PROGRESS", "QUALIFIED", "CONVERTED", "CLOSED", "SPAM"])
+    .optional(),
+  read: z.boolean().optional(),
+  archived: z.boolean().optional(),
+  assignedToId: z.string().max(100).nullable().optional(),
+});
+
+export const destinationSchema = z.object({
+  name: z.string().min(1).max(200),
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug"),
+  shortDescription: z.string().max(500).nullable().optional(),
+  description: z.string().max(20000).default(""),
+  location: z.string().max(300).nullable().optional(),
+  category: z.string().max(100).nullable().optional(),
+  image: z.string().max(500).nullable().optional(),
+  galleryImages: z.array(z.string().max(500)).optional(),
+  seoTitle: z.string().max(70).nullable().optional(),
+  seoDescription: z.string().max(170).nullable().optional(),
+  displayOrder: z.number().int().default(0),
+  featured: z.boolean().default(false),
+  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).default("PUBLISHED"),
+});
+
+export const destinationUpdateSchema = destinationSchema.partial();export const tourPackageSchema = z.object({
+  title: z.string().min(1).max(300),
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug"),
+  location: z.string().max(300).nullable().optional(),
+  category: z.string().max(100).nullable().optional(),
+  duration: z.string().max(100).nullable().optional(),
+  price: z.string().max(100).nullable().optional(),
+  priceNote: z.string().max(300).nullable().optional(),
+  overview: z.string().max(20000).default(""),
+  facts: z.string().max(2000).nullable().optional(),
+  highlights: z.array(z.string().max(1000)).optional(),
+  itinerary: z
+    .array(z.object({ heading: z.string().max(300).optional(), body: z.string().max(10000).optional() }))
+    .optional(),
+  inclusions: z.array(z.string().max(1000)).optional(),
+  exclusions: z.array(z.string().max(1000)).optional(),
+  note: z.string().max(2000).nullable().optional(),
+  image: z.string().max(500).nullable().optional(),
+  galleryImages: z.array(z.string().max(500)).optional(),
+  seoTitle: z.string().max(70).nullable().optional(),
+  seoDescription: z.string().max(170).nullable().optional(),
+  featured: z.boolean().default(false),
+  displayOrder: z.number().int().default(0),
+  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).default("PUBLISHED"),
+});
+
+export const tourPackageUpdateSchema = tourPackageSchema.partial();
+
+export const blogPostSchema = z.object({
+  title: z.string().min(1).max(300),
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug"),
+  excerpt: z.string().max(500).default(""),
+  content: z.string().max(50000).default(""),
+  category: z.string().max(100).default("Travel Guides"),
+  image: z.string().max(500).nullable().optional(),
+  author: z.string().max(200).default("Global Line Safaris"),
+  readTime: z.number().int().min(1).max(240).nullable().optional(),
+  seoTitle: z.string().max(70).nullable().optional(),
+  seoDescription: z.string().max(170).nullable().optional(),
+  featured: z.boolean().default(false),
+  displayOrder: z.number().int().default(0),
+  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).default("PUBLISHED"),
+});
+
+export const blogPostUpdateSchema = blogPostSchema.partial();

@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   ArrowLeft,
   Mail,
   Phone,
-  Building2,
-  Calendar,
-  User,
   MessageCircle,
   Archive,
   CheckCircle2,
@@ -32,7 +29,6 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function AdminInquiryDetailPage() {
-  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
   const [inquiry, setInquiry] = useState<any>(null);
@@ -131,7 +127,7 @@ export default function AdminInquiryDetailPage() {
 
   const cleanPhone = inquiry.phone ? inquiry.phone.replace(/[^0-9]/g, "") : null;
   const whatsappUrl = cleanPhone
-    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hello ${inquiry.name}, thank you for contacting Account Dynamics regarding ${inquiry.service || "our services"}.`)}`
+    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hello ${inquiry.name}, thank you for contacting Global Line Safaris regarding ${inquiry.service || "our travel services"}.`)}`
     : null;
 
   return (
@@ -163,7 +159,7 @@ export default function AdminInquiryDetailPage() {
         {/* Quick Action Bar */}
         <div className="px-6 py-3 bg-slate-50/70 border-b border-slate-100 dark:bg-slate-800/40 dark:border-slate-800 flex flex-wrap gap-2">
           <a
-            href={`mailto:${inquiry.email}?subject=Account Dynamics: Regarding your inquiry`}
+            href={`mailto:${inquiry.email}?subject=Global Line Safaris: Regarding your inquiry`}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-200 transition-colors"
           >
             <Mail className="size-3.5 text-blue-500" />
@@ -220,7 +216,7 @@ export default function AdminInquiryDetailPage() {
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Requested Service</span>
             <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
-              {inquiry.service || "General Accounting & Advisory"}
+              {inquiry.service || "General Inquiry"}
             </p>
           </div>
 

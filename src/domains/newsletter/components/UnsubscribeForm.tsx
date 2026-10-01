@@ -47,8 +47,8 @@ export function UnsubscribeForm() {
           You&apos;re Unsubscribed
         </h2>
         <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-          You will no longer receive the Account Dynamics newsletter. On
-          reflection, we hope we can still help you with your accounting needs.
+          You will no longer receive the Global Line Safaris newsletter. On
+          reflection, we hope we can still help you plan your next journey.
         </p>
       </div>
     );

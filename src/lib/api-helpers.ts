@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import type { z } from "zod"
-import { AppError, isAppError } from "@/lib/errors"
+import { isAppError } from "@/lib/errors"
 import { Prisma } from "@prisma/client"
 
 export function ok<T>(data: T, status = 200) {

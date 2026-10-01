@@ -1,33 +1,33 @@
 "use client";
 
 import Image from "next/image";
-import { Brain, BarChart3, TrendingUp, Cpu } from "lucide-react";
+import { Compass, HeartHandshake, Leaf, Sparkles } from "lucide-react";
 import { siteImages } from "@/lib/siteImages";
 
 const visionItems = [
   {
-    icon: Cpu,
-    title: "Digital Accounting Ecosystems",
+    icon: Compass,
+    title: "Authentic Journeys",
     description:
-      "Transforming traditional accounting practices into modern digital ecosystems that leverage technology for better outcomes.",
+      "Creating genuine travel experiences that connect our guests with Rwanda's people, culture, nature and destinations.",
   },
   {
-    icon: Brain,
-    title: "Analytics-Driven Advisory",
+    icon: HeartHandshake,
+    title: "Personal Service",
     description:
-      "Applying business analytics to accounting to help clients understand performance, identify opportunities and plan ahead with confidence.",
+      "Understanding the needs and interests of every traveller, and designing journeys that are enjoyable, meaningful and professionally organized.",
   },
   {
-    icon: BarChart3,
-    title: "Data-Driven Advisory",
+    icon: Leaf,
+    title: "Responsible Tourism",
     description:
-      "Providing relevant and cost-effective advisory services to small businesses in a rapidly changing and complex business environment.",
+      "Promoting travel that respects the environment, supports local communities and protects the destinations we love.",
   },
   {
-    icon: TrendingUp,
-    title: "Innovation & Growth",
+    icon: Sparkles,
+    title: "Lasting Memories",
     description:
-      "Embracing technological adoption and exploring new business opportunities to remain at the forefront of tax, accounting and business advisory.",
+      "Helping every traveller return home with meaningful experiences, unforgettable stories and memories that last a lifetime.",
   },
 ];
 
@@ -39,13 +39,13 @@ export function VisionSection() {
           <span className="inline-flex items-center gap-2 rounded-full bg-brand/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand mb-4">
             Our Vision
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Building the Future of Digital Accounting
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+            A World Where Every Journey Matters
           </h2>
           <p className="mt-4 text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Our vision involves transforming traditional accounting practices
-            into digital accounting ecosystems, integrating technology and
-            analytics to deliver exceptional service.
+            We aspire to be a trusted and inspiring travel company, showcasing
+            the beauty, culture, wildlife and unique experiences of Rwanda and
+            East Africa through authentic and responsible travel.
           </p>
         </div>
 

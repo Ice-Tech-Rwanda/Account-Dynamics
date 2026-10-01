@@ -2,21 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Globe, Search, Save, CheckCircle2, AlertCircle } from "lucide-react";
+import { Globe, Search, Save } from "lucide-react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const PAGES = [
-  { key: "home", label: "Homepage (/)" },
-  { key: "about", label: "About Us (/about)" },
-  { key: "services", label: "Services (/services)" },
-  { key: "industries", label: "Industries (/industries)" },
-  { key: "contact", label: "Contact (/contact)" },
-  { key: "book", label: "Book Consultation (/book)" },
-  { key: "why-choose-us", label: "Why Choose Us (/why-choose-us)" },
-];
+  { key: "home", label: "Homepage (/)", path: "" },
+  { key: "about", label: "About Us (/about)", path: "about" },
+  { key: "services", label: "Services (/services)", path: "services" },
+  { key: "industries", label: "Industries (/industries)", path: "industries" },
+  { key: "contact", label: "Contact (/contact)", path: "contact" },
+  { key: "why-choose-us", label: "Why Choose Us (/why-choose-us)", path: "why-choose-us" },
+  { key: "destinations", label: "Destinations (/destinations)", path: "destinations" },
+  { key: "tour-packages", label: "Tour Packages (/tour-packages)", path: "tour-packages" },
+  { key: "plan-your-trip", label: "Plan Your Trip (/plan-your-trip)", path: "plan-your-trip" },
+  { key: "gallery", label: "Gallery (/gallery)", path: "gallery" },
+  { key: "mission-and-values", label: "Mission & Values (/mission-and-values)", path: "mission-and-values" },
+  { key: "training", label: "Training (/training)", path: "training" },
+  { key: "blog", label: "Travel Blog (/blog)", path: "blog" },
+  { key: "terms", label: "Terms & Conditions (/terms)", path: "terms" },
+  { key: "privacy-policy", label: "Privacy Policy (/privacy-policy)", path: "privacy-policy" },
+  { key: "team", label: "Team Members (/about/team/*)", path: "about/team" },
+  { key: "unsubscribe", label: "Unsubscribe (/unsubscribe)", path: "unsubscribe" },
+] as const;
 
 export default function AdminSeoPage() {
   const [activePage, setActivePage] = useState("home");
@@ -62,6 +72,7 @@ export default function AdminSeoPage() {
   };
 
   const seo = seoData[activePage] || {};
+  const activePath = PAGES.find((p) => p.key === activePage)?.path ?? activePage;
   const update = (field: string, value: any) =>
     setSeoData((prev) => ({
       ...prev,
@@ -113,14 +124,14 @@ export default function AdminSeoPage() {
             </div>
             <div className="rounded-xl bg-slate-50 p-4 dark:bg-slate-800/50 space-y-1">
               <p className="text-xs text-slate-400 dark:text-slate-500 truncate">
-                https://accountdynamics.com/{activePage === "home" ? "" : activePage}
+                https://globallinesafaris.rw/{activePath}
               </p>
               <h3 className="text-sm font-semibold text-blue-600 dark:text-blue-400 line-clamp-1">
-                {seo.title || "Account Dynamics | Tax, Accounting & Business Advisory"}
+                {seo.title || "Global Line Safaris | Rwanda Safaris & East Africa Tours"}
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
                 {seo.description ||
-                  "Professional tax, cloud accounting, bookkeeping and advisory services for individuals and small businesses in Toronto, Canada."}
+                  "Personalised wildlife, landscape, and cultural travel experiences across Rwanda and East Africa."}
               </p>
             </div>
           </div>
@@ -146,7 +157,7 @@ export default function AdminSeoPage() {
                 value={seo.title ?? ""}
                 onChange={(e) => update("title", e.target.value)}
                 className="rounded-xl"
-                placeholder="e.g. Services | Account Dynamics"
+                placeholder="e.g. Services | Global Line Safaris"
               />
             </div>
 
@@ -189,7 +200,7 @@ export default function AdminSeoPage() {
                 value={seo.canonicalUrl ?? ""}
                 onChange={(e) => update("canonicalUrl", e.target.value)}
                 className="mt-1 rounded-xl"
-                placeholder={`/${activePage === "home" ? "" : activePage}`}
+                placeholder={`/${activePath}`}
               />
             </div>
 

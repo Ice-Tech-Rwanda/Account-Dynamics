@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Why Choose Us",
+  title: "Why Travel With Us",
   description:
-    "Discover why clients trust Account Dynamics — professional expertise, personalized service, technology-enabled accounting, tax & compliance knowledge, business insight and cost-conscious advisory.",
+    "Discover why travellers choose Global Line Safaris — local expertise, tailor-made itineraries, licensed guides, responsible travel and personal support from first idea to homecoming.",
   alternates: { canonical: "/why-choose-us" },
 };
 

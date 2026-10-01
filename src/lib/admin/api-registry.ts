@@ -10,10 +10,8 @@
  */
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/audit";
 import type { z } from "zod";
-import { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,6 +38,21 @@ export interface RegistryConfig<TCreate, TUpdate> {
   orderBy?: Record<string, string> | Record<string, string>[];
   /** Content tags to revalidate after mutations. Empty = no revalidation. */
   contentTags?: string[];
+  /**
+   * Query params the list endpoint should apply as Prisma `where` filters.
+   * Booleans accept "true"/"false"; other values are matched as strings.
+   * Example: filterParams: ["status", "read", "archived"]
+   */
+  filterParams?: string[];
+  /** Default value for a filter param when it is absent from the query string. */
+  filterDefaults?: Record<string, string>;
+  /** Return per-status counts alongside the list (drives CMS filter chips). */
+  includeStatusCounts?: boolean;
+  /**
+   * Hide ARCHIVED records unless `?status=ARCHIVED` is requested explicitly.
+   * Lets the CMS archive content without it cluttering the default list.
+   */
+  hideArchivedByDefault?: boolean;
   /** Custom list filter (receives the base where clause) */
   listFilter?: (where: Record<string, any>) => Record<string, any>;
 }
@@ -117,6 +130,17 @@ export function createListHandler<TCreate, TUpdate>(
 
       let where: Record<string, any> = {};
 
+      // Declared query-param filters (status, read, archived, ...)
+      for (const field of config.filterParams ?? []) {
+        const raw = searchParams.get(field) ?? config.filterDefaults?.[field] ?? "";
+        if (raw === "") continue;
+        if (raw === "true" || raw === "false") {
+          where[field] = raw === "true";
+        } else {
+          where[field] = raw;
+        }
+      }
+
       // Search
       if (q && config.searchFields?.length) {
         where.OR = config.searchFields.map((field) => ({
@@ -127,6 +151,8 @@ export function createListHandler<TCreate, TUpdate>(
       // Custom filter
       if (config.listFilter) {
         where = config.listFilter(where);
+      } else if (config.hideArchivedByDefault && !searchParams.get("status")) {
+        where.status = { ...(where.status ? { equals: where.status } : {}), not: "ARCHIVED" };
       }
 
       // Dynamic sort
@@ -144,7 +170,7 @@ export function createListHandler<TCreate, TUpdate>(
         modelDelegate.count({ where }),
       ]);
 
-      return NextResponse.json({
+      const payload: Record<string, any> = {
         data,
         pagination: {
           page,
@@ -152,7 +178,20 @@ export function createListHandler<TCreate, TUpdate>(
           total,
           totalPages: Math.ceil(total / limit),
         },
-      });
+      };
+
+      if (config.includeStatusCounts) {
+        const grouped = await modelDelegate.groupBy({
+          by: ["status"],
+          where: config.listFilter ? config.listFilter({}) : {},
+          _count: { _all: true },
+        });
+        payload.statusCounts = Object.fromEntries(
+          grouped.map((g: any) => [g.status, g._count._all])
+        );
+      }
+
+      return NextResponse.json(payload);
     } catch (error) {
       console.error(`[admin:${config.name}] list error`, error);
       return NextResponse.json({ error: "Failed to fetch records" }, { status: 500 });

@@ -1,20 +1,17 @@
 /**
- * Centralized placeholder image configuration.
+ * Centralized image configuration for Global Line Safaris.
  *
- * These are temporary, professionally licensed placeholder images sourced from
- * Unsplash (https://unsplash.com — free to use; see their license). They make
- * the site look production-ready and are intentionally centralized here so the
- * client can replace any image without touching component code.
+ * Hero / page-background imagery comes from /public/images, sourced from the
+ * supplied photo set in /public/Images. Files were copied to clean kebab-case
+ * slugs so URLs contain no spaces or double extensions; originals are untouched.
+ *   1. Drop new files under /public/images (or /public/Images for raw drops).
+ *   2. Point the slot below at the new path — no component changes needed.
  *
- * To swap in official Account Dynamics images later:
- *   1. Add the files under /public (e.g. /images/hero.jpg).
- *   2. Update the corresponding value below to the local path (e.g. "/images/hero.jpg").
- *   3. Commit — every component already reads from this module.
+ * Team avatars intentionally stay in /public/gls/team because they are
+ * photographs of named people, not scene/background imagery.
  *
  * All URLs are served through next/image for automatic optimization.
  */
-
-const base = "https://images.unsplash.com";
 
 export interface SiteImage {
   src: string;
@@ -40,11 +37,10 @@ export interface SiteImages {
   contact: SiteImage;
   team: {
     founder: TeamAvatarEntry;
-    rishi: TeamAvatarEntry;
-    amrit: TeamAvatarEntry;
-    yogesh: TeamAvatarEntry;
-    hari: TeamAvatarEntry;
-    nikhil: TeamAvatarEntry;
+    raymond: TeamAvatarEntry;
+    alexis: TeamAvatarEntry;
+    ismail: TeamAvatarEntry;
+    diane: TeamAvatarEntry;
   };
   aboutPage: {
     heroBackground: SiteImage;
@@ -59,121 +55,111 @@ export const siteImages: SiteImages = {
   // Hero background slides (wide, landscape, work well behind a dark overlay)
   heroSlides: [
     {
-      src: `${base}/photo-1497366754035-f200968a6e72`,
-      alt: "Professional modern accounting office workspace at Account Dynamics",
+      src: "/images/rwanda-hills.jpg",
+      alt: "Rolling green hills and countryside views across the Land of a Thousand Hills",
     },
     {
-      src: `${base}/photo-1554224155-6726b3ff858f`,
-      alt: "Calculator and financial documents on a desk at Account Dynamics",
+      src: "/images/volcanoes-national-park.jpg",
+      alt: "Mist over the rainforest slopes of Volcanoes National Park, home of the mountain gorilla",
     },
     {
-      src: `${base}/photo-1553877522-43269d4ea984`,
-      alt: "Business consultant reviewing financial charts and reports",
+      src: "/images/best-of-rwanda-safari.jpg",
+      alt: "Wildlife on the savannah plains of Rwanda during a best-of safari",
     },
   ],
 
-  // About section — accountant/business consulting with financial documents
+  // About section photograph
   about: {
-    src: `${base}/photo-1556761175-b413da4baf72`,
-    alt: "Account Dynamics team collaborating on financial documents in a business meeting",
+    src: "/images/akagera-national-park.jpg",
+    alt: "Landscape of Akagera National Park, Rwanda's largest national park",
   },
 
-  // Business advisory / financial analytics
+  // Advisory / experiences
   advisory: {
-    src: `${base}/photo-1460925895917-afdab827c52f`,
-    alt: "Laptop displaying business analytics and financial charts",
+    src: "/images/lake-ruhondo.jpg",
+    alt: "Lake Ruhondo shoreline with rolling hills in the distance",
   },
 
-  // Page-level hero backgrounds (services, service detail, contact)
+  // Page-level hero backgrounds
   servicesHero: {
-    src: `${base}/photo-1554774853-aae0a22c8aa4`,
-    alt: "Business analytics and accounting reports in a professional environment",
+    src: "/images/nyungwe-forest-park.jpg",
+    alt: "Old-growth rainforest canopy of Nyungwe National Park, Rwanda",
   },
 
-  // Service categories
+  // Service category images
   smallBusiness: {
-    src: `${base}/photo-1522071820081-009f0129c71c`,
-    alt: "Small business team collaborating in a professional consultation",
+    src: "/images/safari-01.webp",
+    alt: "Safari landscape in Rwanda",
   },
   personalTaxes: {
-    src: `${base}/photo-1554224155-6726b3ff858f`,
-    alt: "Professional tax and financial planning documents and calculator",
+    src: "/images/volcanoes-national-park.jpg",
+    alt: "Gorilla trekking in Volcanoes National Park",
   },
   outsourcing: {
-    src: `${base}/photo-1521791136064-7986c2920216`,
-    alt: "Professional accounting team collaborating on client work",
+    src: "/images/kingfisher-kayaking.jpg",
+    alt: "Kingfisher kayaking on the calm waters of Rwanda",
   },
   alliedServices: {
-    src: `${base}/photo-1560472355-536de3962603`,
-    alt: "Financial reports and business planning documents",
+    src: "/images/lake-ruhondo.jpg",
+    alt: "Twin Lakes of Burera and Ruhondo in northern Rwanda",
   },
 
   // Contact page supporting image
   contact: {
-    src: `${base}/photo-1544717297-fa95b6ee9643`,
-    alt: "Professional accounting consultation at a modern Toronto office",
+    src: "/images/rwanda-photo-2019.jpg",
+    alt: "Rwanda safari experience with Global Line Safaris",
   },
 
-  // Team member avatars.
-  // src is a temporary internet portrait placeholder that the client will
-  // replace later with official Account Dynamics photos. To swap in real
-  // photos, just set src to a local path (e.g. "/team/joseph-mathews.jpg")
-  // or another URL — no component changes needed.
+  // Team member avatars — official Global Line Safaris photos of named people
   team: {
     founder: {
-      name: "Joseph P. Mathews",
-      initials: "JM",
-      src: `${base}/photo-1560250097-0b93528c311a`,
+      name: "Raymond Shumbusho",
+      initials: "RS",
+      src: "/gls/team/raymond.jpg",
     },
-    rishi: {
-      name: "Rishi",
-      initials: "R",
-      src: `${base}/photo-1507003211169-0a1dd7228f2d`,
+    raymond: {
+      name: "Raymond Shumbusho",
+      initials: "RS",
+      src: "/gls/team/raymond.jpg",
     },
-    amrit: {
-      name: "Amrit",
-      initials: "A",
-      src: `${base}/photo-1472099645785-5658abf4ff4e`,
+    alexis: {
+      name: "Alexis Rugamba",
+      initials: "AR",
+      src: "/gls/team/alexis.jpg",
     },
-    yogesh: {
-      name: "Yogesh",
-      initials: "Y",
-      src: `${base}/photo-1519085360753-af0119f7cbe7`,
+    ismail: {
+      name: "Ismail Iradukunda",
+      initials: "II",
+      src: "/gls/team/ismail.jpg",
     },
-    hari: {
-      name: "Hari",
-      initials: "H",
-      src: `${base}/photo-1500648767791-00dcc994a43e`,
-    },
-    nikhil: {
-      name: "Nikhil",
-      initials: "N",
-      src: `${base}/photo-1573496359142-b8d87734a5a2`,
+    diane: {
+      name: "Diane Uwase",
+      initials: "DU",
+      src: "/gls/team/diane.jpg",
     },
   },
 
-  // About page illustration images (generic scenes — not portraits of named staff).
-  // Used to enrich the About section with real, professional imagery.
+  // About page illustration images
   aboutPage: {
     heroBackground: {
-      src: `${base}/photo-1551434678-e076c223a692`,
-      alt: "Professional accounting team collaborating in a modern bright office",
+      src: "/images/rwanda-hills.jpg",
+      alt: "Hills of Rwanda in the Land of a Thousand Hills",
     },
     office: {
-      src: `${base}/photo-1524758631624-e2822e304c36`,
-      alt: "Modern professional office meeting space at Account Dynamics",
+      src: "/images/best-of-rwanda-safari.jpg",
+      alt: "Rwanda travel and safari highlights",
     },
     teamCollaboration: {
-      src: `${base}/photo-1542744173-8e7e53415bb0`,
-      alt: "Account Dynamics team collaborating around a desk in the office",
+      src: "/images/kingfisher-kayaking.jpg",
+      alt: "Safari highlights from Global Line Safaris tours",
     },
     finances: {
-      src: `${base}/photo-1554224155-6726b3ff858f`,
-      alt: "Financial documents and calculator on a desk at Account Dynamics",
+      src: "/images/nyungwe-forest-park.jpg",
+      alt: "Nyungwe National Park destination views",
     },
     workspace: {
-      src: `${base}/photo-1497366754035-f200968a6e72`,
-      alt: "Organized accounting workspace at Account Dynamics",
+      src: "/images/safari-01.webp",
+      alt: "Rwanda wildlife and scenery",
     },
   },
 };

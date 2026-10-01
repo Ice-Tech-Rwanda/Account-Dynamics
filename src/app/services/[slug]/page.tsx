@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: ServicePageProps) {
   const category = await getServiceCategory(slug);
   if (!category) return {};
   return {
-    title: `${category.title} | Account Dynamics`,
+    title: `${category.title} | Global Line Safaris`,
     description: category.description.slice(0, 160),
     openGraph: {
-      title: `${category.title} | Account Dynamics`,
+      title: `${category.title} | Global Line Safaris`,
       description: category.description.slice(0, 160),
       url: `/services/${category.slug}`,
     },
@@ -41,23 +41,21 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+    "@type": "TravelAgency",
     name: `${category.title} — ${siteConfig.name}`,
     description: category.description,
     provider: {
-      "@type": "Organization",
+      "@type": "TravelAgency",
       name: siteConfig.name,
       telephone: siteConfig.phone,
       address: {
         "@type": "PostalAddress",
-        streetAddress: "55 Baywood Road, 2nd Floor",
-        addressLocality: "Toronto",
-        addressRegion: "Ontario",
-        postalCode: "M9V 3Y8",
-        addressCountry: "CA",
+        streetAddress: "KG 7 Ave",
+        addressLocality: "Kigali",
+        addressCountry: "RW",
       },
     },
-    areaServed: "Canada",
+    areaServed: "Rwanda",
     url: `${siteConfig.siteUrl.replace(/\/$/, "")}/services/${category.slug}`,
   };
 

@@ -1,18 +1,19 @@
 import { describe, it, expect } from "vitest";
 import {
   contactSchema,
-  quoteSchema,
-  bookingSchema,
   newsletterSchema,
+  internshipInquirySchema,
+  internshipInquiryUpdateSchema,
+  tripInquirySchema,
   serviceCategorySchema,
   serviceSchema,
   teamMemberSchema,
   industrySchema,
   faqSchema,
-  testimonialSchema,
-  softwareToolSchema,
   homepageSectionSchema,
   seoSettingSchema,
+  blogPostSchema,
+  blogPostUpdateSchema,
   userCreateSchema,
   userUpdateSchema,
 } from "@/lib/validation";
@@ -22,8 +23,8 @@ describe("Contact Schema", () => {
     const result = contactSchema.safeParse({
       name: "John Smith",
       email: "john@example.com",
-      subject: "General Inquiry",
-      message: "I need help with tax preparation.",
+      subject: "Safari enquiry",
+      message: "We would like to plan a gorilla trekking trip in July.",
     });
     expect(result.success).toBe(true);
   });
@@ -47,11 +48,11 @@ describe("Contact Schema", () => {
     const result = contactSchema.safeParse({
       name: "John Smith",
       email: "john@example.com",
-      subject: "Service: Bookkeeping",
+      subject: "Service: Gorilla Trekking",
       message: "Hello",
       phone: "416-555-0100",
       company: "Acme Inc",
-      service: "Bookkeeping",
+      service: "Gorilla Trekking",
       idempotencyKey: "a1b2c3d4e5f6g7h8i9j0k1l2m3",
     });
     expect(result.success).toBe(true);
@@ -69,51 +70,62 @@ describe("Contact Schema", () => {
   });
 });
 
-describe("Quote Schema", () => {
-  it("accepts valid quote data", () => {
-    const result = quoteSchema.safeParse({
-      name: "Jane Doe",
-      email: "jane@example.com",
-      service: "Tax Preparation",
-      preferredContact: "email",
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it("defaults preferredContact to email", () => {
-    const result = quoteSchema.safeParse({
-      name: "Jane Doe",
-      email: "jane@example.com",
-    });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.preferredContact).toBe("email");
-    }
-  });
-
-  it("rejects invalid preferredContact", () => {
-    const result = quoteSchema.safeParse({
-      name: "Jane",
-      email: "jane@example.com",
-      preferredContact: "sms",
-    });
-    expect(result.success).toBe(false);
-  });
-});
-
-describe("Booking Schema", () => {
-  it("accepts valid booking data", () => {
-    const result = bookingSchema.safeParse({
-      name: "Bob Wilson",
-      email: "bob@example.com",
-      service: "Tax Advisory",
+describe("Internship Inquiry Schema", () => {
+  it("accepts a minimal valid application", () => {
+    const result = internshipInquirySchema.safeParse({
+      name: "Aline Uwase",
+      email: "aline@example.com",
     });
     expect(result.success).toBe(true);
   });
 
   it("requires name and email", () => {
-    const result = bookingSchema.safeParse({ email: "bob@example.com" });
+    expect(internshipInquirySchema.safeParse({ email: "a@example.com" }).success).toBe(false);
+    expect(internshipInquirySchema.safeParse({ name: "A" }).success).toBe(false);
+    expect(internshipInquirySchema.safeParse({ name: "A", email: "not-an-email" }).success).toBe(false);
+  });
+
+  it("accepts the full internship-specific field set", () => {
+    const result = internshipInquirySchema.safeParse({
+      name: "Eric Habimana",
+      email: "eric@example.com",
+      phone: "+250788000000",
+      university: "University of Rwanda",
+      fieldOfStudy: "Tourism Management",
+      programType: "INDUSTRIAL_ATTACHMENT",
+      preferredStartDate: "2026-03-01",
+      duration: "3 months",
+      areasOfInterest: "Safari guiding, Hospitality",
+      message: "Keen to join the gorilla trekking team.",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an unknown programType", () => {
+    const result = internshipInquirySchema.safeParse({
+      name: "Eric",
+      email: "eric@example.com",
+      programType: "NIGHT_SCHOOL",
+    });
     expect(result.success).toBe(false);
+  });
+
+  it("update schema accepts lead-tracking fields only", () => {
+    expect(
+      internshipInquiryUpdateSchema.safeParse({ status: "IN_PROGRESS", read: true, archived: false })
+        .success
+    ).toBe(true);
+    expect(internshipInquiryUpdateSchema.safeParse({ status: "ARCHIVED" }).success).toBe(false);
+  });
+
+  it("keeps trip inquiries a distinct shape", () => {
+    // The two public forms must not drift into one another.
+    const tripFields = new Set(Object.keys(tripInquirySchema.shape));
+    const internshipFields = new Set(Object.keys(internshipInquirySchema.shape));
+    expect(internshipFields.has("university")).toBe(true);
+    expect(tripFields.has("university")).toBe(false);
+    expect(tripFields.has("preferredPackage")).toBe(true);
+    expect(internshipFields.has("preferredPackage")).toBe(false);
   });
 });
 
@@ -165,17 +177,17 @@ describe("Service Schema", () => {
   it("accepts valid service", () => {
     const result = serviceSchema.safeParse({
       categoryId: "cat-123",
-      name: "Bookkeeping",
-      slug: "bookkeeping",
-      description: "Daily bookkeeping services",
+      name: "Chimpanzee Trekking",
+      slug: "chimpanzee-trekking",
+      description: "Guided chimpanzee tracking in Nyungwe",
     });
     expect(result.success).toBe(true);
   });
 
   it("requires categoryId", () => {
     const result = serviceSchema.safeParse({
-      name: "Bookkeeping",
-      slug: "bookkeeping",
+      name: "Chimpanzee Trekking",
+      slug: "chimpanzee-trekking",
       description: "Daily bookkeeping",
     });
     expect(result.success).toBe(false);
@@ -212,7 +224,7 @@ describe("FAQ Schema", () => {
   it("accepts valid FAQ", () => {
     const result = faqSchema.safeParse({
       question: "What services do you offer?",
-      answer: "We offer accounting, tax and advisory services.",
+      answer: "We offer gorilla trekking, wildlife safaris and cultural tours across Rwanda.",
     });
     expect(result.success).toBe(true);
   });
@@ -229,24 +241,23 @@ describe("FAQ Schema", () => {
   });
 });
 
-describe("Testimonial Schema", () => {
-  it("accepts valid testimonial", () => {
-    const result = testimonialSchema.safeParse({
-      clientName: "Happy Client",
-      content: "Great service!",
+describe("Contact Inquiry Schema", () => {
+  it("requires subject and message", () => {
+    const result = contactSchema.safeParse({
+      name: "Grace Mukamana",
+      email: "grace@example.com",
+      subject: "Gorilla trekking enquiry",
+      message: "We would like to visit in July.",
     });
     expect(result.success).toBe(true);
+    expect(contactSchema.safeParse({ name: "G", email: "g@example.com" }).success).toBe(false);
   });
 
-  it("defaults status to DRAFT", () => {
-    const result = testimonialSchema.safeParse({
-      clientName: "Client",
-      content: "Good",
-    });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.status).toBe("DRAFT");
-    }
+  it("is distinct from the trip inquiry form", () => {
+    const contactFields = new Set(Object.keys(contactSchema.shape));
+    const tripFields = new Set(Object.keys(tripInquirySchema.shape));
+    expect(contactFields.has("subject")).toBe(true);
+    expect(tripFields.has("subject")).toBe(false);
   });
 });
 
@@ -273,8 +284,8 @@ describe("Homepage Section Schema", () => {
 describe("SEO Setting Schema", () => {
   it("accepts valid SEO data", () => {
     const result = seoSettingSchema.safeParse({
-      title: "Home | Account Dynamics",
-      description: "Accounting services in Toronto",
+      title: "Home | Global Line Safaris",
+      description: "Rwanda safari tours and travel",
       indexable: true,
     });
     expect(result.success).toBe(true);
@@ -321,6 +332,76 @@ describe("User Update Schema", () => {
 
   it("accepts empty update", () => {
     const result = userUpdateSchema.safeParse({});
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("Blog Post Schema", () => {
+  it("accepts valid blog post", () => {
+    const result = blogPostSchema.safeParse({
+      title: "How to Plan Your Rwanda Gorilla Trekking Permit",
+      slug: "how-to-plan-rwanda-gorilla-trekking-permit",
+      content: "Paragraph one.\n\nParagraph two.",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects invalid slug format", () => {
+    const result = blogPostSchema.safeParse({
+      title: "Bad Slug",
+      slug: "Bad Slug Format",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("defaults category to Travel Guides", () => {
+    const result = blogPostSchema.safeParse({
+      title: "A Weekend at Lake Kivu",
+      slug: "weekend-at-lake-kivu",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.category).toBe("Travel Guides");
+      expect(result.data.status).toBe("PUBLISHED");
+      expect(result.data.excerpt).toBe("");
+    }
+  });
+
+  it("accepts full metadata fields", () => {
+    const result = blogPostSchema.safeParse({
+      title: "Akagera Big Five",
+      slug: "akagera-big-five",
+      excerpt: "A wild ridge",
+      content: "Body text.",
+      category: "Safari & Wildlife",
+      image: "/gls/gallery/gallery_1787759216_3cf27fb4.jpg",
+      author: "Raymond Shumbusho",
+      readTime: 5,
+      seoTitle: "Akagera Big Five | Global Line Safaris",
+      seoDescription: "Discover Akagera.",
+      featured: true,
+      displayOrder: 2,
+      status: "PUBLISHED",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a readTime of zero", () => {
+    const result = blogPostSchema.safeParse({
+      title: "Test",
+      slug: "test",
+      readTime: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts partial updates", () => {
+    const result = blogPostUpdateSchema.safeParse({ title: "New Title" });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts empty update", () => {
+    const result = blogPostUpdateSchema.safeParse({});
     expect(result.success).toBe(true);
   });
 });

@@ -44,7 +44,7 @@ export function NewsletterForm() {
         Newsletter
       </h3>
       <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-400">
-        Monthly accounting, tax and advisory insights. No spam, unsubscribe
+        Travel inspiration and updates from Rwanda and East Africa. No spam, unsubscribe
         anytime.
       </p>
 

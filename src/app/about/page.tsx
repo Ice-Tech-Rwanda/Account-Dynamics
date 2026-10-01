@@ -1,27 +1,23 @@
+import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site";
-import { getTeam } from "@/lib/content/service.server";
+import { buildPageMetadata, getTeam } from "@/lib/content/service.server";
 import { AboutHero } from "@/domains/about/components/AboutHero";
 import { FounderProfile } from "@/domains/about/components/FounderProfile";
 import { VisionSection } from "@/domains/about/components/VisionSection";
 import { TeamGrid } from "@/domains/about/components/TeamGrid";
+import { CompanyTimeline } from "@/domains/about/components/CompanyTimeline";
+import { CompanyValues } from "@/domains/about/components/CompanyValues";
 import { CTASection } from "@/domains/home/components/CTASection";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "About Us",
-  description:
-    "Learn about Account Dynamics — a Canadian accounting, tax, advisory and business analytics firm founded by Joseph P. Mathews.",
-  openGraph: {
-    title: "About Us | Account Dynamics",
-    description:
-      "Learn about Account Dynamics — a Canadian accounting, tax, advisory and business analytics firm.",
-    url: "/about",
-  },
-  alternates: {
-    canonical: "/about",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata('about', {
+    title: 'About Us',
+    description: 'Learn about Global Line Safaris — a Rwanda-based travel company creating memorable safari and tour experiences across Rwanda and East Africa.',
+    path: '/about',
+  });
+}
 
 export default async function AboutPage() {
   const team = await getTeam();
@@ -29,17 +25,15 @@ export default async function AboutPage() {
 
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "TravelAgency",
     name: siteConfig.name,
     url: siteUrl,
     description: siteConfig.description,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "55 Baywood Road, 2nd Floor",
-      addressLocality: "Toronto",
-      addressRegion: "Ontario",
-      postalCode: "M9V 3Y8",
-      addressCountry: "CA",
+      streetAddress: "KG 7 Ave",
+      addressLocality: "Kigali",
+      addressCountry: "RW",
     },
     telephone: siteConfig.phone,
   };
@@ -52,7 +46,9 @@ export default async function AboutPage() {
       />
       <AboutHero />
       <FounderProfile founder={team.founder} />
+      <CompanyTimeline />
       <VisionSection />
+      <CompanyValues />
       <TeamGrid members={team.members} />
       <CTASection />
     </div>

@@ -1,0 +1,2541 @@
+/* =============================================================================
+   Global Line Safaris — Public Editorial Design
+   -----------------------------------------------------------------------------
+   Premium safari design system inspired by luxury African tourism.
+   Deep forest green + safari gold on warm ivory.
+   Cormorant Garamond for display, Jost for interface.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   BASE
+   --------------------------------------------------------------------------- */
+body:has(.safari-header) {
+  background: #faf7f0;
+  color: #1a1a18;
+  font-family: var(--font-inter), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-serif: var(--font-editorial), Georgia, serif;
+  overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   LAYOUT
+   --------------------------------------------------------------------------- */
+.safari-container {
+  width: min(1400px, calc(100% - 128px));
+  margin-inline: auto;
+}
+
+@media (max-width: 1100px) {
+  .safari-container {
+    width: calc(100% - 64px);
+  }
+}
+
+@media (max-width: 640px) {
+  .safari-container {
+    width: calc(100% - 40px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   HEADER — Fixed, transparent → solid on scroll
+   Layout: .safari-topbar (contact strip) over .safari-nav (logo · links · actions)
+   --------------------------------------------------------------------------- */
+.safari-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  /* The bar is always its own green surface: white links have to stay legible
+     no matter what scrolls underneath it. */
+  background: var(--brand);
+  box-shadow: 0 1px 0 rgba(201, 168, 76, 0.16);
+  transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.safari-header.scrolled {
+  background: rgba(15, 35, 24, 0.97);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 1px 0 rgba(201, 168, 76, 0.16), 0 18px 40px -24px rgba(10, 26, 17, 0.85);
+}
+
+/* --- Contact strip -------------------------------------------------------- */
+.safari-topbar {
+  overflow: hidden;
+  max-height: 46px;
+  /* A shade deeper than the bar so the two rows read as one header. */
+  background: rgba(0, 0, 0, 0.16);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.14);
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+}
+
+.safari-header.scrolled .safari-topbar {
+  max-height: 0;
+  opacity: 0;
+  border-bottom-color: transparent;
+}
+
+.safari-topbar-inner {
+  width: min(1500px, calc(100% - 80px));
+  margin-inline: auto;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.75rem;
+}
+
+.safari-topbar-item,
+.safari-topbar-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+a.safari-topbar-item:hover,
+.safari-topbar-socials a:hover {
+  color: var(--accent);
+}
+
+.safari-topbar-hours {
+  padding-left: 1.75rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.safari-topbar-socials {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding-left: 1.75rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* --- Main bar ------------------------------------------------------------- */
+.safari-nav {
+  width: min(1500px, calc(100% - 80px));
+  margin-inline: auto;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* The nine links are the widest thing in the bar and the only part that has
+     to give when the window narrows, so the bar is sized around one knob:
+     --bar-scale eases the links, their gaps and the CTA down together as the
+     viewport shrinks. Fixed breakpoints alone left the links overlapping the
+     wordmark and the CTA between roughly 1150px and 1560px. */
+  --bar-scale: clamp(0.54rem, 0.44vw + 0.24rem, 0.7rem);
+  gap: 1.25rem;
+  min-width: 0;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.safari-header.scrolled .safari-nav {
+  height: 68px;
+}
+
+/* --- Brand ---------------------------------------------------------------- */
+.safari-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.safari-brand-logo {
+  flex-shrink: 0;
+}
+
+.safari-brand-logo img {
+  width: 54px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.safari-brand:hover .safari-brand-logo img {
+  transform: scale(1.04);
+}
+
+.safari-brand-wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  padding-left: 0.9rem;
+  border-left: 1px solid rgba(201, 168, 76, 0.28);
+  /* Last-resort guard: if the wordmark ever runs out of room it gives way
+     before the logo, the links or the CTA do. The bar is sized so this never
+     actually engages (see --bar-scale). */
+  min-width: 0;
+  overflow: hidden;
+}
+
+.safari-brand-name {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.18rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  /* Degrades to an ellipsis rather than a word cut in half. */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.safari-brand-tagline {
+  margin-top: 0.3rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.56rem;
+  font-weight: 300;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.85);
+  white-space: nowrap;
+}
+
+/* --- Desktop navigation --------------------------------------------------- */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--bar-scale) * 1.9);
+  /* Takes the slack, and is the only piece allowed to compress — the wordmark
+     and the actions keep their intrinsic width so links can never run under
+     them. */
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.desktop-nav .nav-item,
+.desktop-nav .nav-item-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--bar-scale);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+
+.desktop-nav .nav-item::after,
+.desktop-nav .nav-item-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.desktop-nav .nav-item:hover,
+.desktop-nav .nav-item.active,
+.desktop-nav .nav-item-dropdown:hover .nav-item-trigger,
+.desktop-nav .nav-item-trigger:hover,
+.desktop-nav .nav-item-dropdown:focus-within .nav-item-trigger {
+  color: var(--accent);
+}
+
+.desktop-nav .nav-item:hover::after,
+.desktop-nav .nav-item.active::after,
+.desktop-nav .nav-item-dropdown:hover .nav-item-trigger::after,
+.desktop-nav .nav-item-trigger:hover::after,
+.desktop-nav .nav-item-dropdown:focus-within .nav-item-trigger::after {
+  width: 100%;
+}
+
+/* --- Destinations dropdown ------------------------------------------------ */
+.nav-item-dropdown {
+  position: relative;
+}
+
+.nav-item-trigger svg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item-dropdown:hover .nav-item-trigger svg,
+.nav-item-dropdown:focus-within .nav-item-trigger svg {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  min-width: 268px;
+  padding: 1.4rem 0 1.1rem;
+  background: var(--brand);
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  box-shadow: var(--shadow-lift);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.3s;
+}
+
+/* Gold hairline that grows out of the trigger into the panel. */
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--accent);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item-dropdown:hover .nav-dropdown,
+.nav-item-dropdown:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-item-dropdown:hover .nav-dropdown::before,
+.nav-item-dropdown:focus-within .nav-dropdown::before {
+  width: 100%;
+}
+
+.nav-dropdown-label {
+  display: block;
+  padding: 0 1.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.16);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.8);
+}
+
+.nav-dropdown-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1.5rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  transition: color 0.25s, background 0.25s, padding-left 0.25s;
+}
+
+.nav-dropdown-link svg {
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link.active {
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--accent);
+  padding-left: 1.75rem;
+}
+
+.nav-dropdown-link:hover svg,
+.nav-dropdown-link.active svg,
+.nav-dropdown-link:focus-visible svg {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- Actions (phone · CTA · toggle) --------------------------------------- */
+.safari-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-shrink: 0;
+}
+.nav-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.nav-phone svg {
+  color: var(--accent);
+}
+
+.nav-phone:hover {
+  color: var(--accent);
+}
+
+.safari-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.8rem;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-cta {
+  background: var(--accent);
+  color: var(--brand) !important;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.safari-button-ivory {
+  background: var(--accent);
+  color: var(--brand);
+}
+
+.safari-button-ivory:hover {
+  background: var(--accent-soft);
+  color: var(--brand);
+}
+
+.safari-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brand);
+  text-decoration: none;
+  transition: gap 0.3s;
+}
+
+.safari-text-link svg {
+  transition: transform 0.3s;
+}
+
+.safari-text-link:hover svg {
+  transform: translateX(4px);
+}
+
+.light-link {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.light-link:hover {
+  color: var(--accent);
+}
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+}
+
+/* --- Mobile navigation sheet ---------------------------------------------- */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15, 35, 24, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem clamp(1.25rem, 6vw, 3rem) 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+  min-height: 100dvh;
+}
+
+.mobile-nav-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.16);
+}
+
+.mobile-nav-header .safari-brand-name {
+  font-size: 1.05rem;
+}
+
+.mobile-nav-close {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.mobile-nav-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.mobile-nav-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mobile-nav-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.mobile-nav-index {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(201, 168, 76, 0.55);
+  min-width: 1.4rem;
+  padding-top: 0.2rem;
+}
+
+.mobile-nav-link {
+  flex: 1;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 300;
+  line-height: 1.25;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 0.7rem 0;
+  transition: color 0.3s, padding-left 0.3s;
+  overflow-wrap: break-word;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  color: var(--accent);
+  padding-left: 0.35rem;
+}
+
+.mobile-nav-expand {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.mobile-nav-expand svg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-nav-expand:hover,
+.mobile-nav-expand.open {
+  color: var(--accent);
+}
+
+.mobile-nav-expand.open svg {
+  transform: rotate(180deg);
+}
+
+.mobile-nav-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-nav-sub > * {
+  overflow: hidden;
+}
+
+.mobile-nav-sub.open {
+  grid-template-rows: 1fr;
+}
+
+.mobile-nav-sublink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.45rem 0 0.45rem 2.25rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  border-left: 1px solid rgba(201, 168, 76, 0.3);
+  margin: 0.15rem 0 0.6rem;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.mobile-nav-sublink:hover,
+.mobile-nav-sublink.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.mobile-nav-footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0));
+  border-top: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.mobile-nav-footer .safari-button {
+  width: 100%;
+}
+
+.mobile-nav-contact {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.mobile-nav-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.mobile-nav-contact a svg {
+  color: var(--accent);
+}
+
+.mobile-nav-contact a:hover {
+  color: var(--accent);
+}
+
+.mobile-nav-socials {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.mobile-nav-socials a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.mobile-nav-socials a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   HERO — Full-screen cinematic
+   --------------------------------------------------------------------------- */
+.safari-hero {
+  height: 100vh;
+  min-height: 700px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--brand);
+}
+
+.hero-photograph {
+  object-fit: cover;
+}
+
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(10, 22, 15, 0.72) 0%, rgba(15, 35, 24, 0.55) 50%, rgba(10, 22, 15, 0.8) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 4rem;
+  max-width: 900px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: heroReveal 1.2s 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes heroReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.safari-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+}
+
+.safari-eyebrow-line {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.safari-eyebrow span {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.safari-hero .safari-eyebrow,
+.safari-page-hero .safari-eyebrow,
+.safari-philosophy .safari-eyebrow,
+.safari-cta .safari-eyebrow {
+  color: var(--accent);
+}
+
+.safari-hero h1 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 1.05;
+  color: var(--accent);
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.01em;
+}
+
+.safari-hero h1 em {
+  font-style: italic;
+  color: var(--accent-soft);
+}
+
+.hero-description {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 580px;
+  margin-bottom: 3rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-bottom {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  padding: 0 4rem;
+}
+
+.hero-scroll {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.hero-scroll:hover {
+  color: var(--accent);
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(201, 168, 76, 0.8), transparent);
+}
+
+.hero-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-controls > span {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.hero-controls > span span {
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 0.25rem;
+}
+
+.hero-controls button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.hero-controls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------------
+   SECTIONS
+   --------------------------------------------------------------------------- */
+.safari-section {
+  padding-block: 140px;
+}
+
+@media (max-width: 1100px) {
+  .safari-section {
+    padding-block: 100px;
+  }
+}
+
+@media (max-width: 640px) {
+  .safari-section {
+    padding-block: 72px;
+  }
+}
+
+.safari-section h2,
+.safari-cta h2,
+.safari-philosophy h2 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Light sections take the deep green heading; the sections that sit on the
+   green brand background must not, or the text disappears into it. */
+.safari-section h2 {
+  color: var(--brand);
+}
+
+.safari-philosophy h2 {
+  color: var(--accent);
+}
+
+.safari-section p:not(.safari-eyebrow) {
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: #4a4a45;
+}
+
+/* Body copy on the green sections needs a light tone to stay readable. */
+.philosophy-copy p:not(.safari-eyebrow),
+.safari-cta p:not(.safari-eyebrow) {
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ---------------------------------------------------------------------------
+   INTRO / PHILOSOPHY
+   --------------------------------------------------------------------------- */
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 100px;
+}
+
+@media (max-width: 1100px) {
+  .intro-grid {
+    gap: 60px;
+  }
+}
+
+@media (max-width: 800px) {
+  .intro-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.intro-photograph {
+  position: relative;
+  min-height: 520px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.intro-photograph img {
+  object-fit: cover;
+}
+
+.intro-copy > p:not(.safari-eyebrow) {
+  margin-top: 1.5rem;
+  color: #4a4a45;
+}
+
+.intro-copy .safari-text-link {
+  margin-top: 1.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   EDITORIAL HEADING
+   --------------------------------------------------------------------------- */
+.editorial-heading {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 100px;
+  align-items: end;
+  margin-bottom: 4rem;
+}
+
+.editorial-heading > :last-child {
+  max-width: 430px;
+  justify-self: end;
+}
+
+.editorial-heading p:not(.safari-eyebrow) {
+  color: #4a4a45;
+}
+
+.editorial-heading .safari-text-link {
+  margin-top: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .editorial-heading {
+    gap: 50px;
+  }
+}
+
+@media (max-width: 800px) {
+  .editorial-heading {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .editorial-heading > :last-child {
+    justify-self: start;
+    max-width: 600px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   PARTNERS — Infinite sliding cards marquee
+   --------------------------------------------------------------------------- */
+.partners-section {
+  background: var(--white);
+  padding-block: 100px;
+  overflow: hidden;
+}
+
+.partners-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 3rem;
+  /* Fade edges for a polished look */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.partners-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: scroll-x 30s linear infinite;
+}
+
+.partners-marquee:hover .partners-track {
+  animation-play-state: paused;
+}
+
+.partner-card {
+  flex-shrink: 0;
+  width: 240px;
+  height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(15, 35, 24, 0.08);
+  border-radius: 12px;
+  background: var(--white);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+/* Marks published as solid white need the dark surface they were drawn for. */
+.partner-card-reversed {
+  background: var(--brand);
+  border-color: rgba(201, 168, 76, 0.22);
+}
+
+.partner-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+.partner-card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+}
+
+/* Real marks are shown in their own colours — no grayscale filter. */
+.partner-logo {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.partner-card:hover .partner-logo {
+  transform: scale(1.04);
+}
+
+/* Text badge used where no publishable mark exists (e.g. Volcanoes NP). */
+.partner-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+  font-family: var(--font-editorial), Georgia, serif;
+  color: var(--brand-bg-light);
+  line-height: 1.2;
+}
+
+.partner-badge-line:first-child {
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.partner-badge-line:last-child {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.75;
+}
+
+.partner-name {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--brand);
+  text-align: center;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+.partner-link {
+  text-decoration: none;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .partners-section {
+    padding-block: 72px;
+  }
+
+  .partner-card {
+    width: 180px;
+    height: 104px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   DESTINATIONS
+   --------------------------------------------------------------------------- */
+.destinations-section {
+  background: var(--white);
+}
+
+.destination-editorial-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+}
+
+.destination-card {
+  position: relative;
+  min-height: 260px;
+  display: block;
+  overflow: hidden;
+  background: var(--brand);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.destination-editorial-grid .destination-card {
+  min-height: 0;
+}
+
+.destination-large {
+  grid-row: span 2;
+}
+
+.destination-card > img,
+.experience-image img,
+.package-image img {
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.destination-card:hover > img,
+.experience-card:hover img,
+.safari-package:hover img {
+  transform: scale(1.05);
+}
+
+.destination-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 22, 15, 0.85) 0%, rgba(10, 22, 15, 0.1) 60%);
+  transition: background 0.4s;
+}
+
+.destination-card:hover .destination-shade {
+  background: linear-gradient(to top, rgba(10, 22, 15, 0.9) 0%, rgba(10, 22, 15, 0.3) 70%);
+}
+
+.destination-copy {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+}
+
+.destination-copy .safari-eyebrow {
+  color: var(--accent);
+  font-size: 0.58rem;
+  margin-bottom: 0.5rem;
+}
+
+.destination-copy h3 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.destination-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  font-size: 0.82rem !important;
+  line-height: 1.65 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.destination-explore {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 1.25rem;
+}
+
+.destination-large .destination-copy {
+  padding: 2.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   EXPERIENCES / SERVICES
+   --------------------------------------------------------------------------- */
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 1100px) {
+  .experience-grid {
+    gap: 22px;
+  }
+}
+
+@media (max-width: 800px) {
+  .experience-grid {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+}
+
+.experience-card {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+}
+
+.experience-image {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--brand);
+}
+
+.experience-copy {
+  padding: 1.5rem 0 0;
+}
+
+.experience-copy h3 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--brand);
+  line-height: 1.2;
+}
+
+.experience-copy p {
+  color: #4a4a45;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.experience-copy .safari-text-link {
+  margin-top: 1rem;
+}
+
+/* ---------------------------------------------------------------------------
+   PACKAGES / TOURS
+   --------------------------------------------------------------------------- */
+.safari-package {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  color: #1a1a18;
+  text-decoration: none;
+  border: 1px solid rgba(15, 35, 24, 0.08);
+  transition: border-color 0.3s;
+}
+
+.safari-package:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+.package-image {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--brand);
+}
+
+.package-duration {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--accent);
+  color: var(--brand);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.package-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.package-copy .safari-eyebrow {
+  font-size: 0.58rem;
+  margin-bottom: 0.6rem;
+  color: var(--accent);
+}
+
+.package-copy h3 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--brand);
+  line-height: 1.25;
+}
+
+.package-overview {
+  color: #4a4a45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.package-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.package-bottom > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------------------
+   PHILOSOPHY / WHY CHOOSE US
+   --------------------------------------------------------------------------- */
+.safari-philosophy {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  background: var(--brand);
+  color: var(--white);
+}
+
+@media (max-width: 800px) {
+  .safari-philosophy {
+    grid-template-columns: 1fr;
+  }
+}
+
+.philosophy-image {
+  position: relative;
+  min-height: 600px;
+}
+
+.philosophy-image img {
+  object-fit: cover;
+}
+
+@media (max-width: 800px) {
+  .philosophy-image {
+    min-height: 420px;
+  }
+}
+
+.philosophy-copy {
+  padding: 80px clamp(32px, 6vw, 100px);
+}
+
+@media (max-width: 800px) {
+  .philosophy-copy {
+    padding: 55px 24px;
+  }
+}
+
+.philosophy-list {
+  margin-top: 2.5rem;
+}
+
+.philosophy-list > div {
+  display: flex;
+  gap: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-block: 1.5rem;
+}
+
+.philosophy-number {
+  color: var(--accent);
+  font-size: 0.7rem;
+  padding-top: 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.philosophy-list h3 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+.philosophy-list p {
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.5rem;
+  font-size: 0.85rem !important;
+  line-height: 1.7 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   CTA SECTION
+   --------------------------------------------------------------------------- */
+.safari-cta {
+  background: var(--brand);
+  color: var(--white);
+  text-align: center;
+  padding-block: 120px;
+}
+
+@media (max-width: 640px) {
+  .safari-cta {
+    padding-block: 70px;
+  }
+}
+
+.safari-cta h2 {
+  max-width: 740px;
+  margin: auto;
+  color: var(--white);
+}
+
+.safari-cta p:not(.safari-eyebrow) {
+  max-width: 510px;
+  margin: 1.5rem auto 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------------------------------------------------------------------------
+   PAGE HERO (internal pages)
+   --------------------------------------------------------------------------- */
+.safari-page-hero {
+  min-height: 450px;
+  position: relative;
+  background: var(--brand);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  /* clears the fixed header: contact strip (46px) + main bar (80px) */
+  padding-top: 126px;
+}
+
+.page-hero-content {
+  position: relative;
+  padding-block: 50px 70px;
+}
+
+.safari-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.6rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2.5rem;
+}
+
+.safari-breadcrumb > span {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.safari-breadcrumb a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.safari-breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.safari-page-hero h1 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  line-height: 1.1;
+  max-width: 1000px;
+  letter-spacing: -0.01em;
+}
+
+.page-hero-description {
+  max-width: 660px;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------------------------- */
+.safari-footer {
+  background: var(--brand);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 80px 0 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 4rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: 1.3fr 1fr;
+    gap: 45px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 24px;
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+
+  .footer-grid > :last-child {
+    grid-column: span 2;
+  }
+}
+
+/* Sized for the widest reasonable lockup; object-contain keeps any aspect intact. */
+.footer-logo {
+  position: relative;
+  display: block;
+  width: 132px;
+  height: 44px;
+}
+
+.footer-brand p {
+  max-width: 300px;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 1.2rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s;
+}
+
+.footer-social a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.safari-footer h3 {
+  color: var(--accent);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.safari-footer ul {
+  display: grid;
+  gap: 0.7rem;
+  font-size: 0.82rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.safari-footer a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.safari-footer a:hover {
+  color: var(--accent-soft);
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.82rem;
+}
+
+.footer-contact a {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-contact a:hover {
+  color: var(--accent-soft);
+}
+
+.footer-newsletter {
+  margin-top: 2rem;
+}
+
+.footer-newsletter p,
+.footer-newsletter h3 {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-newsletter input {
+  border-radius: 0;
+  background: var(--white);
+  color: #1a1a18;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.72rem;
+  font-weight: 300;
+}
+
+.footer-bottom > div {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-bottom a {
+  color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-bottom a:hover {
+  color: var(--accent-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   GALLERY
+   --------------------------------------------------------------------------- */
+.gallery-editorial {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.gallery-editorial a {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+  display: block;
+}
+
+.gallery-editorial a:nth-child(2) {
+  height: 450px;
+}
+
+.gallery-editorial img {
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-editorial a:hover img {
+  transform: scale(1.035);
+}
+
+@media (max-width: 800px) {
+  .gallery-editorial {
+    gap: 12px;
+  }
+
+  .gallery-editorial a {
+    height: 260px;
+  }
+
+  .gallery-editorial a:nth-child(2) {
+    height: 340px;
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery-editorial {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .gallery-editorial a {
+    height: 230px;
+  }
+
+  .gallery-editorial a:first-child {
+    grid-column: span 2;
+    height: 290px;
+  }
+
+  .gallery-editorial a:nth-child(2) {
+    height: 230px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   DISCOVERY / LISTING
+   --------------------------------------------------------------------------- */
+.discovery-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(15, 35, 24, 0.1);
+}
+
+.discovery-toolbar label {
+  display: grid;
+  gap: 10px;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.discovery-toolbar input,
+.discovery-toolbar select {
+  min-height: 48px;
+  background: var(--white);
+  border: 1px solid rgba(15, 35, 24, 0.15);
+  border-radius: 0;
+  padding: 12px 15px;
+  min-width: 240px;
+  font-size: 0.9rem;
+  color: #1a1a18;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.discovery-results {
+  font-size: 0.75rem;
+  color: #4a4a45;
+}
+
+.discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.discovery-grid .destination-card {
+  min-height: 440px;
+}
+
+.discovery-empty {
+  padding: 65px 20px;
+  text-align: center;
+  border: 1px solid rgba(15, 35, 24, 0.1);
+}
+
+.discovery-empty h2 {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 300;
+  font-size: 2rem;
+  color: var(--brand);
+}
+
+@media (max-width: 1100px) {
+  .discovery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-toolbar {
+    align-items: stretch;
+  }
+
+  .discovery-toolbar label {
+    width: 100%;
+  }
+
+  .discovery-toolbar input,
+  .discovery-toolbar select {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FORMS
+   --------------------------------------------------------------------------- */
+.inquiry-form-heading {
+  border-bottom: 1px solid rgba(15, 35, 24, 0.1);
+  padding-bottom: 20px;
+  margin-bottom: 26px;
+}
+
+.inquiry-form-heading p {
+  font-size: 0.8rem;
+  color: #4a4a45;
+  margin-top: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   SKIP LINK & FOCUS
+   --------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: 20px;
+  top: -100px;
+  background: var(--white);
+  color: var(--brand);
+  padding: 15px;
+  z-index: 300;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 10px;
+}
+
+body:has(.safari-header) :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+   COMPATIBILITY — Align existing detail/form pages
+   --------------------------------------------------------------------------- */
+body:has(.safari-header) main {
+  background: #faf7f0;
+  color: #1a1a18;
+}
+
+body:has(.safari-header) main .it-container {
+  max-width: 1400px;
+  width: calc(100% - 128px);
+  margin-inline: auto;
+}
+
+@media (max-width: 1100px) {
+  body:has(.safari-header) main .it-container {
+    width: calc(100% - 64px);
+  }
+}
+
+@media (max-width: 640px) {
+  body:has(.safari-header) main .it-container {
+    width: calc(100% - 40px);
+  }
+}
+
+body:has(.safari-header) main :is(h1, h2, h3) {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 300;
+}
+
+body:has(.safari-header) main [class*="rounded-"] {
+  border-radius: 3px;
+}
+
+body:has(.safari-header) main [class*="shadow"] {
+  box-shadow: none;
+}
+
+body:has(.safari-header) main [class*="bg-slate-50"],
+body:has(.safari-header) main [class*="bg-brand-bg-light"] {
+  background-color: #faf7f0;
+}
+
+body:has(.safari-header) main [class*="bg-white"] {
+  background-color: var(--white);
+}
+
+/* Only apply dark text on light backgrounds - let dark sections keep their own text colors */
+body:has(.safari-header) main [class*="bg-white"] [class*="text-slate-9"],
+body:has(.safari-header) main [class*="bg-brand-bg-light"] [class*="text-slate-9"],
+body:has(.safari-header) main [class*="bg-slate-50"] [class*="text-slate-9"] {
+  color: #1a1a18;
+}
+
+body:has(.safari-header) main [class*="bg-white"] [class*="text-slate-5"],
+body:has(.safari-header) main [class*="bg-white"] [class*="text-slate-4"],
+body:has(.safari-header) main [class*="bg-white"] [class*="text-slate-6"],
+body:has(.safari-header) main [class*="bg-brand-bg-light"] [class*="text-slate-5"],
+body:has(.safari-header) main [class*="bg-brand-bg-light"] [class*="text-slate-4"],
+body:has(.safari-header) main [class*="bg-brand-bg-light"] [class*="text-slate-6"],
+body:has(.safari-header) main [class*="bg-slate-50"] [class*="text-slate-5"],
+body:has(.safari-header) main [class*="bg-slate-50"] [class*="text-slate-4"],
+body:has(.safari-header) main [class*="bg-slate-50"] [class*="text-slate-6"] {
+  color: #4a4a45;
+}
+
+body:has(.safari-header) main input,
+body:has(.safari-header) main select,
+body:has(.safari-header) main textarea {
+  min-height: 48px;
+  border-radius: 2px;
+  font-size: 16px;
+  border-color: rgba(15, 35, 24, 0.15);
+  color: #1a1a18;
+  background: var(--white);
+  font-family: var(--font-inter), sans-serif;
+}
+
+body:has(.safari-header) main button[data-slot="button"] {
+  border-radius: 2px;
+  box-shadow: none;
+  min-height: 48px;
+}
+
+body:has(.safari-header) main .animate-ping {
+  display: none;
+}
+
+body:has(.safari-header) main [class*="bg-clip-text"] {
+  background: none;
+  color: inherit;
+}
+
+body:has(.safari-header) main [class*="radial-gradient"] {
+  display: none;
+}
+
+body:has(.safari-header) main [class*="bg-gradient-to-br"] {
+  background-image: none;
+  background-color: var(--brand);
+}
+
+body:has(.safari-header) main form {
+  scroll-margin-top: 115px;
+}
+
+body:has(.safari-header) [data-slot="dialog-overlay"] {
+  z-index: 200;
+}
+
+body:has(.safari-header) main .it-container.max-w-3xl {
+  max-width: 768px;
+}
+
+/* ---------------------------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------------------------- */
+/* Keep DESKTOP_BREAKPOINT in src/components/layout/Header.tsx in step with the
+   width below: it is what closes the sheet when the window grows past it. */
+@media (min-width: 1240px) {
+  .mobile-nav-overlay {
+    display: none;
+  }
+}
+
+/* Every link, the wordmark and the CTA all fit from 1240px up — below that
+   there is no honest way to shrink a nine-link bar further, so it hands over to
+   the sheet. From here to 1600px the phone number and the tagline are the
+   optional pieces: both are repeated in the contact strip above and in the
+   sheet, so dropping them costs nothing. */
+@media (min-width: 1240px) and (max-width: 1599px) {
+  .nav-phone,
+  .safari-brand-tagline {
+    display: none;
+  }
+
+  .safari-brand-name {
+    font-size: 1.02rem;
+  }
+
+  .safari-nav {
+    gap: 1.1rem;
+  }
+
+  .nav-cta {
+    padding: 0.7rem 0.95rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    gap: 0.625rem;
+  }
+}
+
+@media (max-width: 1239px) {
+  .desktop-nav,
+  .nav-phone {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .safari-nav-actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .safari-topbar {
+    display: none;
+  }
+
+  .safari-page-hero {
+    padding-top: 80px;
+  }
+
+  .intro-grid {
+    gap: 50px;
+  }
+
+  .editorial-heading {
+    gap: 50px;
+  }
+
+  .destination-editorial-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 400px 320px 320px;
+  }
+
+  .destination-large {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.3fr 1fr;
+    gap: 45px;
+  }
+
+  .safari-hero h1 {
+    max-width: 850px;
+  }
+
+  .experience-grid {
+    gap: 22px;
+  }
+
+  .discovery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .safari-container {
+    width: calc(100% - 48px);
+  }
+
+  .safari-section {
+    padding-block: 72px;
+  }
+
+  .intro-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .intro-photograph {
+    min-height: 420px;
+  }
+
+  .editorial-heading {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .editorial-heading > :last-child {
+    justify-self: start;
+    max-width: 600px;
+  }
+
+  .safari-philosophy {
+    grid-template-columns: 1fr;
+  }
+
+  .philosophy-image {
+    min-height: 420px;
+  }
+
+  .philosophy-copy {
+    padding: 55px 24px;
+  }
+
+  .experience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .experience-copy {
+    padding: 0;
+  }
+
+  .experience-image {
+    aspect-ratio: 3/4;
+  }
+
+  .gallery-editorial {
+    gap: 12px;
+  }
+
+  .gallery-editorial a {
+    height: 260px;
+  }
+
+  .gallery-editorial a:nth-child(2) {
+    height: 340px;
+  }
+
+  .safari-hero {
+    min-height: 680px;
+  }
+
+  .hero-content {
+    padding-bottom: 110px;
+  }
+
+  .safari-nav,
+  .safari-topbar-inner {
+    width: calc(100% - 40px);
+  }
+
+  .safari-nav {
+    height: 78px;
+    gap: 0.75rem;
+  }
+
+  .safari-brand-logo img {
+    width: 46px;
+    height: auto;
+  }
+
+  .safari-brand-wordmark {
+    padding-left: 0.75rem;
+    min-width: 0;
+  }
+
+  .safari-brand-name {
+    font-size: clamp(1rem, 2.2vw, 1.05rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .safari-page-hero {
+    min-height: 420px;
+  }
+
+  body:has(.safari-header) main .it-container {
+    width: calc(100% - 32px);
+  }
+}
+
+@media (max-width: 640px) {
+  .safari-container {
+    width: calc(100% - 40px);
+  }
+
+  .safari-nav {
+    gap: 0.5rem;
+    width: calc(100% - 20px);
+    height: 72px;
+    padding-inline: 0.25rem;
+  }
+
+  .safari-brand-tagline {
+    display: none;
+  }
+
+  .safari-nav-actions {
+    gap: 0.375rem;
+  }
+
+  .mobile-nav-link {
+    font-size: 1.45rem;
+  }
+
+  /* The CTA would push the menu button off the edge on small phones. The
+     sheet already leads with it, so drop it from the bar entirely. */
+  .nav-cta {
+    display: none;
+  }
+
+  .safari-brand {
+    gap: 0.5rem;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .safari-brand-wordmark {
+    min-width: 0;
+    padding-left: 0.5rem;
+    overflow: hidden;
+    border-left: 1px solid rgba(201, 168, 76, 0.2);
+    flex: 1 1 auto;
+  }
+
+  .safari-brand-name {
+    /* 0.85rem is the floor at which "Global Line Safaris" still reads; it is
+       reached at 320px, where the logo and the 40px toggle leave 182px. */
+    font-size: clamp(0.85rem, 1rem + 0.9vw, 1rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .safari-brand-logo img {
+    width: 38px;
+  }
+
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  /* The sheet is a fixed full-bleed panel, so the CTA and the contacts are
+     already one tap away — the bar keeps only the toggle. */
+  .safari-hero {
+    height: auto;
+    /* 100svh, not 100vh: mobile browsers grow the URL bar on scroll, and a vh
+       hero pushes the headline under the bar as it retracts. svh is the stable
+       height, so the hero never grows past the viewport. */
+    min-height: 100svh;
+  }
+
+  .hero-content {
+    /* clears the 72px fixed bar — the eyebrow would otherwise sit behind it */
+    padding-top: calc(72px + clamp(16px, 4vw, 40px));
+    padding-bottom: clamp(120px, 20svh, 160px);
+  }
+
+  .safari-hero .hero-content .safari-eyebrow {
+    margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  .safari-hero h1 {
+    font-size: 3.05rem;
+    line-height: 1.1;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+
+  .hero-actions {
+    gap: 18px;
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .hero-bottom {
+    bottom: 25px;
+  }
+
+  .hero-scroll {
+    max-width: 130px;
+    font-size: 0.6rem;
+    gap: 10px;
+  }
+
+  .hero-controls {
+    gap: 8px;
+  }
+
+  .hero-controls > span {
+    margin-right: 0;
+  }
+
+  .destination-editorial-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .destination-editorial-grid .destination-card {
+    min-height: 370px;
+  }
+
+  .destination-editorial-grid .destination-large {
+    min-height: 450px;
+  }
+
+  .intro-photograph {
+    min-height: 380px;
+  }
+
+  .intro-grid {
+    gap: 34px;
+  }
+
+  .experience-card {
+    display: flex;
+    gap: 0;
+  }
+
+  .experience-image {
+    aspect-ratio: 4/3;
+  }
+
+  .experience-copy {
+    padding-top: 22px;
+  }
+
+  .experience-grid {
+    gap: 42px;
+  }
+
+  .discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-toolbar {
+    align-items: stretch;
+  }
+
+  .discovery-toolbar label {
+    width: 100%;
+  }
+
+  .discovery-toolbar input,
+  .discovery-toolbar select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .safari-page-hero h1 {
+    font-size: 2.6rem;
+    overflow-wrap: anywhere;
+  }
+
+  .safari-breadcrumb {
+    margin-bottom: 26px;
+  }
+
+  .page-hero-content {
+    padding-block: 35px 55px;
+  }
+
+  .safari-page-hero {
+    min-height: 390px;
+    /* clears the 72px fixed bar: the topbar is already gone at this width */
+    padding-top: calc(72px + 20px);
+  }
+
+  .gallery-editorial {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .gallery-editorial a {
+    height: 230px;
+  }
+
+  .gallery-editorial a:first-child {
+    grid-column: span 2;
+    height: 290px;
+  }
+
+  .gallery-editorial a:nth-child(2) {
+    height: 230px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 24px;
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+
+  .footer-grid > :last-child {
+    grid-column: span 2;
+  }
+
+  .safari-footer {
+    padding-top: 50px;
+  }
+
+  .safari-cta {
+    padding-block: 70px;
+  }
+
+  .safari-eyebrow {
+    font-size: 0.58rem;
+  }
+
+  .package-copy {
+    padding: 24px 20px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  body:has(.safari-header) *,
+  body:has(.safari-header) *::before,
+  body:has(.safari-header) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

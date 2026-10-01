@@ -1,0 +1,664 @@
+{
+  "settings": {
+    "companyName": "Global Line Safaris",
+    "shortName": "Global Line Safaris",
+    "tagline": "Travel | Safaris | East Africa",
+    "description": "Global Line Safaris is a Rwanda-based travel company creating memorable safari, wildlife, cultural and adventure experiences across Rwanda and East Africa.",
+    "email": "info@globallinesafaris.rw",
+    "phone": "+250 793 885 400",
+    "phoneSecondary": "+250 793 885 400",
+    "addressLine1": "KG 7 Ave",
+    "addressLine2": "Kigali, Rwanda",
+    "city": "Kigali",
+    "province": "Kigali",
+    "postalCode": "",
+    "country": "Rwanda",
+    "businessHoursLine1": "Monday – Friday",
+    "businessHoursLine2": "9:00 AM – 5:00 PM",
+    "whatsappNumber": "250793885400",
+    "whatsappMessage": "Hello Global Line Safaris, I would like to learn more about your safari and tour packages.",
+    "bookingUrl": "/plan-your-trip",
+    "copyright": "© 2026 Global Line Safaris. All rights reserved.",
+    "designerCredit": "Ice Tech Rwanda",
+    "adminEmail": "info@globallinesafaris.rw",
+    "linkedin": "https://linkedin.com/in/global-line-safaris-0367a123a",
+    "facebook": "https://facebook.com/globallinesafaris",
+    "instagram": "https://instagram.com/globallinesafaris1",
+    "youtube": ""
+  },
+  "serviceCategories": [
+    {
+      "slug": "tours-and-experiences",
+      "title": "Tours & Experiences",
+      "description": "Guided safaris, cultural journeys and city experiences that showcase the very best of Rwanda and East Africa, led by knowledgeable professional guides.",
+      "icon": "Compass",
+      "image": "/gls/destinations/destination_1787674099_6e7a612fc4.jpg",
+      "cta": "Plan Your Trip",
+      "displayOrder": 1,
+      "services": [
+        {
+          "name": "Wildlife Safaris",
+          "slug": "wildlife-safaris",
+          "description": "Experience unforgettable wildlife adventures across Rwanda and East Africa with Global Line Safaris. We offer well-organized safari experiences that showcase incredible wildlife, breathtaking landscapes and diverse cultures, supported by professional guidance and personalized service.",
+          "shortDescription": "Well-organized wildlife adventures across Rwanda and East Africa.",
+          "icon": "Mountain",
+          "image": "/gls/destinations/destination_1787674351_a7daeb9128.jpg",
+          "ctaLabel": "Plan a Safari",
+          "ctaUrl": "/plan-your-trip",
+          "featured": true,
+          "displayOrder": 1,
+          "benefits": [
+            "Professional driver-guides and safari vehicles",
+            "Big Five game drives and boat safaris",
+            "Itineraries tailored to your travel dates"
+          ]
+        },
+        {
+          "name": "Historical & Culture Tours",
+          "slug": "historical-culture-tours",
+          "description": "Discover the rich history, heritage and traditions of Rwanda and East Africa with Global Line Safaris. Our guided tours offer authentic cultural experiences and visits to significant historical sites, giving you a deeper connection to the people, stories and traditions of the region.",
+          "shortDescription": "Authentic cultural experiences and visits to significant historical sites.",
+          "icon": "Landmark",
+          "image": "/gls/destinations/destination_1787674844_314119702f.jpg",
+          "ctaLabel": "Explore Culture",
+          "ctaUrl": "/plan-your-trip",
+          "featured": true,
+          "displayOrder": 2,
+          "benefits": [
+            "Guided visits to museums and heritage sites",
+            "Community and cultural encounters",
+            "Stories and context from local guides"
+          ]
+        },
+        {
+          "name": "Educational Tours",
+          "slug": "educational-tours",
+          "description": "Learning comes alive beyond the classroom. Global Line Safaris designs immersive educational tours that connect students and groups with Rwanda's history, culture and conservation efforts — from genocide memorials and heritage museums to national parks and community projects. Each itinerary is tailored to your academic focus, led by knowledgeable guides, with all logistics handled from start to finish.",
+          "shortDescription": "Immersive educational tours for students and groups.",
+          "icon": "GraduationCap",
+          "image": "/gls/destinations/destination_1787674747_3163daf1ae.jpg",
+          "ctaLabel": "Plan an Educational Tour",
+          "ctaUrl": "/plan-your-trip",
+          "featured": true,
+          "displayOrder": 3,
+          "benefits": [
+            "Itineraries tailored to your academic focus",
+            "Knowledgeable educational guides",
+            "Full logistics handled from start to finish"
+          ]
+        },
+        {
+          "name": "City Tours",
+          "slug": "city-tours",
+          "description": "Discover the highlights of Rwanda and East Africa's cities with Global Line Safaris. Our guided city tours take you through key attractions, local markets, cultural sites and vibrant neighborhoods, offering an authentic and memorable experience of each destination.",
+          "shortDescription": "Guided tours through key attractions, markets and neighbourhoods.",
+          "icon": "Building2",
+          "image": "/gls/destinations/destination_1787674747_3163daf1ae.jpg",
+          "ctaLabel": "Book a City Tour",
+          "ctaUrl": "/plan-your-trip",
+          "displayOrder": 4,
+          "benefits": [
+            "Kigali city highlights and local markets",
+            "Cultural and historical landmarks",
+            "Flexible half-day and full-day options"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "travel-services",
+      "title": "Travel Services",
+      "description": "Practical, reliable support that makes travelling through Rwanda and East Africa comfortable and hassle-free — from guided support to transport and accommodation.",
+      "icon": "Globe",
+      "image": "/gls/destinations/destination_1787676127_7ba3b4ed2e.jpg",
+      "cta": "Plan Your Trip",
+      "displayOrder": 2,
+      "services": [
+        {
+          "name": "Customized Tour Packages",
+          "slug": "customized-tour-packages",
+          "description": "At Global Line Safaris, we create personalized tour packages across Rwanda and East Africa tailored to your interests, budget, schedule and travel preferences. From wildlife and culture to adventure and relaxation, we design memorable experiences that suit your needs.",
+          "shortDescription": "Personalized packages built around your interests and budget.",
+          "icon": "Map",
+          "image": "/gls/destinations/destination_1787676580_9b68dfe032.jpg",
+          "ctaLabel": "Request a Custom Package",
+          "ctaUrl": "/plan-your-trip",
+          "featured": true,
+          "displayOrder": 1,
+          "benefits": [
+            "Itineraries tailored to your interests and budget",
+            "Flexible dates, pace and accommodation levels",
+            "One point of contact from inquiry to trip"
+          ]
+        },
+        {
+          "name": "Step-on Guide Services",
+          "slug": "step-on-guide-services",
+          "description": "Explore Rwanda and East Africa with our professional step-on guides, available for buses, small cars, local destinations and village walks. Our knowledgeable guides share authentic insights into the region's history, culture, people and attractions, making every journey more meaningful.",
+          "shortDescription": "Professional step-on guides for buses, small cars and village walks.",
+          "icon": "Users",
+          "image": "/gls/destinations/destination_1787674690_bc6a987f23.jpg",
+          "ctaLabel": "Arrange a Guide",
+          "ctaUrl": "/plan-your-trip",
+          "displayOrder": 2,
+          "benefits": [
+            "Guides for buses, small cars and walking tours",
+            "Authentic local insight and storytelling",
+            "Flexible for groups of all sizes"
+          ]
+        },
+        {
+          "name": "Car Rental",
+          "slug": "car-rental",
+          "description": "At Global Line Safaris, we provide reliable and convenient car rental services designed to make your travel comfortable, flexible, and hassle-free. Whether you are travelling for business, leisure, tourism, or special events, our range of well-maintained vehicles offers a convenient way to explore your destination at your own pace. Our services are supported by professional and experienced staff who are committed to providing quality service, safety, and customer satisfaction. From short-term rentals to longer journeys, we offer flexible options to meet the needs of individuals, families, groups and organisations. Travel with freedom, comfort and confidence with Global Line Safaris.",
+          "shortDescription": "Reliable self-drive and 4x4 vehicle rental for your travels.",
+          "icon": "Car",
+          "image": "/gls/packages/package_1787685881_7fe4f1b2.jpg",
+          "ctaLabel": "Request a Vehicle",
+          "ctaUrl": "/plan-your-trip",
+          "displayOrder": 3,
+          "benefits": [
+            "Self-drive and chauffeured options",
+            "4x4 vehicles for upcountry routes",
+            "Flexible daily rental arrangements"
+          ]
+        },
+        {
+          "name": "Accommodation Booking",
+          "slug": "accommodation-booking",
+          "description": "Our Accommodation Booking service helps visitors find and secure comfortable, convenient and suitable accommodation for their travel needs. We work with trusted accommodation providers to offer a range of options to suit different preferences, budgets and group sizes — from luxury and mid-range to budget.",
+          "shortDescription": "Trusted accommodation options from luxury to budget.",
+          "icon": "BedDouble",
+          "image": "/gls/destinations/destination_1787675907_9ab0af2cc2.jpg",
+          "ctaLabel": "Find Accommodation",
+          "ctaUrl": "/plan-your-trip",
+          "displayOrder": 4,
+          "benefits": [
+            "Luxury, mid-range and budget options",
+            "Trusted accommodation partners",
+            "Bookings matched to your itinerary"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "training-attachments",
+      "title": "Training & Attachments",
+      "description": "Global Line Safaris combines tourism services with professional skills development, offering accredited tourism short courses and hands-on industry placements for students and practitioners.",
+      "icon": "GraduationCap",
+      "image": "/gls/gallery/gallery_1787759216_3cf27fb4.jpg",
+      "cta": "Enquire About Training",
+      "displayOrder": 3,
+      "services": [
+        {
+          "name": "Tourism Short Courses",
+          "slug": "tourism-short-courses",
+          "description": "Our tourism short courses provide practical, industry-focused training designed to equip learners with essential knowledge and skills for careers in tourism, travel and hospitality. The courses are facilitated by experienced industry professionals who bring real-world knowledge, insights and practical expertise into the learning experience. Learners gain relevant skills that can enhance their professional development, support career advancement, or provide a strong foundation for entering the tourism industry.",
+          "shortDescription": "Practical, industry-focused short courses for tourism, travel and hospitality careers.",
+          "icon": "GraduationCap",
+          "image": "/gls/gallery/gallery_1787761154_6d06c549.jpg",
+          "ctaLabel": "Enquire About Short Courses",
+          "ctaUrl": "/contact",
+          "featured": true,
+          "displayOrder": 1,
+          "benefits": [
+            "Practical, industry-focused curriculum",
+            "Facilitated by experienced industry professionals",
+            "Supports career development and entry into tourism"
+          ]
+        },
+        {
+          "name": "Industrial Attachment Programs",
+          "slug": "industrial-attachment-programs",
+          "description": "Our industrial attachment program provides learners with valuable hands-on experience in real-world tourism and hospitality environments. Through placements with industry partners and guidance from experienced industry professionals, learners have the opportunity to apply classroom knowledge, develop practical skills and gain first-hand exposure to workplace practices. The program bridges the gap between academic learning and industry experience, preparing learners for successful careers in the tourism and hospitality sector.",
+          "shortDescription": "Hands-on placements and internships in real tourism and hospitality settings.",
+          "icon": "Briefcase",
+          "image": "/gls/gallery/gallery_1787761154_6d06c549.jpg",
+          "ctaLabel": "Enquire About Attachments",
+          "ctaUrl": "/contact",
+          "featured": true,
+          "displayOrder": 2,
+          "benefits": [
+            "Placements with industry partners",
+            "Apply classroom knowledge in real environments",
+            "Build practical skills and workplace experience"
+          ]
+        }
+      ]
+    }
+  ],
+  "team": [
+    {
+      "id": "raymond-shumbusho",
+      "name": "Raymond Shumbusho",
+      "role": "Managing Director & Founder",
+      "bio": "Raymond is the Managing Director and Founder of Global Line Safaris, a tourism company established from his passion for tourism, professional guiding and skills development within Rwanda's tourism sector. Raymond began his professional journey as a driver, where he developed a strong interest in tourism and gradually progressed into becoming a professional tourist driver-guide. Through his experience working with tourists and exploring Rwanda's destinations, he gained extensive practical knowledge of tour operations, tourist guiding, customer service, transportation and the overall tourism industry. With a growing passion for sharing his knowledge and creating opportunities for others, Raymond expanded his work beyond tourism guiding. He became actively involved in providing professional tourism training, internships and industrial attachments, helping students and aspiring tourism professionals gain practical skills and industry experience. His commitment to developing Rwanda's tourism workforce inspired him to establish Global Line Safaris, where he combines tourism services with professional skills development. Under his leadership, the company has expanded its activities to include a tourism training center accredited to offer short courses related to tourism through the Rwanda TVET Board.",
+      "photo": "/gls/team/raymond.jpg",
+      "isFounder": true,
+      "expertise": [
+        "Tour Operations",
+        "Professional Tour Guiding",
+        "Tourism Training & Mentorship",
+        "Transportation & Logistics",
+        "Skills Development"
+      ],
+      "displayOrder": 1
+    },
+    {
+      "id": "alexis-rugamba",
+      "name": "Alexis Rugamba",
+      "role": "Operations Manager & Licensed Safari Guide",
+      "bio": "Alexis is a licensed tourist safari guide based in Rwanda who also leads tours across the border into Uganda. He studied tourism in high school and later earned a degree in Travel and Tourism Management. He started his career as a trainee guide at Global Line Safaris. After completing professional training, he worked as a step-on guide for city tours, countryside trips and wildlife game drives in savannah parks. After earning his degree, he was promoted from trainer and tourist guide to Operations Manager at the company. He also got his driving license and a basic mechanic certificate from Kavumu, allowing him to work as a tourist driver-guide — able to both drive and guide clients safely. He is now a certified member of the Rwanda Safari Guide Association, licensed to work as a professional safari guide.",
+      "photo": "/gls/team/alexis.jpg",
+      "isFounder": false,
+      "expertise": [
+        "Operations Management",
+        "Wildlife Tours",
+        "City & Countryside Guiding",
+        "Cross-border Trips (Rwanda–Uganda)",
+        "Safe Driving & Basic Vehicle Repairs"
+      ],
+      "displayOrder": 2
+    },
+    {
+      "id": "ismail-iradukunda",
+      "name": "Ismail Iradukunda",
+      "role": "Marketing Manager & Tourist Guide",
+      "bio": "Ismail is a tourist guide based in Rwanda, leading tours within the country. He began his career as a trainee guide at Global Line Safaris, where he trained under the company and was later hired as a full-time staff member. While working, he pursued further studies and earned a degree in Hotel and Restaurant Management, which strengthened his professional expertise in hospitality and customer service. Though now a hospitality professional by qualification, he remains passionate about the tourism industry and continues to work closely with guides and travelers. After his studies, he was promoted from trainer and tourist guide to Marketing Manager at the company. He also holds a driving license.",
+      "photo": "/gls/team/ismail.jpg",
+      "isFounder": false,
+      "expertise": [
+        "Marketing & Promotion",
+        "Hospitality & Customer Service",
+        "Wildlife Tours",
+        "City & Countryside Guiding",
+        "Domestic Travel across Rwanda"
+      ],
+      "displayOrder": 3
+    },
+    {
+      "id": "diane-uwase",
+      "name": "Diane Uwase",
+      "role": "Reservationist & Customer Relations",
+      "bio": "Diane joined Global Line Safaris as a trainee about 1–2 years ago, straight after completing high school. Through hands-on experience and strong performance, she was promoted to Reservationist and Customer Relations, where she now manages bookings and ensures clients receive excellent service from inquiry through to the completion of their trip.",
+      "photo": "/gls/team/diane.jpg",
+      "isFounder": false,
+      "expertise": [
+        "Reservations Management",
+        "Customer Relations",
+        "Communication & Client Support",
+        "Tourism Operations"
+      ],
+      "displayOrder": 4
+    }
+  ],
+  "industries": [
+    {
+      "name": "Wildlife & Safari Travellers",
+      "slug": "wildlife-safari-travellers",
+      "description": "Travellers seeking Big Five game drives, boat safaris and unforgettable wildlife encounters in Rwanda's savannah and wetlands.",
+      "icon": "Mountain",
+      "image": "/gls/destinations/destination_1787674351_a7daeb9128.jpg",
+      "services": [
+        "Wildlife Safaris",
+        "Akagera Game Drives",
+        "Boat Safaris",
+        "Customized Tour Packages"
+      ],
+      "displayOrder": 1
+    },
+    {
+      "name": "Gorilla Trekking Travellers",
+      "slug": "gorilla-trekking-travellers",
+      "description": "Visitors coming to Rwanda for mountain gorilla trekking, golden monkey tracking and the Virunga volcanoes.",
+      "icon": "Binoculars",
+      "image": "/gls/destinations/destination_1787674099_6e7a612fc4.jpg",
+      "services": [
+        "Gorilla Trekking",
+        "Volcanoes National Park",
+        "Cultural Visits",
+        "Permit Guidance"
+      ],
+      "displayOrder": 2
+    },
+    {
+      "name": "Cultural Explorers",
+      "slug": "cultural-explorers",
+      "description": "Guests who want to connect with Rwanda's history, heritage, communities, music, dance and craftsmanship.",
+      "icon": "Landmark",
+      "image": "/gls/destinations/destination_1787674844_314119702f.jpg",
+      "services": [
+        "Historical & Culture Tours",
+        "Community Experiences",
+        "Museum Visits",
+        "City Tours"
+      ],
+      "displayOrder": 3
+    },
+    {
+      "name": "Families & Private Groups",
+      "slug": "families-private-groups",
+      "description": "Families and private groups looking for flexible, well-organized journeys with comfortable pacing and trusted logistics.",
+      "icon": "Users",
+      "image": "/gls/destinations/destination_1787675907_9ab0af2cc2.jpg",
+      "services": [
+        "Customized Tour Packages",
+        "Car Rental",
+        "Accommodation Booking",
+        "Step-on Guides"
+      ],
+      "displayOrder": 4
+    },
+    {
+      "name": "Students & Educational Groups",
+      "slug": "students-educational-groups",
+      "description": "Schools, universities and institutions seeking immersive educational tours and structured learning experiences.",
+      "icon": "GraduationCap",
+      "image": "/gls/destinations/destination_1787674747_3163daf1ae.jpg",
+      "services": [
+        "Educational Tours",
+        "Industrial Attachments",
+        "Tourism Short Courses",
+        "Step-on Guides"
+      ],
+      "displayOrder": 5
+    },
+    {
+      "name": "Adventure & Hiking Travellers",
+      "slug": "adventure-hiking-travellers",
+      "description": "Active travellers drawn to the Congo Nile Trail, rainforest canopy walks, volcano hikes and lake adventures.",
+      "icon": "Footprints",
+      "image": "/gls/destinations/destination_1787676513_ee1c31891f.jpg",
+      "services": [
+        "Congo Nile Trail",
+        "Canopy Walk",
+        "Hiking & Nature Walks",
+        "Lake Kivu Adventures"
+      ],
+      "displayOrder": 6
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What does Global Line Safaris offer?",
+      "answer": "Global Line Safaris offers guided wildlife safaris, historical and cultural tours, educational tours, city tours, customized tour packages, step-on guide services, car rental, accommodation booking and accredited tourism short courses and industrial attachments across Rwanda and East Africa.",
+      "category": "General",
+      "displayOrder": 1
+    },
+    {
+      "question": "How do I plan a trip or request a quote?",
+      "answer": "Submit the Plan Your Trip form on our website with your travel dates, group size, interests and preferred package. Our team will get back to you with a tailored itinerary and quotation. You can also call or WhatsApp us on +250 793 885 400 or email info@globallinesafaris.rw.",
+      "category": "Booking",
+      "displayOrder": 2
+    },
+    {
+      "question": "Where is Global Line Safaris based?",
+      "answer": "We are based on KG 7 Ave in Kigali, Rwanda. Our team operates tours across Rwanda and into neighbouring East African destinations.",
+      "category": "General",
+      "displayOrder": 3
+    },
+    {
+      "question": "Which destinations do you cover?",
+      "answer": "We cover destinations across Rwanda including Volcanoes National Park, Akagera National Park, Nyungwe National Park, Lake Kivu, Kigali, the Congo Nile Trail and many more, as well as cross-border trips into Uganda and the wider East African region.",
+      "category": "Destinations",
+      "displayOrder": 4
+    },
+    {
+      "question": "Can you arrange customized or private tours?",
+      "answer": "Yes. We create personalized tour packages tailored to your interests, budget, schedule and travel preferences, and we offer private departures, car rental, step-on guides and accommodation booking to match your itinerary.",
+      "category": "Packages",
+      "displayOrder": 5
+    },
+    {
+      "question": "Do you offer training and internships in tourism?",
+      "answer": "Yes. Through our tourism training center, accredited to offer short courses related to tourism through the Rwanda TVET Board, we provide professional tourism training, internships and industrial attachments for students and aspiring tourism professionals.",
+      "category": "Training",
+      "displayOrder": 6
+    }
+  ],
+  "homepageSections": [
+    {
+      "sectionKey": "hero",
+      "eyebrow": "Discover Rwanda & East Africa",
+      "title": "Discover Rwanda & Beyond",
+      "subtitle": "Experience extraordinary wildlife, breathtaking landscapes, and authentic cultural adventures with Global Line Safaris.",
+      "ctaLabel": "Plan Your Trip",
+      "ctaUrl": "/plan-your-trip"
+    },
+    {
+      "sectionKey": "services",
+      "eyebrow": "What We Do",
+      "title": "Tours, Safaris & Travel Services",
+      "subtitle": "From gorilla trekking and Big Five game drives to cultural journeys, city tours, car rental and accommodation booking — we handle the details so you can enjoy the journey.",
+      "ctaLabel": "Explore All Services",
+      "ctaUrl": "/services",
+      "items": [
+        {
+          "icon": "Mountain",
+          "title": "Wildlife Safaris",
+          "description": "Big Five game drives and boat safaris across Rwanda's parks."
+        },
+        {
+          "icon": "Binoculars",
+          "title": "Gorilla Trekking",
+          "description": "Mountain gorilla and golden monkey experiences in Volcanoes National Park."
+        },
+        {
+          "icon": "Landmark",
+          "title": "Culture & Heritage",
+          "description": "Authentic guided journeys through Rwanda's history and communities."
+        },
+        {
+          "icon": "GraduationCap",
+          "title": "Educational Tours",
+          "description": "Immersive, curriculum-aligned tours for students and groups."
+        },
+        {
+          "icon": "Car",
+          "title": "Car Rental",
+          "description": "Reliable self-drive and 4x4 vehicles for your travels."
+        },
+        {
+          "icon": "BedDouble",
+          "title": "Accommodation",
+          "description": "Trusted places to stay from luxury to budget."
+        }
+      ]
+    },
+    {
+      "sectionKey": "destinations",
+      "eyebrow": "Explore Rwanda",
+      "title": "Where Your Journey Can Take You",
+      "subtitle": "From the misty Virunga volcanoes to the warm shores of Lake Kivu and the Big Five plains of Akagera, discover the destinations that define a Rwandan adventure.",
+      "ctaLabel": "View All Destinations",
+      "ctaUrl": "/destinations"
+    },
+    {
+      "sectionKey": "packages",
+      "eyebrow": "Tour Packages",
+      "title": "Featured Safaris & Tour Packages",
+      "subtitle": "Explore our most popular itineraries, from one-day escapes to multi-day journeys across Rwanda's parks, lakes and cultural heartlands.",
+      "ctaLabel": "Browse All Packages",
+      "ctaUrl": "/tour-packages"
+    },
+    {
+      "sectionKey": "about",
+      "eyebrow": "Who We Are",
+      "title": "Discover Rwanda With Global Line Safaris",
+      "subtitle": "Global Line Safaris is a Rwanda-based travel company dedicated to creating memorable and meaningful travel experiences across Rwanda and East Africa. We invite travelers to discover the remarkable beauty of Rwanda through its breathtaking landscapes, extraordinary wildlife, vibrant culture and welcoming communities.",
+      "ctaLabel": "About Us",
+      "ctaUrl": "/about"
+    },
+    {
+      "sectionKey": "whyChoose",
+      "eyebrow": "Our Difference",
+      "title": "Why Travel With Global Line Safaris?",
+      "subtitle": "We believe travel should be more than simply visiting a destination. It should be an opportunity to discover, connect and create memories that last a lifetime.",
+      "ctaLabel": "Learn Why",
+      "ctaUrl": "/why-choose-us",
+      "items": [
+        {
+          "icon": "MapPin",
+          "title": "Local Knowledge",
+          "description": "Discover Rwanda through the knowledge and perspective of people who understand the destinations and their stories."
+        },
+        {
+          "icon": "Compass",
+          "title": "Unique Experiences",
+          "description": "Experience wildlife, nature, culture and remarkable destinations beyond the ordinary tourist experience."
+        },
+        {
+          "icon": "HeartHandshake",
+          "title": "Personal Service",
+          "description": "We take time to understand your interests and help create a journey that fits your travel expectations."
+        },
+        {
+          "icon": "Camera",
+          "title": "Lasting Memories",
+          "description": "Every journey is an opportunity to create stories, experiences and memories worth taking home."
+        }
+      ]
+    },
+    {
+      "sectionKey": "gallery",
+      "eyebrow": "Gallery",
+      "title": "Moments From the Journey",
+      "subtitle": "A glimpse of the landscapes, wildlife, cultures and travellers that make every Global Line Safaris trip unforgettable.",
+      "ctaLabel": "View Gallery",
+      "ctaUrl": "/gallery"
+    },
+    {
+      "sectionKey": "partners",
+      "eyebrow": "Our Partners",
+      "title": "Trusted By The Best",
+      "subtitle": "We collaborate with leading organizations across Rwanda and East Africa to deliver exceptional travel experiences."
+    },
+    {
+      "sectionKey": "finalCta",
+      "eyebrow": "Ready When You Are",
+      "title": "Let's Plan Your Rwandan Adventure",
+      "subtitle": "Whether you dream of gorilla trekking, Big Five safaris, cultural discovery or a relaxed lakeside escape, our team is here to help you create the journey that's right for you.",
+      "ctaLabel": "Plan Your Trip",
+      "ctaUrl": "/plan-your-trip"
+    }
+  ],
+  "seo": [
+    {
+      "pageKey": "home",
+      "title": "Global Line Safaris | Rwanda Safaris & East Africa Tours",
+      "description": "Rwanda-based travel company creating memorable safari, wildlife, gorilla trekking, cultural and adventure experiences across Rwanda and East Africa."
+    },
+    {
+      "pageKey": "about",
+      "title": "About Us",
+      "description": "Discover the story behind Global Line Safaris — a Rwanda-based travel company dedicated to authentic, memorable journeys across Rwanda and East Africa."
+    },
+    {
+      "pageKey": "services",
+      "title": "Services",
+      "description": "Wildlife safaris, cultural tours, educational tours, city tours, car rental, accommodation booking and tourism training from Global Line Safaris."
+    },
+    {
+      "pageKey": "industries",
+      "title": "Who We Serve",
+      "description": "Travel experiences for wildlife lovers, gorilla trekking travellers, cultural explorers, families, students and adventure seekers."
+    },
+    {
+      "pageKey": "contact",
+      "title": "Contact Us",
+      "description": "Get in touch with Global Line Safaris in Kigali, Rwanda. Call or WhatsApp +250 793 885 400 or email info@globallinesafaris.rw."
+    },
+    {
+      "pageKey": "why-choose-us",
+      "title": "Why Travel With Us",
+      "description": "Local knowledge, unique experiences, personal service and lasting memories — why travellers choose Global Line Safaris."
+    },
+    {
+      "pageKey": "destinations",
+      "title": "Destinations",
+      "description": "Explore Rwanda's destinations with Global Line Safaris — Volcanoes National Park, Akagera, Nyungwe, Lake Kivu, Kigali, the Congo Nile Trail and more."
+    },
+    {
+      "pageKey": "tour-packages",
+      "title": "Tour Packages",
+      "description": "Browse Rwanda safari and tour packages from Global Line Safaris, from one-day experiences to multi-day journeys across the country."
+    },
+    {
+      "pageKey": "plan-your-trip",
+      "title": "Plan Your Trip",
+      "description": "Tell us your travel dates, interests and group size and let Global Line Safaris craft your personalized Rwanda or East Africa itinerary."
+    },
+    {
+      "pageKey": "gallery",
+      "title": "Gallery",
+      "description": "Photo highlights from Global Line Safaris journeys across Rwanda and East Africa."
+    },
+    {
+      "pageKey": "mission-and-values",
+      "title": "Mission & Values",
+      "description": "Our mission, vision and values — the principles that shape every Global Line Safaris journey."
+    },
+    {
+      "pageKey": "book",
+      "title": "Plan Your Trip",
+      "description": "Start planning your Rwanda safari or East Africa tour with Global Line Safaris."
+    },
+    {
+      "pageKey": "blog",
+      "title": "Travel Blog & Safari Stories",
+      "description": "Practical travel guides, gorilla trekking tips, safari stories and destination inspiration from the Global Line Safaris team."
+    }
+  ],
+  "siteImages": [
+    {
+      "key": "hero.1",
+      "url": "/images/rwanda-hills.jpg",
+      "alt": "Rolling green hills and countryside views across the Land of a Thousand Hills"
+    },
+    {
+      "key": "hero.2",
+      "url": "/images/volcanoes-national-park.jpg",
+      "alt": "Mist over the rainforest slopes of Volcanoes National Park, home of the mountain gorilla"
+    },
+    {
+      "key": "hero.3",
+      "url": "/images/best-of-rwanda-safari.jpg",
+      "alt": "Wildlife on the savannah plains of Rwanda during a best-of safari"
+    },
+    {
+      "key": "about",
+      "url": "/images/akagera-national-park.jpg",
+      "alt": "Landscape of Akagera National Park, Rwanda's largest national park"
+    },
+    {
+      "key": "advisory",
+      "url": "/images/lake-ruhondo.jpg",
+      "alt": "Lake Ruhondo shoreline with rolling hills in the distance"
+    },
+    {
+      "key": "servicesHero",
+      "url": "/images/nyungwe-forest-park.jpg",
+      "alt": "Old-growth rainforest canopy of Nyungwe National Park, Rwanda"
+    },
+    {
+      "key": "contact",
+      "url": "/images/rwanda-photo-2019.jpg",
+      "alt": "Rwanda safari experience with Global Line Safaris"
+    },
+    {
+      "key": "category.tours-and-experiences",
+      "url": "/images/safari-01.webp",
+      "alt": "Safari landscape in Rwanda"
+    },
+    {
+      "key": "category.travel-services",
+      "url": "/images/lake-ruhondo.jpg",
+      "alt": "Twin Lakes of Burera and Ruhondo in northern Rwanda"
+    },
+    {
+      "key": "category.training-attachments",
+      "url": "/images/kingfisher-kayaking.jpg",
+      "alt": "Kingfisher kayaking on the calm waters of Rwanda"
+    }
+  ]
+}

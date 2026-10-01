@@ -8,6 +8,7 @@ import { AdminDataTable, type Column } from "@/components/admin/AdminDataTable";
 import { CrudDialog } from "@/components/admin/CrudDialog";
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { adminFetch } from "@/lib/admin-fetch";
+import { useCurrentUserRole } from "@/components/admin/useCurrentUserRole";
 import { Badge } from "@/components/ui/badge";
 
 const ROLE_COLORS: Record<string, string> = {
@@ -21,6 +22,10 @@ export default function AdminUsersPage() {
     endpoint: "/api/admin/users",
     pageSize: 20,
   });
+  // Only SUPER_ADMIN can create, edit or delete users — hide those controls for
+  // lower roles instead of letting them fail with a 403.
+  const { atLeast, loading: roleLoading } = useCurrentUserRole();
+  const canManage = atLeast("SUPER_ADMIN");
   const [showCreate, setShowCreate] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteItem, setDeleteItem] = useState<any>(null);
@@ -58,7 +63,7 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDelete = async () => {
+  const confirmDelete = async () => {
     if (!deleteItem) return;
     const res = await adminFetch(`/api/admin/users/${deleteItem.id}`, { method: "DELETE" });
     if (res.ok) {
@@ -107,38 +112,45 @@ export default function AdminUsersPage() {
     {
       key: "actions",
       label: "Actions",
-      render: (item) => (
-        <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditItem(item);
-            }}
-            className="text-xs font-semibold text-brand hover:underline"
-          >
-            Edit
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteItem(item);
-            }}
-            className="text-xs font-semibold text-red-500 hover:underline"
-          >
-            Delete
-          </button>
-        </div>
-      ),
+      render: (item) =>
+        canManage ? (
+          <div className="flex gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditItem(item);
+              }}
+              className="text-xs font-semibold text-brand hover:underline"
+            >
+              Edit
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteItem(item);
+              }}
+              className="text-xs font-semibold text-red-500 hover:underline"
+            >
+              Delete
+            </button>
+          </div>
+        ) : (
+          <span className="text-xs text-slate-400">View only</span>
+        ),
     },
   ];
 
   return (
     <AdminPageShell
       title="User Management"
-      subtitle="Manage admin users, roles, and permissions (SUPER_ADMIN only)"
+      subtitle={
+        canManage
+          ? "Manage admin users, roles, and permissions"
+          : "View admin users and roles. Creating, editing and deleting accounts requires a Super Admin."
+      }
       onRefresh={refresh}
-      loading={loading}
-      onAdd={() => setShowCreate(true)}
+      loading={loading || roleLoading}
+      onAdd={canManage ? () => setShowCreate(true) : undefined}
       addLabel="Add Admin User"
     >
       <AdminDataTable
@@ -206,7 +218,7 @@ export default function AdminUsersPage() {
       <ConfirmDialog
         open={!!deleteItem}
         onClose={() => setDeleteItem(null)}
-        onConfirm={handleDelete}
+        onConfirm={confirmDelete}
         title="Delete user account?"
         message={`Are you sure you want to delete ${deleteItem?.email}? This action cannot be undone.`}
       />

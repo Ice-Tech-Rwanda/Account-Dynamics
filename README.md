@@ -1,71 +1,55 @@
-# Account Dynamics
+# Global Line Safaris
 
-A professional website for **Account Dynamics** — a Canadian accounting, tax, advisory and business analytics firm based in Toronto, Ontario.
+Premium tourism website and content management system for **Global Line Safaris**, a Rwanda-based travel company creating personalised journeys across Rwanda and East Africa.
 
-## Tech Stack
+## Tech stack
 
-- **Next.js 16** (App Router, Turbopack) + **TypeScript**
-- **Tailwind CSS v4** design system with CSS-variable tokens
-- **Prisma** + SQLite database, **NextAuth.js** (Auth.js) admin auth
-- **shadcn/ui** primitives, **Radix UI**, **Framer Motion**, **lucide-react**, **zod**, **sonner**
-- **Vitest** (unit) + **Playwright** (e2e)
+- Next.js 16 App Router and TypeScript
+- Tailwind CSS v4 design tokens
+- Prisma and PostgreSQL
+- Auth.js admin authentication with role-based access
+- Radix UI, shadcn/ui primitives, Framer Motion, and Lucide icons
+- Vitest unit tests and Playwright end-to-end support
 
-## Quick Start
+## Quick start
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill in DATABASE_URL, NEXTAUTH_SECRET, etc.
-npx prisma generate
-npx prisma db push
-npm run db:seed               # demo content (optional)
+cp .env.example .env.local
+npm run db:generate
+npm run db:push
+npm run db:seed
 npm run dev
 ```
 
-Open http://localhost:3000. The admin area is `/admin`.
+Open `http://localhost:3000`. The protected CMS is available at `/admin`.
 
-## Services
+## Public website
 
-- **Small Business** — Bookkeeping, Tax Advisory, Audits & Appeals, Compilation Engagement Reports, Historical Accounting & Compliance Catch-Up, Payroll, Corporate Restructuring
-- **Personal Taxes** — Tax Filing, Tax Advisory, Estate Planning, Lifetime Capital Gains Exemption
-- **Outsourcing** — CPA & Accounting Office Outsourcing, Corporate Group Outsourcing
-- **Allied Services** — Financing & Business Plans, QuickBooks Onboarding
+- `/` — immersive homepage with CMS-managed destinations and packages
+- `/about` — company introduction, philosophy, mission, and team
+- `/destinations` and `/destinations/[slug]` — destination directory and details
+- `/tour-packages` and `/tour-packages/[slug]` — tour listings and itineraries
+- `/services` and `/services/[slug]` — travel services
+- `/gallery` — travel photography
+- `/plan-your-trip` — trip inquiry form
+- `/contact` — general contact form
 
-## Pages
+## CMS capabilities
 
-| Route | Description |
-|-------|-------------|
-| `/` | Homepage |
-| `/about` | About Us — Founder, Vision, Team |
-| `/services` | Services overview |
-| `/services/small-business` | Small Business services |
-| `/services/personal-taxes` | Personal Taxes services |
-| `/services/outsourcing` | Outsourcing services |
-| `/services/allied-services` | Allied Services |
-| `/industries` | Industries We Serve |
-| `/why-choose-us` | Why Choose Us |
-| `/contact` | Contact form and information |
-| `/admin` | Admin dashboard |
+The existing admin dashboard manages destinations, tour packages, services, homepage content, media, travel inquiries, SEO, website settings, users, roles, and audit logs. Public forms use server-side validation, rate limiting, idempotency protection, and optional email notifications.
 
-## Contact
+## Verification
 
-- **Phone:** 416-748-2042 | 416-450-5639
-- **Address:** 55 Baywood Road, 2nd Floor, Toronto, Ontario M9V 3Y8
-- **Hours:** Monday – Friday, 9:00 AM – 4:00 PM
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
 
-## Scripts
+## Confirmed contact details
 
-| Script | Purpose |
-|--------|---------|
-| `npm run dev` | Start the dev server |
-| `npm run build` | Production build |
-| `npm run start` | Serve the production build |
-| `npm run lint` | ESLint (flat config) |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest unit tests |
-| `npm run db:generate` | `prisma generate` |
-| `npm run db:push` | `prisma db push` |
-| `npm run db:seed` | `prisma db seed` |
-
-## Branding
-
-Edit `src/lib/site.ts` (name, URLs, socials, contact info) and the `:root` / `.dark` blocks in `src/styles/tokens.css` (colors, fonts, radius) to rebrand.
+- Phone and WhatsApp: +250 793 885 400
+- Email: info@globallinesafaris.rw
+- Public address: KG 7 Ave, Kigali, Rwanda

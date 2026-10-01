@@ -1,23 +1,18 @@
-import { getHomepageContent } from "@/lib/content/service.server";
+import type { Metadata } from "next";
+import { buildPageMetadata, getHomepageContent } from "@/lib/content/service.server";
 import { CTASection } from "@/domains/home/components/CTASection";
 import { WhyChooseHero } from "@/domains/why-choose-us/components/WhyChooseHero";
 import { WhyChoosePillars } from "@/domains/why-choose-us/components/WhyChoosePillars";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Why Choose Us",
-  description:
-    "Why clients trust Account Dynamics for their accounting, tax and business advisory needs.",
-  openGraph: {
-    title: "Why Choose Us | Account Dynamics",
-    description: "Why clients trust Account Dynamics.",
-    url: "/why-choose-us",
-  },
-  alternates: {
-    canonical: "/why-choose-us",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata('why-choose-us', {
+    title: 'Why Travel With Us',
+    description: 'Why travellers choose Global Line Safaris for safari and tour experiences across Rwanda and East Africa.',
+    path: '/why-choose-us',
+  });
+}
 
 export default async function WhyChooseUsPage() {
   const homepage = await getHomepageContent();

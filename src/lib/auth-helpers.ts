@@ -2,7 +2,6 @@ import "server-only";
 
 import { auth } from "@/lib/auth";
 import { NotFoundError, AppError, UnauthorizedError } from "@/lib/errors";
-import type { Role } from "@prisma/client";
 
 export const ROLES = {
   SUPER_ADMIN: "SUPER_ADMIN",

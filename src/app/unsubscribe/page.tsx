@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { UnsubscribeForm } from "@/domains/newsletter/components/UnsubscribeForm";
 import { ArrowLeft } from "lucide-react";
+import { buildPageMetadata } from "@/lib/content/service.server";
 
-export const metadata: Metadata = {
-  title: "Unsubscribe from Newsletter",
-  description:
-    "Unsubscribe from the Account Dynamics newsletter. Enter your email address to stop receiving updates.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = await buildPageMetadata("unsubscribe", {
+    title: "Unsubscribe from Newsletter",
+    description:
+      "Unsubscribe from the Global Line Safaris newsletter. Enter your email address to stop receiving updates.",
+    path: "/unsubscribe",
+  });
+  return { ...meta, robots: { index: false, follow: true } };
+}
 
 export default function UnsubscribePage() {
   return (

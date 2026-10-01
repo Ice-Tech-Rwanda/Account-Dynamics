@@ -18,14 +18,17 @@ import {
 } from "lucide-react";
 
 const serviceOptions = [
-  "Small Business Accounting",
-  "Personal Taxes",
-  "Tax Advisory",
-  "Bookkeeping",
-  "Payroll",
-  "Outsourcing",
-  "Business Planning",
-  "QuickBooks Onboarding",
+  "Wildlife Safaris",
+  "Gorilla Trekking",
+  "Cultural & Historical Tours",
+  "Educational Tours",
+  "City Tours",
+  "Customized Tour Packages",
+  "Car Rental",
+  "Accommodation Booking",
+  "Step-on Guide Services",
+  "Tourism Short Courses",
+  "Industrial Attachments",
   "Other",
 ];
 
@@ -85,6 +88,7 @@ export function ContactForm() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      requestAnimationFrame(() => document.getElementById(Object.keys(validationErrors)[0])?.focus());
       return;
     }
     setErrors({});
@@ -192,11 +196,11 @@ export function ContactForm() {
         <span className="inline-flex items-center gap-2 rounded-full bg-brand/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-brand">
           Get in Touch
         </span>
-        <h2 className="mt-4 text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h2 className="mt-4 text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight font-serif">
           Send Us a Message
         </h2>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-          Tell us about your needs and we&apos;ll get back to you promptly.
+          Tell us about your travel plans and we&apos;ll get back to you promptly.
         </p>
       </div>
 
@@ -225,6 +229,9 @@ export function ContactForm() {
               <User className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="name"
+                aria-invalid={Boolean(errors.name)}
+                aria-describedby={errors.name ? "contact-name-error" : undefined}
+                required
                 name="name"
                 type="text"
                 value={formData.name}
@@ -234,7 +241,7 @@ export function ContactForm() {
               />
             </div>
             {errors.name && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
+              <p id="contact-name-error" role="alert" className="mt-1 flex items-center gap-1 text-xs text-red-500">
                 <AlertCircle className="size-3" /> {errors.name}
               </p>
             )}
@@ -249,6 +256,9 @@ export function ContactForm() {
               <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="email"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "contact-email-error" : undefined}
+                required
                 name="email"
                 type="email"
                 value={formData.email}
@@ -258,7 +268,7 @@ export function ContactForm() {
               />
             </div>
             {errors.email && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
+              <p id="contact-email-error" role="alert" className="mt-1 flex items-center gap-1 text-xs text-red-500">
                 <AlertCircle className="size-3" /> {errors.email}
               </p>
             )}
@@ -273,16 +283,18 @@ export function ContactForm() {
               <Phone className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
               <input
                 id="phone"
+                aria-invalid={Boolean(errors.phone)}
+                aria-describedby={errors.phone ? "contact-phone-error" : undefined}
                 name="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={handleChange}
                 className={`${inputBase} ${errors.phone ? inputErr : inputOk}`}
-                placeholder="(416) 000-0000"
+                placeholder="+250 700 000 000"
               />
             </div>
             {errors.phone && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
+              <p id="contact-phone-error" role="alert" className="mt-1 flex items-center gap-1 text-xs text-red-500">
                 <AlertCircle className="size-3" /> {errors.phone}
               </p>
             )}
@@ -291,7 +303,7 @@ export function ContactForm() {
           {/* Business */}
           <div>
             <label htmlFor="business" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Business / Company
+              Country / Organization
             </label>
             <div className="relative">
               <Building2 className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
@@ -302,7 +314,7 @@ export function ContactForm() {
                 value={formData.business}
                 onChange={handleChange}
                 className={`${inputBase} ${inputOk}`}
-                placeholder="Your Company Name"
+                placeholder="Country or organization"
               />
             </div>
           </div>
@@ -346,16 +358,19 @@ export function ContactForm() {
             <MessageSquare className="pointer-events-none absolute left-3.5 top-3.5 size-4 text-slate-400" />
             <textarea
               id="message"
+              aria-invalid={Boolean(errors.message)}
+              aria-describedby={errors.message ? "contact-message-error" : undefined}
+              required
               name="message"
               rows={4}
               value={formData.message}
               onChange={handleChange}
               className={`${inputBase} ${errors.message ? inputErr : inputOk} resize-none pt-3`}
-              placeholder="Tell us about your accounting needs..."
+              placeholder="Tell us about your travel plans..."
             />
           </div>
           {errors.message && (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
+            <p id="contact-message-error" role="alert" className="mt-1 flex items-center gap-1 text-xs text-red-500">
               <AlertCircle className="size-3" /> {errors.message}
             </p>
           )}

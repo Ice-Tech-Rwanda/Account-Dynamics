@@ -1,109 +1,131 @@
 import Link from "next/link";
-import { Phone, MapPin, Clock, ArrowUpRight } from "lucide-react";
-import { siteConfig } from "@/lib/site";
-import { footerGroups } from "@/lib/navigation";
-import { Logo } from "@/components/brand/Logo";
+import Image from "next/image";
+import { Instagram, Facebook, Linkedin, Twitter } from "lucide-react";
+import { getSiteSettings } from "@/lib/content/service.server";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
 
-export function Footer() {
+function externalHref(value: string) {
+  const href = value.trim();
+  if (!href || href === "#") return null;
+  return /^https?:\/\//i.test(href) ? href : `https://${href}`;
+}
+
+const socialIcons: Record<string, React.ElementType> = {
+  Instagram,
+  Facebook,
+  Linkedin,
+  "X (Twitter)": Twitter,
+};
+
+export async function Footer() {
+  const settings = await getSiteSettings();
+  const socials = [
+    { label: "Instagram", href: externalHref(settings.instagram) },
+    { label: "Facebook", href: externalHref(settings.facebook) },
+    { label: "LinkedIn", href: externalHref(settings.linkedin) },
+  ].filter((social): social is { label: string; href: string } => Boolean(social.href));
+
   return (
-    <footer className="border-t border-slate-200/80 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 dark:border-slate-800/80">
-      <div className="it-container px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-6">
-          {/* Brand column */}
-          <div className="lg:col-span-2">
-            <Logo />
-            <p className="mt-4 text-sm leading-6 text-slate-600 dark:text-slate-400 max-w-sm">
-              {siteConfig.description}
-            </p>
-
-            {/* Contact info */}
-            <div className="mt-6 space-y-3">
-              <div className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
-                <MapPin className="size-4 mt-0.5 shrink-0 text-brand" />
-                <span>{siteConfig.location}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                <Phone className="size-4 shrink-0 text-brand" />
-                <div>
-                  <a href={`tel:${siteConfig.phone.replace(/-/g, "")}`} className="hover:text-brand transition-colors">
-                    {siteConfig.phone}
-                  </a>
-                  <span className="mx-1.5 text-slate-300 dark:text-slate-600">|</span>
-                  <a href={`tel:${siteConfig.phoneSecondary?.replace(/-/g, "")}`} className="hover:text-brand transition-colors">
-                    {siteConfig.phoneSecondary}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                <Clock className="size-4 shrink-0 text-brand" />
-                <span>{siteConfig.hours}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Link columns */}
-          {footerGroups.map((group) => (
-            <div key={group.title}>
-              <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                {group.title}
-              </h3>
-              <ul className="mt-4 space-y-3">
-                {group.links.map((link) => (
-                  <li key={`${link.href}-${link.label}`}>
-                    <Link
-                      href={link.href}
-                      className="group inline-flex items-center gap-1 text-sm text-slate-600 hover:text-brand dark:text-slate-400 dark:hover:text-accent transition-colors"
+    <footer className="safari-footer">
+      <div className="safari-container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Link href="/" aria-label="Global Line Safaris home">
+              {/* settings.logo is CMS-overridable, so its aspect ratio is unknown —
+                  fit it inside a fixed box rather than assuming one. */}
+              <span className="footer-logo">
+                <Image
+                  src={settings.logo || "/gls/logo.png"}
+                  alt="Global Line Safaris"
+                  fill
+                  sizes="132px"
+                  className="object-contain"
+                />
+              </span>
+            </Link>
+            <p>{settings.description}</p>
+            {socials.length > 0 && (
+              <div className="footer-social">
+                {socials.map((s) => {
+                  const Icon = socialIcons[s.label] ?? Instagram;
+                  return (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Follow us on ${s.label}`}
+                      title={s.label}
                     >
-                      {link.label}
-                      <ArrowUpRight className="size-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Newsletter */}
+                      <Icon width={18} height={18} />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
           <div>
-            <NewsletterForm />
+            <h3>Explore</h3>
+            <ul>
+              <li>
+                <Link href="/destinations">Destinations</Link>
+              </li>
+              <li>
+                <Link href="/tour-packages">Tour Packages</Link>
+              </li>
+              <li>
+                <Link href="/services">Travel Services</Link>
+              </li>
+              <li>
+                <Link href="/gallery">Travel Gallery</Link>
+              </li>
+              <li>
+                <Link href="/plan-your-trip">Plan Your Trip</Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Get to know us</h3>
+            <ul>
+              <li>
+                <Link href="/about">Our Story</Link>
+              </li>
+              <li>
+                <Link href="/about#team">Our Team</Link>
+              </li>
+              <li>
+                <Link href="/why-choose-us">Why Travel With Us</Link>
+              </li>
+              <li>
+                <Link href="/contact">Contact</Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Let&apos;s start a conversation</h3>
+            <div className="footer-contact">
+              <a href={`tel:${settings.phone.replace(/[^+0-9]/g, "")}`}>
+                {settings.phone}
+              </a>
+              <a href={`mailto:${settings.email}`}>{settings.email}</a>
+              <span>
+                {[settings.addressLine1, settings.city, settings.country]
+                  .filter(Boolean)
+                  .join(", ")}
+              </span>
+            </div>
+            <div className="footer-newsletter">
+              <NewsletterForm />
+            </div>
           </div>
         </div>
-
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 pt-8 dark:border-slate-800/80 sm:flex-row">
-          <div className="flex flex-col items-center gap-1.5 sm:items-start">
-            <p className="text-xs text-slate-500 dark:text-slate-500">
-              &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
-            </p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-600">
-              Designed &amp; Developed by{" "}
-              <a
-                href="https://icetechrwanda.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-500 dark:text-slate-500 hover:text-brand transition-colors"
-              >
-                Ice Tech Rwanda
-              </a>
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-500">
-            <Link href="/privacy-policy" className="hover:text-brand transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-brand transition-colors">
-              Terms of Use
-            </Link>
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
-            <span className="hidden sm:inline">{siteConfig.location.split(",")[1]?.trim()}</span>
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="hover:text-brand transition-colors"
-            >
-              {siteConfig.email}
-            </a>
+        <div className="footer-bottom">
+          <p>
+            © {new Date().getFullYear()} {settings.companyName}. All rights reserved.
+          </p>
+          <div>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Use</Link>
           </div>
         </div>
       </div>

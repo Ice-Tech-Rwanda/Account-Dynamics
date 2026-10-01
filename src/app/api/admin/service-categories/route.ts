@@ -3,9 +3,6 @@ import { serviceCategorySchema, serviceCategoryUpdateSchema } from "@/lib/valida
 import {
   createListHandler,
   createCreateHandler,
-  createGetHandler,
-  createUpdateHandler,
-  createDeleteHandler,
 } from "@/lib/admin/api-registry";
 
 const config = {
@@ -16,6 +13,8 @@ const config = {
   searchFields: ["title", "slug", "description"],
   orderBy: { displayOrder: "asc" },
   contentTags: ["services"],
+  filterParams: ["status"],
+  hideArchivedByDefault: true,
   include: {
     services: {
       orderBy: { displayOrder: "asc" },

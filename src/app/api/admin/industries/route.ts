@@ -3,9 +3,6 @@ import { industrySchema, industryUpdateSchema } from "@/lib/validation";
 import {
   createListHandler,
   createCreateHandler,
-  createGetHandler,
-  createUpdateHandler,
-  createDeleteHandler,
 } from "@/lib/admin/api-registry";
 
 const config = {
@@ -16,6 +13,8 @@ const config = {
   searchFields: ["name", "slug", "description"],
   orderBy: { displayOrder: "asc" },
   contentTags: ["industries"],
+  filterParams: ["status"],
+  hideArchivedByDefault: true,
 };
 
 export const GET = createListHandler(prisma.industry, config);

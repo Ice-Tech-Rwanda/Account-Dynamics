@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const SECTIONS = ["hero", "services", "advisory", "about", "whyChoose", "whoWeServe", "technology", "faq", "finalCta"];
+const SECTIONS = ["hero", "about", "destinations", "services", "packages", "whyChoose", "gallery", "partners", "finalCta"];
 
 export default function AdminHomepagePage() {
   const [activeSection, setActiveSection] = useState("hero");

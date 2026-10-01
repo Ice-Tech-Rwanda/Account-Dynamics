@@ -49,7 +49,7 @@ function buildCsp(nonce: string): string {
     "default-src 'self'",
     `script-src ${scriptSrc}${gaScriptSrc}`,
     `style-src ${styleSrc}`,
-    "img-src 'self' data: blob: https://images.unsplash.com https://*.blob.vercel-storage.com" + gaImgSrc,
+    "img-src 'self' data: blob: https://*.blob.vercel-storage.com" + gaImgSrc,
     "font-src 'self' data:",
     "connect-src 'self' https://*.blob.vercel-storage.com" + gaConnectSrc,
     "object-src 'none'",

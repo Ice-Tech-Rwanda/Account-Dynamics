@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { siteConfig } from "@/lib/site";
@@ -9,12 +10,11 @@ import type {
   FaqItem,
   Industry,
   WhoWeServe,
-  TechnologyItem,
-  Testimonial,
   HomepageContent,
   HomepageSectionData,
   SiteSettings,
   SiteImageSetting,
+  BlogPost,
 } from "@/lib/content/types";
 
 export const CONTENT_TAGS = {
@@ -25,8 +25,10 @@ export const CONTENT_TAGS = {
   faqs: ["faqs"],
   homepage: ["homepage"],
   media: ["media"],
-  membership: ["membership"],
-  software: ["software"],
+  destinations: ["destinations"],
+  packages: ["packages"],
+  blog: ["blog"],
+  tripInquiries: ["trip-inquiries"],
 } as const;
 
 function parseJsonArray<T>(raw: string | null | undefined, fallback: T[] = []): T[] {
@@ -115,7 +117,7 @@ export async function getServiceCategory(slug: string): Promise<ServiceCategory 
       },
     },
   });
-  if (!dbCat) return null;
+  if (!dbCat || dbCat.status !== "PUBLISHED") return null;
 
   return {
     slug: dbCat.slug,
@@ -171,6 +173,7 @@ async function loadTeam(): Promise<{ founder: TeamMember; members: TeamMember[] 
       bio: m.bio ?? "",
       expertise: parseJsonArray<string>(m.expertise),
       image: m.photo ?? undefined,
+      photo: m.photo ?? undefined,
       isFounder: m.isFounder,
       email: m.email ?? undefined,
       linkedin: m.linkedin ?? undefined,
@@ -178,9 +181,7 @@ async function loadTeam(): Promise<{ founder: TeamMember; members: TeamMember[] 
   );
 
   const founder =
-    members.find((m) => m.isFounder) ??
-    members.find((m) => m.name === "Joseph P. Mathews") ??
-    members[0];
+    members.find((m) => m.isFounder) ?? members[0];
 
   return { founder, members };
 }
@@ -243,110 +244,6 @@ export function getIndustries() {
 }
 
 // ---------------------------------------------------------------------------
-// Technology / Software Tools
-// ---------------------------------------------------------------------------
-
-async function loadTechnologyItems(): Promise<TechnologyItem[]> {
-  const rows = await prisma.softwareTool.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { displayOrder: "asc" },
-  });
-  return rows.map((r) => ({
-    title: r.name,
-    description: r.description ?? undefined,
-    icon: "Cloud",
-    logo: r.logo ?? undefined,
-    websiteUrl: r.websiteUrl ?? undefined,
-  }));
-}
-
-export function getTechnologyItems(): Promise<TechnologyItem[]> {
-  return cached("technology", loadTechnologyItems, CONTENT_TAGS.software)();
-}
-
-// ---------------------------------------------------------------------------
-// Testimonials
-// ---------------------------------------------------------------------------
-
-async function loadTestimonials(): Promise<Testimonial[]> {
-  const rows = await prisma.testimonial.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { displayOrder: "asc" },
-  });
-  return rows.map((t) => ({
-    id: t.id,
-    clientName: t.clientName,
-    company: t.company,
-    position: t.position,
-    content: t.content,
-    photo: t.photo,
-    rating: t.rating,
-  }));
-}
-
-export function getTestimonials() {
-  return cached("testimonials", loadTestimonials, CONTENT_TAGS.homepage)();
-}
-
-// ---------------------------------------------------------------------------
-// Membership
-// ---------------------------------------------------------------------------
-
-async function loadMembershipSection(): Promise<HomepageSectionData> {
-  const section = await prisma.homepageSection.findUnique({ where: { sectionKey: "membership" } });
-  const membership = await prisma.membership.findFirst({ where: { status: "PUBLISHED" } });
-  const plans = membership
-    ? await prisma.membershipPlan.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { displayOrder: "asc" },
-      })
-    : [];
-
-  let items: HomepageSectionData["items"] = [];
-  if (section) {
-    items = parseItems(section.items);
-  } else if (membership) {
-    items = parseJsonArray<{ icon: string; title: string; description: string }>(membership.benefits).map((b) => ({
-      icon: "Check",
-      title: typeof b === "string" ? b : b.title,
-      description: "",
-    }));
-  }
-
-  const title = section?.title ?? membership?.title ?? "";
-  const subtitle = section?.subtitle ?? null;
-  const description = section?.description ?? membership?.description ?? "";
-  const imageKey = section?.imageKey;
-  const ctaLabel = section?.ctaLabel ?? membership?.ctaLabel ?? "Explore Membership Options";
-  const ctaUrl = section?.ctaUrl ?? membership?.ctaUrl ?? siteConfig.bookOnlineUrl;
-
-  return {
-    sectionKey: "membership",
-    eyebrow: section?.eyebrow ?? "Membership Plans",
-    title,
-    subtitle,
-    description,
-    items,
-    image: imageKey ?? null,
-    ctaLabel,
-    ctaUrl,
-    plans: plans.map((p) => ({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      billingFrequency: p.billingFrequency,
-      description: p.description,
-      features: parseJsonArray<string>(p.features),
-      featured: p.featured,
-    })),
-  };
-}
-
-export function getMembershipSection() {
-  return cached("membership", loadMembershipSection, CONTENT_TAGS.membership)();
-}
-
-// ---------------------------------------------------------------------------
 // Homepage sections
 // ---------------------------------------------------------------------------
 
@@ -372,13 +269,12 @@ async function loadHomepageContent(): Promise<HomepageContent> {
   return {
     hero: build("hero"),
     services: build("services"),
-    advisory: build("advisory"),
     about: build("about"),
     whyChoose: build("whyChoose"),
-    whoWeServe: build("whoWeServe"),
-    technology: build("technology"),
-    membership: await getMembershipSection(),
-    faq: build("faq"),
+    destinations: build("destinations"),
+    packages: build("packages"),
+    gallery: build("gallery"),
+    partners: build("partners"),
     finalCta: build("finalCta"),
   };
 }
@@ -417,10 +313,9 @@ async function loadSiteImages(): Promise<{
     servicesHero: resolve("servicesHero"),
     contact: resolve("contact"),
     categories: {
-      "small-business": resolve("category.small-business"),
-      "personal-taxes": resolve("category.personal-taxes"),
-      outsourcing: resolve("category.outsourcing"),
-      "allied-services": resolve("category.allied-services"),
+      "tours-and-experiences": resolve("category.tours-and-experiences"),
+      "travel-services": resolve("category.travel-services"),
+      "training-attachments": resolve("category.training-attachments"),
     },
   };
 }
@@ -451,7 +346,7 @@ async function loadSiteSettings(): Promise<SiteSettings> {
     city: get("city", ""),
     province: get("province", ""),
     postalCode: get("postalCode", ""),
-    country: get("country", "Canada"),
+    country: get("country", "Rwanda"),
     phone: get("phone", siteConfig.phone),
     phoneSecondary: get("phoneSecondary", ""),
     email: get("email", siteConfig.email),
@@ -472,6 +367,219 @@ async function loadSiteSettings(): Promise<SiteSettings> {
 
 export function getSiteSettings() {
   return cached("siteSettings", loadSiteSettings, CONTENT_TAGS.settings)();
+}
+
+// ---------------------------------------------------------------------------
+// Tourism: destinations & packages
+// ---------------------------------------------------------------------------
+
+function mapDestination(row: any): import("@/lib/content/types").Destination {
+  return {
+    id: row.id as string,
+    name: row.name,
+    slug: row.slug,
+    shortDescription: row.shortDescription ?? null,
+    description: row.description,
+    location: row.location ?? null,
+    category: row.category ?? null,
+    image: row.image ?? null,
+    galleryImages: parseJsonArray<string>(row.galleryImages) ?? null,
+    seoTitle: row.seoTitle ?? null,
+    seoDescription: row.seoDescription ?? null,
+    displayOrder: row.displayOrder,
+    featured: row.featured,
+  };
+}
+
+async function loadDestinations(): Promise<import("@/lib/content/types").Destination[]> {
+  const rows = await prisma.destination.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: [{ displayOrder: "asc" }],
+  });
+  return rows.map(mapDestination);
+}
+
+export function getDestinations() {
+  return cached("destinations", loadDestinations, CONTENT_TAGS.destinations)();
+}
+
+export async function getDestination(slug: string): Promise<import("@/lib/content/types").Destination | null> {
+  const row = await prisma.destination.findUnique({
+    where: { slug },
+  });
+  if (!row || row.status !== "PUBLISHED") return null;
+  return mapDestination(row);
+}
+
+function mapPackage(row: any): import("@/lib/content/types").TourPackage {
+  return {
+    id: row.id as string,
+    title: row.title,
+    slug: row.slug,
+    location: row.location ?? null,
+    category: row.category ?? null,
+    duration: row.duration ?? null,
+    price: row.price ?? null,
+    priceNote: row.priceNote ?? null,
+    overview: row.overview,
+    facts: row.facts ?? null,
+    highlights: parseJsonArray<string>(row.highlights),
+    itinerary: parseJsonArray<{ heading?: string; body?: string }>(row.itinerary),
+    inclusions: parseJsonArray<string>(row.inclusions),
+    exclusions: parseJsonArray<string>(row.exclusions),
+    note: row.note ?? null,
+    image: row.image ?? null,
+    galleryImages: parseJsonArray<string>(row.galleryImages),
+    seoTitle: row.seoTitle ?? null,
+    seoDescription: row.seoDescription ?? null,
+    featured: row.featured,
+    displayOrder: row.displayOrder,
+  };
+}
+
+async function loadTourPackages(): Promise<import("@/lib/content/types").TourPackage[]> {
+  const rows = await prisma.tourPackage.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: [{ displayOrder: "asc" }],
+  });
+  return rows.map(mapPackage);
+}
+
+export function getTourPackages() {
+  return cached("tourPackages", loadTourPackages, CONTENT_TAGS.packages)();
+}
+
+export async function getTourPackage(slug: string): Promise<import("@/lib/content/types").TourPackage | null> {
+  const row = await prisma.tourPackage.findUnique({ where: { slug } });
+  if (!row || row.status !== "PUBLISHED") return null;
+  return mapPackage(row);
+}
+
+// ---------------------------------------------------------------------------
+// Blog
+// ---------------------------------------------------------------------------
+
+function mapBlogPost(row: any): BlogPost {
+  return {
+    id: row.id as string,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt ?? null,
+    content: row.content ?? null,
+    category: row.category ?? null,
+    image: row.image ?? null,
+    author: row.author ?? null,
+    readTime: row.readTime ?? null,
+    seoTitle: row.seoTitle ?? null,
+    seoDescription: row.seoDescription ?? null,
+    featured: row.featured,
+    displayOrder: row.displayOrder,
+    status: row.status,
+    createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : undefined,
+  };
+}
+
+async function loadBlogPosts(): Promise<BlogPost[]> {
+  const rows = await prisma.blogPost.findMany({
+    where: { status: "PUBLISHED" },
+    orderBy: [{ featured: "desc" }, { displayOrder: "asc" }, { createdAt: "desc" }],
+  });
+  return rows.map(mapBlogPost);
+}
+
+export function getBlogPosts() {
+  return cached("blogPosts", loadBlogPosts, CONTENT_TAGS.blog)();
+}
+
+export async function getBlogPost(slug: string): Promise<BlogPost | null> {
+  const row = await prisma.blogPost.findUnique({ where: { slug } });
+  if (!row || row.status !== "PUBLISHED") return null;
+  return mapBlogPost(row);
+}
+
+// Gallery media (public)
+export async function getGalleryImages(): Promise<
+  Array<{ id: string; url: string; alt: string | null; width: number | null; height: number | null }>
+> {
+  const rows = await prisma.media.findMany({
+    where: { mimeType: { startsWith: "image/" } },
+    orderBy: { createdAt: "asc" },
+  });
+  return rows.map((m) => ({
+    id: m.id,
+    url: m.url,
+    alt: m.title ?? m.alt ?? null,
+    width: m.width,
+    height: m.height,
+  }));
+}
+
+// SEO metadata for a page (seeded from /admin/seo)
+export async function getSeoSetting(pageKey: string): Promise<{
+  title: string | null;
+  description: string | null;
+  ogImage: string | null;
+  canonicalUrl: string | null;
+  indexable: boolean;
+} | null> {
+  const row = await prisma.seoSetting.findUnique({ where: { pageKey } });
+  if (!row) return null;
+  return {
+    title: row.title,
+    description: row.description,
+    ogImage: row.ogImage,
+    canonicalUrl: row.canonicalUrl,
+    indexable: row.indexable,
+  };
+}
+
+/**
+ * Builds Next.js `Metadata` from the CMS-managed SEO record for a page, falling
+ * back to hardcoded defaults when no record (or a given field) is set.
+ *
+ * Every public page routes its metadata through this so edits made in
+ * /admin/seo actually take effect instead of silently being ignored.
+ */
+export async function buildPageMetadata(
+  pageKey: string,
+  defaults: { title: string; description: string; path?: string }
+): Promise<Metadata> {
+  const seo = await getCachedSeoSetting(pageKey);
+  const path = defaults.path ?? pageKey;
+
+  const title = seo?.title || defaults.title;
+  const description = seo?.description || defaults.description;
+  const ogImage = seo?.ogImage || undefined;
+  const url = seo?.canonicalUrl || path;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Global Line Safaris",
+      type: "website",
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
+    robots: seo?.indexable === false ? { index: false, follow: false } : undefined,
+  };
+}
+
+async function getCachedSeoSetting(pageKey: string) {
+  return unstable_cache(
+    async () => prisma.seoSetting.findUnique({ where: { pageKey } }),
+    [`seo:${pageKey}`],
+    { revalidate: 60, tags: ["seo"] }
+  )();
 }
 
 // ---------------------------------------------------------------------------

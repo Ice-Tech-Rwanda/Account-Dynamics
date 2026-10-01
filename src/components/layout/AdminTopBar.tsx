@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Bell, Moon, Sun, LogOut, User, Settings, CheckCheck, Loader2 } from "lucide-react";
+import { Bell, Moon, Sun, LogOut, User, Settings, CheckCheck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useTheme } from "@/components/shared/ThemeProvider";
@@ -33,7 +33,7 @@ function timeAgo(value: string): string {
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-export function AdminTopBar() {
+export function AdminTopBar({ user }: { user: { name?: string | null; email?: string | null; role?: string } }) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -128,21 +128,11 @@ export function AdminTopBar() {
     if (n.link) router.push(n.link);
   };
 
-  const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const isDark = theme === "dark";
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white/80 backdrop-blur-xl px-4 lg:px-6 dark:bg-slate-950/80 dark:border-slate-800/50">
-      <div className="flex items-center gap-3 flex-1 max-w-md">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search anything..."
-            aria-label="Search"
-            className="w-full h-9 pl-9 pr-3 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-brand/30 focus:ring-2 focus:ring-brand/10 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500 transition-all"
-          />
-        </div>
-      </div>
+    <header className="admin-topbar sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white/80 backdrop-blur-xl px-4 lg:px-6 dark:bg-slate-950/80 dark:border-slate-800/50">
+      <Link href="/admin/dashboard" className="admin-topbar-title">The safari workspace <span>Global Line Safaris</span></Link>
 
       <div className="flex items-center gap-1.5">
         <button
@@ -176,7 +166,7 @@ export function AdminTopBar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-80 rounded-xl border bg-white shadow-xl shadow-black/5 dark:bg-slate-900 dark:border-slate-700/50 overflow-hidden"
+                className="admin-notification-panel absolute right-0 mt-2 w-80 rounded-xl border bg-white shadow-xl shadow-black/5 dark:bg-slate-900 dark:border-slate-700/50 overflow-hidden"
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Notifications</h3>
@@ -245,8 +235,8 @@ export function AdminTopBar() {
                 className="absolute right-0 mt-2 w-48 rounded-xl border bg-white shadow-xl shadow-black/5 dark:bg-slate-900 dark:border-slate-700/50 overflow-hidden"
               >
                 <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">Administrator</p>
-                  <p className="text-xs text-slate-500">{siteConfig.email}</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">{user.name || "Team member"}</p>
+                  <p className="text-xs text-slate-500">{user.email}</p>
                 </div>
                 <div className="p-1.5 space-y-0.5">
                   {[

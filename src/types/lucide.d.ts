@@ -22,6 +22,8 @@ declare module "lucide-react" {
   export const Brain: Icon
   export const Building2: Icon
   export const Calendar: Icon
+  export const CalendarDays: Icon
+  export const ListChecks: Icon
   export const Camera: Icon
   export const Check: Icon
   export const CheckCircle: Icon
@@ -32,6 +34,28 @@ declare module "lucide-react" {
   export const ChevronUp: Icon
   export const Clipboard: Icon
   export const Clock: Icon
+  export const Compass: Icon
+  export const Navigation: Icon
+  export const Map: Icon
+  export const Mountain: Icon
+  export const Binoculars: Icon
+  export const Footprints: Icon
+  export const Car: Icon
+  export const BedDouble: Icon
+  export const Landmark: Icon
+  export const HeartHandshake: Icon
+  export const Route: Icon
+  export const TreePine: Icon
+  export const Bird: Icon
+  export const Sunset: Icon
+  export const Ship: Icon
+  export const Plane: Icon
+  export const Utensils: Icon
+  export const Anchor: Icon
+  export const Waves: Icon
+  export const Leaf: Icon
+  export const Fuel: Icon
+  export const Hotel: Icon
   export const Crown: Icon
   export const Download: Icon
   export const DownloadCloud: Icon

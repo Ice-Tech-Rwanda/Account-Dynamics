@@ -18,7 +18,7 @@ export function FounderProfile({ founder }: FounderProfileProps) {
               Leadership
             </span>
             <div className="flex items-center gap-5">
-              <TeamAvatar slug="founder" size={88} />
+              <TeamAvatar photo={founder.photo} name={founder.name} size={88} />
               <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
                   {founder.name}
@@ -64,18 +64,21 @@ export function FounderProfile({ founder }: FounderProfileProps) {
 
             <div className="mt-6 p-8 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50">
               <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
-                Professional Background
+                Our Story
               </h3>
               <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                 <p>
-                  Since 1999, Joseph has led Joseph Mathews &amp; Associates, and
-                  in 2019, he expanded his professional endeavors by founding
-                  Account Dynamics.
+                  Global Line Safaris grew from a passion for tourism,
+                  professional guiding and skills development within Rwanda&apos;s
+                  tourism sector. What began with hands-on experience as a
+                  tourist driver-guide has grown into a full travel company.
                 </p>
                 <p>
-                  With over 20 years of practice, Joseph has identified a critical
-                  need for advisory services that provide individuals with the
-                  necessary information and understanding of the Income Tax Act.
+                  Today we combine carefully designed safari and tour experiences
+                  with professional tourism training, internships and industry
+                  attachments — helping travellers discover Rwanda while helping
+                  the next generation of tourism professionals build practical
+                  skills.
                 </p>
               </div>
             </div>

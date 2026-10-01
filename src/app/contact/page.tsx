@@ -1,4 +1,5 @@
-import { getSiteSettings } from "@/lib/content/service.server";
+import type { Metadata } from "next";
+import { buildPageMetadata, getSiteSettings } from "@/lib/content/service.server";
 import { ContactHero } from "@/domains/contact/components/ContactHero";
 import { ContactForm } from "@/domains/contact/components/ContactForm";
 import { CTASection } from "@/domains/home/components/CTASection";
@@ -8,19 +9,13 @@ import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Contact",
-  description:
-    "Get in touch with Account Dynamics for accounting, tax, advisory and business analytics services in Toronto.",
-  openGraph: {
-    title: "Contact | Account Dynamics",
-    description: "Get in touch with Account Dynamics.",
-    url: "/contact",
-  },
-  alternates: {
-    canonical: "/contact",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata('contact', {
+    title: 'Contact',
+    description: 'Get in touch with Global Line Safaris for safari and tour experiences across Rwanda and East Africa. Call, email or visit our Kigali office.',
+    path: '/contact',
+  });
+}
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
@@ -29,8 +24,8 @@ export default async function ContactPage() {
     {
       icon: Phone,
       label: "Phone",
-      lines: [settings.phone, settings.phoneSecondary].filter(Boolean),
-      href: `tel:${settings.phone.replace(/-/g, "")}`,
+      lines: [...new Set([settings.phone, settings.phoneSecondary].filter(Boolean))],
+      href: `tel:${settings.phone.replace(/[^+0-9]/g, "")}`,
     },
     {
       icon: Mail,
@@ -41,7 +36,7 @@ export default async function ContactPage() {
     {
       icon: MapPin,
       label: "Visit Us",
-      lines: [settings.addressLine1, `${settings.city}, ${settings.province} ${settings.postalCode}`],
+      lines: [settings.addressLine1, settings.addressLine2].filter(Boolean),
     },
     {
       icon: Clock,
@@ -69,16 +64,16 @@ export default async function ContactPage() {
               <div className="rounded-3xl bg-gradient-to-br from-brand-bg-dark via-brand-bg-dark-mid to-brand p-8 sm:p-10 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(217,255,58,0.12),transparent_55%)]" />
                 <div className="relative">
-                  <h2 className="text-2xl font-bold tracking-tight">
+                  <h2 className="text-2xl font-bold tracking-tight font-serif">
                     Contact Information
                   </h2>
                   <p className="mt-2 text-sm text-slate-300 leading-relaxed">
-                    Reach out by phone or email, or visit our office. We&apos;re
-                    happy to help with all your accounting needs.
+                    Reach out by phone or email, or visit our Kigali office.
+                    We&apos;re happy to help plan your journey.
                   </p>
 
                   <div className="mt-8 space-y-6">
-                    {details.map((detail) => (
+                    {details.filter(detail => detail.lines.some(Boolean)).map((detail) => (
                       <div key={detail.label} className="flex gap-4">
                         <div className="flex-shrink-0 flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 backdrop-blur-xl text-accent">
                           <detail.icon className="size-5" />
@@ -112,15 +107,15 @@ export default async function ContactPage() {
                       Prefer to Book Online?
                     </h3>
                     <p className="mt-1.5 text-sm text-slate-300">
-                      Schedule a consultation directly through our booking
-                      system.
+                      Tell us about your trip and request a personalised
+                      itinerary.
                     </p>
                     <Link href={settings.bookingUrl} className="mt-4 inline-block">
                       <Button
                         variant="accent"
                         className="gap-2 rounded-xl text-slate-950"
                       >
-                        Book Online <ArrowRight className="size-4" />
+                        Plan Your Trip <ArrowRight className="size-4" />
                       </Button>
                     </Link>
                   </div>

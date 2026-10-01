@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ImageUpload } from "@/components/admin/ImageUpload"
 import {
+  StringListField,
+  ImageListField,
+  ObjectListField,
+  parseStringList,
+  parseObjectList,
+  type ObjectListSubField,
+} from "@/components/admin/ListField"
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -14,20 +22,38 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+type FieldType =
+  | "text"
+  | "email"
+  | "number"
+  | "textarea"
+  | "select"
+  | "date"
+  | "checkbox"
+  | "image"
+  | "stringList"
+  | "imageList"
+  | "objectList"
+
 interface Field {
   name: string
   label: string
-  type?: "text" | "email" | "number" | "textarea" | "select" | "date" | "checkbox" | "image"
+  type?: FieldType
   options?: { label: string; value: string }[]
   required?: boolean
   placeholder?: string
   min?: number
+  /** objectList: shape of each row */
+  itemFields?: ObjectListSubField[]
+  /** objectList: singular noun used in add/remove labels */
+  itemLabel?: string
+  addLabel?: string
 }
 
 interface CrudDialogProps {
   open: boolean
   onClose: () => void
-  onSave: (data: Record<string, string | number | boolean>) => Promise<void>
+  onSave: (data: Record<string, any>) => Promise<void>
   fields: Field[]
   initial?: Record<string, any>
   title: string
@@ -57,7 +83,19 @@ function CrudDialogInner({
   initial,
   title,
 }: Omit<CrudDialogProps, "open">) {
-  const [form, setForm] = useState<Record<string, any>>(initial ?? {})
+  const [form, setForm] = useState<Record<string, any>>(() => {
+    // Normalise JSON-text columns into arrays so list fields render as lists
+    // instead of a raw JSON string.
+    const next: Record<string, any> = { ...(initial ?? {}) }
+    for (const f of fields) {
+      if (f.type === "stringList" || f.type === "imageList") {
+        next[f.name] = parseStringList(next[f.name])
+      } else if (f.type === "objectList") {
+        next[f.name] = parseObjectList(next[f.name], (f.itemFields ?? []).map((s) => s.name))
+      }
+    }
+    return next
+  })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -65,6 +103,10 @@ function CrudDialogInner({
     for (const f of fields) {
       const value = form[f.name]
       if (f.required && (value === undefined || value === null || value === "")) {
+        setError(`${f.label} is required.`)
+        return false
+      }
+      if (f.required && Array.isArray(value) && value.length === 0) {
         setError(`${f.label} is required.`)
         return false
       }
@@ -76,8 +118,21 @@ function CrudDialogInner({
     if (!validate()) return
     setSaving(true)
     setError(null)
+    // Drop empty rows so blank list entries are not persisted.
+    const payload: Record<string, any> = {}
+    for (const [key, value] of Object.entries(form)) {
+      if (Array.isArray(value)) {
+        payload[key] = value.filter((item) =>
+          typeof item === "string"
+            ? item.trim() !== ""
+            : Object.values(item ?? {}).some((v) => String(v ?? "").trim() !== "")
+        )
+      } else {
+        payload[key] = value
+      }
+    }
     try {
-      await onSave(form)
+      await onSave(payload)
       onClose()
     } catch (e: any) {
       setError(e?.message ?? "Failed to save. Please try again.")
@@ -88,13 +143,13 @@ function CrudDialogInner({
 
   return (
     <Dialog open onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
-      <DialogContent className="max-w-lg gap-0 p-0">
+      <DialogContent className="max-w-2xl gap-0 p-0">
         <DialogHeader className="border-b border-slate-200 px-6 py-4 dark:border-slate-800">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="sr-only">{title}</DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[60vh] space-y-4 overflow-y-auto px-6 py-5">
+        <div className="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5">
           {error && (
             <div
               role="alert"
@@ -111,6 +166,30 @@ function CrudDialogInner({
                   value={form[f.name] ?? ""}
                   onChange={(url) => setForm({ ...form, [f.name]: url })}
                   placeholder={f.placeholder}
+                />
+              ) : f.type === "stringList" ? (
+                <StringListField
+                  label={f.label}
+                  value={Array.isArray(form[f.name]) ? form[f.name] : []}
+                  onChange={(next) => setForm({ ...form, [f.name]: next })}
+                  placeholder={f.placeholder}
+                  addLabel={f.addLabel}
+                />
+              ) : f.type === "imageList" ? (
+                <ImageListField
+                  label={f.label}
+                  value={Array.isArray(form[f.name]) ? form[f.name] : []}
+                  onChange={(next) => setForm({ ...form, [f.name]: next })}
+                  addLabel={f.addLabel}
+                />
+              ) : f.type === "objectList" ? (
+                <ObjectListField
+                  label={f.label}
+                  value={Array.isArray(form[f.name]) ? form[f.name] : []}
+                  onChange={(next) => setForm({ ...form, [f.name]: next })}
+                  subFields={f.itemFields ?? []}
+                  itemLabel={f.itemLabel}
+                  addLabel={f.addLabel}
                 />
               ) : (
                 <>

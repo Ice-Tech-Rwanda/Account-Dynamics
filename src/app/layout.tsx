@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lexend, Merriweather } from "next/font/google";
+import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -10,27 +10,25 @@ import { Analytics } from "@/components/analytics/Analytics";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/lib/site";
 
-const lexend = Lexend({
-  variable: "--font-lexend",
+const editorial = Cormorant_Garamond({
+  variable: "--font-editorial",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-});
-
-const merriweather = Merriweather({
-  variable: "--font-merriweather",
-  subsets: ["latin"],
-  weight: ["300", "400", "700"],
+  weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   display: "swap",
-  fallback: ["Georgia", "Cambria", "Times New Roman", "serif"],
+});
+
+const inter = Jost({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: `${siteConfig.name} | Tax, Cloud Accounting, Advisory & Business Analytics`,
+    default: `${siteConfig.name} | Rwanda Safaris & East Africa Tours`,
     template: siteConfig.titleTemplate,
   },
   description: siteConfig.description,
@@ -41,11 +39,18 @@ export const metadata: Metadata = {
     url: siteConfig.siteUrl,
     siteName: siteConfig.name,
     type: "website",
+    images: [
+      {
+        url: "/images/rwanda-hills.jpg",
+        alt: "Gorilla trekking in the misty forests of Volcanoes National Park, Rwanda",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
+    images: ["/images/rwanda-hills.jpg"],
   },
   robots: {
     index: true,
@@ -58,21 +63,28 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${siteConfig.name} — Travel Journal`}
+          href="/feed.xml"
+        />
+      </head>
       <body
-        className={`${lexend.variable} ${merriweather.variable} font-sans antialiased`}
+        className={`${editorial.variable} ${inter.variable} font-sans antialiased`}
       >
         <ThemeProvider>
           <AdminGuard>
             <Header />
           </AdminGuard>
-          <main className="min-h-screen">{children}</main>
+          <main id="main-content" tabIndex={-1} className="min-h-screen">{children}</main>
           <AdminGuard>
             <Footer />
           </AdminGuard>
           <Toaster position="top-right" richColors />
         </ThemeProvider>
-        <FloatingWhatsApp />
+        <AdminGuard><FloatingWhatsApp /></AdminGuard>
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? <Analytics /> : null}
       </body>
     </html>

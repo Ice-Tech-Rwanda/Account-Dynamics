@@ -1,178 +1,99 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Phone, ChevronLeft, ChevronRight } from "lucide-react";
-import { siteConfig } from "@/lib/site";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { siteImages } from "@/lib/siteImages";
+import type { SiteImageSetting } from "@/lib/content/types";
 
-const SLIDES = siteImages.heroSlides;
+interface HeroSectionProps {
+  eyebrow?: string | null;
+  title?: string | null;
+  subtitle?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  images?: SiteImageSetting[];
+}
 
-const SLIDE_DURATION_MS = 6000;
-
-export function HeroSection() {
+export function HeroSection({
+  eyebrow,
+  title,
+  subtitle,
+  ctaLabel,
+  ctaUrl,
+  images,
+}: HeroSectionProps) {
+  const slides = images?.length
+    ? images.map((i) => ({
+        src: i.url,
+        alt: i.alt || "Rwanda travel with Global Line Safaris",
+      }))
+    : siteImages.heroSlides;
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (reduceMotion || paused) return;
-    timerRef.current = setInterval(() => {
-      setIndex((current) => (current + 1) % SLIDES.length);
-    }, SLIDE_DURATION_MS);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [index, paused, reduceMotion]);
-
-  function goTo(slide: number) {
-    setIndex(((slide % SLIDES.length) + SLIDES.length) % SLIDES.length);
-  }
+  const slide = slides[index % slides.length];
 
   return (
-    <section
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-bg-dark"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      aria-label="Introduction"
-    >
-      {/* Sliding background images */}
-      <div className="absolute inset-0">
-        {SLIDES.map((slide, slideIndex) => (
-          <motion.div
-            key={slide.src}
-            className="absolute inset-0"
-            initial={false}
-            animate={{ opacity: slideIndex === index ? 1 : 0 }}
-            transition={{ duration: reduceMotion ? 0 : 1.2, ease: "easeInOut" }}
-            aria-hidden={slideIndex !== index}
+    <section className="safari-hero" aria-label="Discover Rwanda">
+      <Image
+        key={slide.src}
+        src={slide.src}
+        alt={slide.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="hero-photograph"
+      />
+      <div className="hero-shade" />
+      <div className="safari-container hero-content">
+        <div className="safari-eyebrow">
+          <span className="safari-eyebrow-line" />
+          <span>{eyebrow || "Rwanda & East Africa"}</span>
+        </div>
+        <h1>{title || "Discover Rwanda & Beyond"}</h1>
+        <p className="hero-description">
+          {subtitle ||
+            "Experience breathtaking landscapes, extraordinary wildlife, and unforgettable journeys with Global Line Safaris."}
+        </p>
+        <div className="hero-actions">
+          <Link className="safari-button safari-button-ivory" href="/destinations">
+            Explore Destinations
+            <ArrowRight width={14} height={14} />
+          </Link>
+          <Link
+            className="safari-text-link light-link"
+            href={ctaUrl || "/plan-your-trip"}
           >
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              priority={slideIndex === 0}
-              sizes="100vw"
-              className="object-cover"
-              style={
-                slideIndex === index && !reduceMotion
-                  ? { transform: "scale(1.08)", transition: "transform 7s ease-out" }
-                  : { transform: "scale(1)", transition: "transform 7s ease-out" }
-              }
-            />
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-bg-dark/70 via-brand-bg-dark/50 to-brand-bg-dark/25" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,rgba(29,42,32,0.4),transparent_60%)]" />
-
-      <div className="relative z-10 w-full max-w-5xl px-4 sm:px-6 py-24">
-        <div className="text-center sm:text-left">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="flex justify-center sm:justify-start"
-          >
-            <span className="inline-flex items-center gap-2.5 rounded-full bg-white/10 backdrop-blur-xl px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-accent-soft border border-accent-soft/30">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
-              </span>
-              Helping You Reach Your Financial Goals
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.8 }}
-            className="mt-6 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold leading-[1.05] tracking-tight text-white"
-          >
-            Turn your numbers into{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-soft via-accent to-accent-soft">
-              smarter decisions.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.8 }}
-            className="mt-6 text-base sm:text-lg md:text-xl text-slate-200/90 max-w-2xl leading-relaxed font-light"
-          >
-            Professional tax, cloud accounting, bookkeeping and advisory for
-            individuals and small businesses across Canada.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-9 flex flex-wrap gap-4 justify-center sm:justify-start"
-          >
-            <Link href="/book">
-              <Button variant="accent" size="xl" className="gap-2.5 rounded-xl shadow-xl shadow-accent/30 text-base">
-                Book a Free Consultation
-                <ArrowRight className="size-4" />
-              </Button>
-            </Link>
-            <Link href={siteConfig.bookOnlineUrl}>
-              <Button
-                size="xl"
-                className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:border-white/30 gap-2.5 text-base shadow-lg"
-              >
-                <Phone className="size-4" /> Book a Consultation
-              </Button>
-            </Link>
-          </motion.div>
+            {ctaLabel || "Plan Your Trip"}
+            <ArrowRight width={14} height={14} />
+          </Link>
         </div>
       </div>
-
-      {/* Slide controls */}
-      <div className="absolute z-20 right-5 bottom-6 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => goTo(index - 1)}
-          aria-label="Previous slide"
-          className="rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white p-2.5 hover:bg-white/20 transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => goTo(index + 1)}
-          aria-label="Next slide"
-          className="rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white p-2.5 hover:bg-white/20 transition-colors"
-        >
-          <ChevronRight className="size-4" />
-        </button>
-      </div>
-      <div className="absolute z-20 left-1/2 -translate-x-1/2 bottom-7 flex items-center gap-2">
-        {SLIDES.map((slide, slideIndex) => (
+      <div className="safari-container hero-bottom">
+        <a href="#discover" className="hero-scroll">
+          <span className="hero-scroll-line" />
+          <span>Discover</span>
+        </a>
+        <div className="hero-controls">
+          <span aria-live="polite" aria-atomic="true">
+            {String(index + 1).padStart(2, "0")}
+            <span> / {String(slides.length).padStart(2, "0")}</span>
+          </span>
           <button
-            key={slide.src}
-            type="button"
-            onClick={() => goTo(slideIndex)}
-            aria-label={`Go to slide ${slideIndex + 1}`}
-            aria-current={slideIndex === index}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              slideIndex === index
-                ? "w-8 bg-accent"
-                : "w-2 bg-white/40 hover:bg-white/70"
-            }`}
-          />
-        ))}
+            aria-label="Previous photograph"
+            onClick={() =>
+              setIndex((index - 1 + slides.length) % slides.length)
+            }
+          >
+            <ChevronLeft width={16} height={16} />
+          </button>
+          <button
+            aria-label="Next photograph"
+            onClick={() => setIndex((index + 1) % slides.length)}
+          >
+            <ChevronRight width={16} height={16} />
+          </button>
+        </div>
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-slate-950 to-transparent pointer-events-none" />
     </section>
   );
 }

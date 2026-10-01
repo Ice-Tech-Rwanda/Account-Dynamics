@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Industries",
+  title: "Who We Serve",
   description:
-    "Account Dynamics serves individuals, small businesses, entrepreneurs, accounting & CPA firms and groups of companies across Canada with accounting, tax and advisory services.",
+    "Global Line Safaris creates tailored safari and tour experiences for wildlife lovers, gorilla trekking travellers, families, students and cultural explorers across Rwanda and East Africa.",
   alternates: { canonical: "/industries" },
 };
 

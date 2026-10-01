@@ -3,9 +3,6 @@ import { faqSchema, faqUpdateSchema } from "@/lib/validation";
 import {
   createListHandler,
   createCreateHandler,
-  createGetHandler,
-  createUpdateHandler,
-  createDeleteHandler,
 } from "@/lib/admin/api-registry";
 
 const config = {
@@ -16,6 +13,8 @@ const config = {
   searchFields: ["question", "answer", "category"],
   orderBy: { displayOrder: "asc" },
   contentTags: ["faqs"],
+  filterParams: ["status"],
+  hideArchivedByDefault: true,
 };
 
 export const GET = createListHandler(prisma.faqItem, config);

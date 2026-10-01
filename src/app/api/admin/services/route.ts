@@ -12,6 +12,8 @@ const config = {
   searchFields: ["name", "slug", "description"],
   orderBy: { displayOrder: "asc" },
   contentTags: ["services"],
+  filterParams: ["status"],
+  hideArchivedByDefault: true,
   include: {
     category: true,
     benefits: { orderBy: { displayOrder: "asc" } },
@@ -26,8 +28,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { serviceSchema: schema } = await import("@/lib/validation");
-    const parsed = schema.safeParse(body);
+    const parsed = serviceSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") }, { status: 400 });
     }

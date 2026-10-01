@@ -1,8 +1,8 @@
 {
-  "name": "account-dynamics",
+  "name": "global-line-safaris-cms",
   "version": "1.0.0",
   "private": true,
-  "description": "Account Dynamics — Professional accounting, tax, advisory and business analytics website built with Next.js 16, Tailwind CSS v4, and Prisma.",
+  "description": "Global Line Safaris — premium Rwanda and East Africa tourism website and content management system.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

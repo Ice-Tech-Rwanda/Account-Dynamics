@@ -10,21 +10,26 @@ export const mainNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   {
-    label: "Services",
-    href: "/services",
+    label: "Destinations",
+    href: "/destinations",
     children: [
-      { label: "Small Business", href: "/services/small-business" },
-      { label: "Personal Taxes", href: "/services/personal-taxes" },
-      { label: "Outsourcing", href: "/services/outsourcing" },
-      { label: "Allied Services", href: "/services/allied-services" },
+      { label: "All Destinations", href: "/destinations" },
+      { label: "Volcanoes National Park", href: "/destinations/volcanoes-national-park" },
+      { label: "Akagera National Park", href: "/destinations/akagera-national-park" },
+      { label: "Nyungwe National Park", href: "/destinations/nyungwe-national-park" },
+      { label: "Lake Kivu", href: "/destinations/lake-kivu" },
+      { label: "Kigali City", href: "/destinations/kigali-city" },
     ],
   },
-  { label: "Industries", href: "/industries" },
-  { label: "Why Choose Us", href: "/why-choose-us" },
+  { label: "Tour Packages", href: "/tour-packages" },
+  { label: "Services", href: "/services" },
+  { label: "Training", href: "/training" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
-export const ctaNav = { label: "Book Online", href: siteConfig.bookOnlineUrl };
+export const ctaNav = { label: "Plan Your Trip", href: siteConfig.bookOnlineUrl };
 
 export interface FooterGroup {
   title: string;
@@ -33,28 +38,37 @@ export interface FooterGroup {
 
 export const footerGroups: FooterGroup[] = [
   {
-    title: "Services",
+    title: "Destinations",
     links: [
-      { label: "Small Business", href: "/services/small-business" },
-      { label: "Personal Taxes", href: "/services/personal-taxes" },
-      { label: "Outsourcing", href: "/services/outsourcing" },
-      { label: "Allied Services", href: "/services/allied-services" },
+      { label: "Volcanoes National Park", href: "/destinations/volcanoes-national-park" },
+      { label: "Akagera National Park", href: "/destinations/akagera-national-park" },
+      { label: "Nyungwe National Park", href: "/destinations/nyungwe-national-park" },
+      { label: "Lake Kivu", href: "/destinations/lake-kivu" },
+      { label: "Kigali City", href: "/destinations/kigali-city" },
+      { label: "All Destinations", href: "/destinations" },
     ],
   },
   {
     title: "Company",
     links: [
       { label: "About Us", href: "/about" },
-      { label: "Industries", href: "/industries" },
-      { label: "Why Choose Us", href: "/why-choose-us" },
+      { label: "Our Team", href: "/about#team" },
+      { label: "Mission & Values", href: "/mission-and-values" },
+      { label: "Why Travel With Us", href: "/why-choose-us" },
+      { label: "Gallery", href: "/gallery" },
+      { label: "Travel Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Resources",
+    title: "Tours & Services",
     links: [
-      { label: "Book Online", href: siteConfig.bookOnlineUrl },
-      { label: "FAQ", href: "/#faq" },
+      { label: "Tour Packages", href: "/tour-packages" },
+      { label: "Services", href: "/services" },
+      { label: "Training & Internships", href: "/training" },
+      { label: "Plan Your Trip", href: siteConfig.bookOnlineUrl },
+      { label: "Tours & Experiences", href: "/services/tours-and-experiences" },
+      { label: "Travel Services", href: "/services/travel-services" },
     ],
   },
 ];
