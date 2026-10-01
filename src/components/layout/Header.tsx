@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import {
   Menu,
@@ -31,6 +31,8 @@ export function Header() {
   // the sheet without needing an effect to close it.
   const [menuRoute, setMenuRoute] = useState<string | null>(null);
   const menuOpen = menuRoute === pathname;
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   const scrolled = useSyncExternalStore(
     subscribeToScroll,
@@ -48,6 +50,46 @@ export function Header() {
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  // Trap focus inside the mobile nav overlay when it's open
+  useEffect(() => {
+    if (!menuOpen) return;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    const focusableSelectors = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusableElements = overlay.querySelectorAll<HTMLElement>(focusableSelectors);
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Focus the first element when the menu opens
+    firstElement?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+
+      if (event.shiftKey) {
+        // Shift+Tab on the first element: wrap to the last element
+        if (document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab on the last element: wrap to the first element
+        if (document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      // Return focus to the toggle button when the menu closes
+      toggleRef.current?.focus();
     };
   }, [menuOpen]);
 
@@ -197,6 +239,7 @@ export function Header() {
               <ArrowUpRight width={14} height={14} aria-hidden="true" />
             </Link>
             <button
+              ref={toggleRef}
               className="menu-toggle"
               aria-controls="mobile-nav-overlay"
               aria-expanded={menuOpen}
@@ -214,12 +257,17 @@ export function Header() {
       </header>
 
       <div
+        ref={overlayRef}
         className={`mobile-nav-overlay${menuOpen ? " open" : ""}`}
         id="mobile-nav-overlay"
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
+        aria-hidden={!menuOpen}
         inert={!menuOpen}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) closeMenu();
+        }}
       >
         <div className="mobile-nav-header">
           <span className="safari-brand">

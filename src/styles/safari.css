@@ -738,6 +738,22 @@ a.safari-topbar-item:hover,
   background: var(--brand);
 }
 
+.hero-slides {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
 .hero-photograph {
   object-fit: cover;
 }

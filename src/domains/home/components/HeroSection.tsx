@@ -34,15 +34,24 @@ export function HeroSection({
 
   return (
     <section className="safari-hero" aria-label="Discover Rwanda">
-      <Image
-        key={slide.src}
-        src={slide.src}
-        alt={slide.alt}
-        fill
-        priority
-        sizes="100vw"
-        className="hero-photograph"
-      />
+      <div className="hero-slides">
+        {slides.map((s, i) => (
+          <div
+            key={s.src}
+            className={`hero-slide${i === index ? " active" : ""}`}
+            aria-hidden={i !== index}
+          >
+            <Image
+              src={s.src}
+              alt={s.alt}
+              fill
+              priority={i === 0}
+              sizes="100vw"
+              className="hero-photograph"
+            />
+          </div>
+        ))}
+      </div>
       <div className="hero-shade" />
       <div className="safari-container hero-content">
         <div className="safari-eyebrow">
